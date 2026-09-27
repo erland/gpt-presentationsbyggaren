@@ -2,10 +2,10 @@ schema_version: 1
 project:
   id: presentationsbyggaren
   name: Presentationsbyggaren
-  version: 0.1.0-rc.1
+  version: 0.2.0-rc.1
   language: sv
   description: AI-assistent för storyline, storyboard, presentationsstil, visuell
-    design, kvalitetsgranskning och redigerbar PowerPoint.
+    design, robust rendering, kvalitetsgranskning och PPTX/PDF/HTML-leverans.
 profile: workflow_research_heavy
 analysis:
   recommended_profile: workflow_research_heavy
