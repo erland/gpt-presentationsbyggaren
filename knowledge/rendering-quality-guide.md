@@ -2,108 +2,131 @@
 
 ## Syfte
 
-Den här guiden styr övergången från validerat storyboard till levererbar presentation. Målet är tvådelat:
+Rendering ska ge en professionell presentation och en tekniskt giltig leverans. När användaren inte kräver objektredigerbarhet är **visual-first** standard: visuellt resultat prioriteras framför PowerPoints interna objektmodell.
 
-1. presentationen ska se designad ut, inte som ett wireframe,
-2. PPTX-filen ska vara tekniskt giltig och kunna öppnas i PowerPoint-kompatibla program.
+## Två huvudspår
 
-## Designprincip
+### Visual-first
 
-**Kommunikationskvalitet först, redigerbarhet där det är rimligt.**
+Använd när visuell kvalitet är viktigare än objektredigering.
 
-Redigerbarhet är en viktig egenskap men inte det överordnade målet. En slide med primitiva boxar och linjer är inte bättre bara för att varje objekt går att redigera.
+- varje slide får renderas till en färdig helslidebild,
+- PowerPoint används som presentationsskal,
+- PDF ska när möjligt motsvara samma visuella rendering,
+- exakt copy ska kontrolleras separat från bildgenereringen,
+- speaker notes bevaras när presentationsformatet stöder det.
 
-Välj för varje slide en renderingsstrategi:
+### Copilot-handoff
 
-- `native` – text, tabeller, enkla diagram, processer och strukturer som tjänar på fortsatt redigering,
-- `designed-composition` – större typografi, färgfält, former, lager, asymmetri och grafisk rytm byggd med presentationsobjekt,
-- `generated-visual` – informationsbärande illustration, konceptbild eller metafor när native objekt skulle ge märkbart svagare kommunikation,
-- `hybrid` – illustration eller bild kombinerad med redigerbar rubrik, etiketter, data eller källor.
+Använd när användaren vill ha en redigerbar presentation från ett presentationsverktyg som Microsoft Copilot.
+
+- `presentation-plan.md` är sanningskälla,
+- `copilot-handoff.docx` är primärt överlämningsformat,
+- PDF kan följa med som stabil referens,
+- en kort `copilot-prompt.md` instruerar verktyget att följa dokumentet och skapa redigerbar presentation.
+
+## Visual-first pipeline
+
+1. Validera `presentation-plan.md`.
+2. Fastställ visual system.
+3. Välj 1–2 anchor slides.
+4. Generera och godkänn anchor-assets.
+5. Generera återstående assets normalt en slide i taget; använd högst små batcher när det är lämpligt.
+6. Komponera korrekt rubrik, etiketter och övrig presentationscopy.
+7. Rendera högupplösta slides.
+8. Paketera till PPTX och PDF.
+9. Granska faktisk preview av alla slides.
+10. Leverera först efter teknisk och visuell gate.
 
 ## Visuell ambitionsnivå
 
-En färdig presentation ska normalt visa flera av följande egenskaper:
+En färdig presentation ska visa:
 
-- tydlig variation i komposition mellan slides som gör olika jobb,
-- stark skala: minst ett tydligt dominant element på viktiga slides,
-- genomtänkt typografisk hierarki,
-- avsiktlig användning av whitespace,
-- visuella ankare som hjälper minnet,
-- illustrationer eller starkare grafiska kompositioner på hero-/aha-slides när det passar,
-- konsekvent men inte mekaniskt gridsystem,
-- tydlig rytm mellan lugna, informativa och starka slides.
+- tydligt dominant fokus,
+- storlek och kontrast som fungerar på presentationsavstånd,
+- varierad komposition när slides gör olika jobb,
+- avsiktlig whitespace,
+- konsekvent formspråk utan identisk layout,
+- visuella metaforer eller illustrationer där de stärker budskapet,
+- rytm mellan lugna, informativa och starka slides.
 
-Följande är varningssignaler:
+Blockerande varningssignaler:
 
-- samma låda-med-linje-komposition upprepas genom stora delar av presentationen,
-- alla objekt är små i relation till canvasen,
-- stor tom yta saknar avsikt,
-- ikoner används som ersättning för faktisk visualisering,
-- varje slide ser ut som ett storyboard snarare än en slutdesign.
+- wireframe-känsla,
+- upprepade små boxar och tunna pilar,
+- standardikoner som huvudsakligt visuellt språk,
+- allt innehåll samlat i små objekt mitt på en stor canvas,
+- generisk mallkänsla utan koppling till budskapet,
+- bildgenererad text med felstavning eller felaktiga siffror.
 
-## Rendererstrategi
+## Bildgenerering
 
-Canonical metoden ska inte själv konstruera rå Open XML.
+Följ `knowledge/visual-first-workflow.md`.
 
-När runtime erbjuder en etablerad presentationsrenderer ska den användas. Vid programmatisk PPTX-generering ska en renderer med etablerat stöd för PowerPoint/Open XML användas i stället för handskrivna ZIP/XML-delar.
+Bildmodellen ska normalt skapa scen, illustration, bakgrund eller metafor. Presentationscopy läggs separat när exakthet krävs.
 
-Renderingen ska följa presentation-generation-specifikationen och bevara:
+Anchor-resultat ska styra senare generationer när runtime kan använda referensbilder.
 
-- slideformat,
-- typsnittsfallback,
-- speaker notes när det stöds,
-- text som separata element där den rimligen behöver redigeras,
-- källor och etiketter som redigerbara element,
-- bilder i tillräcklig upplösning.
+## PPTX-paketering
+
+Canonical metoden ska inte handskriva rå Open XML.
+
+Vid programmatisk PPTX-generering ska en etablerad presentationsrenderer eller bibliotek användas. För visual-first kan varje slide bestå av en helslidebild; detta minskar behovet av komplex PowerPoint-layout.
 
 ## Teknisk PPTX-validering
 
-Före leverans ska PPTX, när runtime medger det, passera:
+Före leverans ska PPTX när runtime medger det passera:
 
-1. **ZIP-integritet** – filen är ett läsbart ZIP-paket.
-2. **Obligatoriska delar** – minst `[Content_Types].xml`, `_rels/.rels` och `ppt/presentation.xml` finns.
-3. **Content Types** – varje explicit Override-part pekar på en del som faktiskt finns.
-4. **Relationships** – interna relationship-targets går att resolva till befintliga delar.
-5. **Oberoende rendering** – filen kan öppnas eller renderas i en separat Office-kompatibel motor när sådan finns.
-6. **Preview** – slides renderas till bilder/PDF för visuell kontroll.
+1. ZIP-integritet.
+2. Obligatoriska delar: `[Content_Types].xml`, `_rels/.rels`, `ppt/presentation.xml`.
+3. Alla Content-Type Overrides pekar på delar som finns.
+4. Interna relationship-targets kan resolvas.
+5. Filen kan öppnas/renderas med en oberoende Office-kompatibel motor när sådan finns.
+6. Preview kan skapas.
 
-Ett fel i steg 1–4 är alltid blockerande. Fel i steg 5 är blockerande för påstådd PowerPoint-kompatibilitet.
+Fel i 1–4 är alltid blockerande. Fel i 5 blockerar påstådd PowerPoint-kompatibilitet.
 
-## Visuell preview-gate
+## Preview-gate
 
-Granska renderade slides som faktisk bild, inte bara objektmodellen.
+Granska det användaren faktiskt kommer att se:
 
-Kontrollera:
-
-- textklippning och overflow,
-- element utanför canvas,
-- oläslig text,
+- textklippning,
 - överlapp,
-- oproportionerligt små objekt,
-- repetitiv wireframe-känsla,
-- oavsiktligt tomma ytor,
+- oläslig copy,
 - låg kontrast,
-- visuella element som inte stödjer slide-budskapet.
+- oproportionerligt små objekt,
+- oavsiktligt tomrum,
+- visuella artefakter,
+- wireframe- eller mallkänsla,
+- inkonsekvent visual system.
 
-Minst titel/öppning, en typisk innehållsslide, en komplex slide och avslutning bör granskas; vid liten presentation granskas alla slides.
+I visual-first granskas normalt **alla slides**, eftersom previewn är den slutliga visuella sanningen.
 
 ## Leveransformat
 
-För full presentationsleverans prioriteras:
+När visual-first valts:
 
-1. **PPTX** – huvudformat när fortsatt redigering eller PowerPoint krävs.
-2. **PDF** – rekommenderad följeslagare som visuellt stabil referens.
-3. **HTML** – alternativ när hög visuell frihet, animation eller webbpresentation är viktigare än PowerPoint-redigering.
+1. `presentation-plan.md` – återupptagningsbar masterplan,
+2. `presentation.pptx` – bildbaserad PowerPoint för framförande,
+3. `presentation.pdf` – visuellt stabil representation.
 
-PDF och HTML ersätter inte PPTX när användaren uttryckligen behöver PowerPoint, men kan vara bättre primärformat när redigering inte är ett krav.
+När redigerbarhet via Copilot önskas:
+
+1. samma `presentation-plan.md`,
+2. `copilot-handoff.docx`,
+3. `copilot-handoff.pdf` när möjligt,
+4. `copilot-prompt.md`.
+
+HTML är fortsatt ett möjligt alternativ för webbpresentation men inte huvudspår i 0.3.
 
 ## Leveransgate
 
-En leverans får kallas färdig först när:
+Leveransen är klar när:
 
-- storyboard- och designgate är godkända,
-- teknisk PPTX-validering är godkänd för PPTX,
-- preview har granskats när rendering är möjlig,
+- presentation-planen är komplett,
+- anchor/style-gate är godkänd,
+- alla visual-first-slides har granskats som preview,
 - inga blockerande visuella problem återstår,
-- PDF har skapats som följeslagare när runtime kan göra det och uppgiften motiverar det,
-- eventuella valideringsbegränsningar redovisas uttryckligt.
+- PPTX-integritet är godkänd om PPTX levereras,
+- PDF motsvarar avsedd rendering när PDF levereras,
+- Copilot-handoff bevarar samma kärnbudskap och slide-specifikation när det spåret används.
