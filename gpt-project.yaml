@@ -2,9 +2,9 @@ schema_version: 1
 project:
   id: presentationsbyggaren
   name: Presentationsbyggaren
-  version: 0.3.1-rc.1
+  version: 0.3.2-rc.1
   language: sv
-  description: AI-assistent för återupptagningsbar presentation plan, en-slide-i-taget visual-first rendering,
+  description: AI-assistent för nedladdningsbar presentation plan, explicit slide-för-slide visual-first rendering,
     kvalitetsgranskning samt kompletterande Copilot-handoff.
 profile: workflow_research_heavy
 analysis:
@@ -122,7 +122,7 @@ artifacts:
       persistence: persistent
       multiplicity: one
       filename_pattern: presentation-plan.md
-      description: Kanonisk återupptagningsbar presentationsplan med brief, storyline, design direction, visual system och slide-för-slide-specifikation.
+      description: Kanonisk återupptagningsbar presentationsplan som levereras som nedladdningsbar Markdown-fil.
     presentation_pptx:
       kind: document
       format: pptx
