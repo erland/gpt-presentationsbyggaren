@@ -38,6 +38,14 @@ status: planned
 - **Komposition:** ett tydligt dominant fokus per slide.
 - **Textregel:** presentationscopy genereras inte i bildassets.
 
+## Rendering status
+
+- Phase: anchors
+- Next slide: 01
+- Slide 01: next
+- Slide 02: pending
+- Slide 03: pending
+
 ## Slides
 
 ### Slide 01 — Från AI som sökmotor till AI som arbetskamrat
@@ -87,7 +95,7 @@ IT-arkitekt i förgrunden och AI som en mindre informationskälla, tydligt under
 
 **Image asset**
 - Needed: yes
-- Generation group: batch-a
+- Generation group: slide-02
 - Prompt intent: konkretisera informationsverktyg
 - Must show: människa som aktiv utförare
 - Must avoid: robot som gör arbetet åt människan
