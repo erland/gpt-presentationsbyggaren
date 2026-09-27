@@ -3,26 +3,72 @@
   "$id": "presentation-generation.schema.json",
   "title": "Presentation Generation Contract",
   "type": "object",
-  "required": ["input", "output", "rendering", "sources", "technical_validation", "quality"],
+  "required": [
+    "input",
+    "output",
+    "rendering",
+    "sources",
+    "technical_validation",
+    "quality"
+  ],
   "properties": {
     "input": {
       "type": "object",
-      "required": ["presentation_plan"],
+      "required": [
+        "presentation_plan"
+      ],
       "properties": {
-        "presentation_plan": {"type": "string", "minLength": 1},
-        "storyboard": {"type": ["string", "null"]},
-        "source_material": {"type": "array", "items": {"type": "string"}},
-        "existing_presentation": {"type": ["string", "null"]}
+        "presentation_plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storyboard": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_material": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "existing_presentation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "output": {
       "type": "object",
-      "required": ["generation_mode", "primary_artifact", "editable"],
+      "required": [
+        "generation_mode",
+        "primary_artifact",
+        "editable"
+      ],
       "properties": {
-        "generation_mode": {"enum": ["visual-first", "copilot-handoff", "native"]},
-        "primary_artifact": {"enum": ["pptx", "pdf", "docx", "html"]},
-        "editable": {"type": "boolean"},
+        "generation_mode": {
+          "enum": [
+            "visual-first",
+            "copilot-handoff",
+            "native"
+          ]
+        },
+        "primary_artifact": {
+          "enum": [
+            "pptx",
+            "pdf",
+            "docx",
+            "html"
+          ]
+        },
+        "editable": {
+          "type": "boolean"
+        },
         "support_artifacts": {
           "type": "array",
           "items": {
@@ -47,30 +93,81 @@
     },
     "rendering": {
       "type": "object",
-      "required": ["design_priority", "text_strategy", "image_generation"],
+      "required": [
+        "design_priority",
+        "text_strategy",
+        "image_generation"
+      ],
       "properties": {
-        "design_priority": {"const": "communication_quality"},
-        "text_strategy": {"enum": ["compose_after_image_generation", "native_text", "tool_managed"]},
-        "allow_full_slide_rasterization": {"type": "boolean"},
+        "design_priority": {
+          "const": "communication_quality"
+        },
+        "text_strategy": {
+          "enum": [
+            "compose_after_image_generation",
+            "native_text",
+            "tool_managed"
+          ]
+        },
+        "allow_full_slide_rasterization": {
+          "type": "boolean"
+        },
         "slide_render_modes": {
           "type": "array",
-          "items": {"enum": ["image-slide", "hybrid-slide", "native-slide", "copilot-only"]},
+          "items": {
+            "enum": [
+              "image-slide",
+              "hybrid-slide",
+              "native-slide",
+              "copilot-only"
+            ]
+          },
           "uniqueItems": true
         },
         "companion_formats": {
           "type": "array",
-          "items": {"enum": ["pdf", "html", "docx"]},
+          "items": {
+            "enum": [
+              "pdf",
+              "html",
+              "docx"
+            ]
+          },
           "uniqueItems": true
         },
         "image_generation": {
           "type": "object",
-          "required": ["anchor_slides_first", "max_batch_size", "whole_deck_single_prompt"],
+          "required": [
+            "anchor_slides_first",
+            "one_slide_per_generation",
+            "max_batch_size",
+            "whole_deck_single_prompt",
+            "anti_collage"
+          ],
           "properties": {
-            "anchor_slides_first": {"const": true},
-            "anchor_count": {"type": "integer", "minimum": 1, "maximum": 2},
-            "max_batch_size": {"type": "integer", "minimum": 1, "maximum": 4},
-            "whole_deck_single_prompt": {"const": false},
-            "exact_copy_in_generated_images": {"type": "boolean"}
+            "anchor_slides_first": {
+              "const": true
+            },
+            "anchor_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2
+            },
+            "max_batch_size": {
+              "const": 1
+            },
+            "whole_deck_single_prompt": {
+              "const": false
+            },
+            "exact_copy_in_generated_images": {
+              "type": "boolean"
+            },
+            "one_slide_per_generation": {
+              "const": true
+            },
+            "anti_collage": {
+              "const": true
+            }
           },
           "additionalProperties": false
         }
@@ -79,37 +176,85 @@
     },
     "sources": {
       "type": "object",
-      "required": ["traceability", "current_claims_verified_when_possible"],
+      "required": [
+        "traceability",
+        "current_claims_verified_when_possible"
+      ],
       "properties": {
-        "traceability": {"type": "boolean"},
-        "current_claims_verified_when_possible": {"type": "boolean"},
-        "unverified_claims_marked": {"type": "boolean"}
+        "traceability": {
+          "type": "boolean"
+        },
+        "current_claims_verified_when_possible": {
+          "type": "boolean"
+        },
+        "unverified_claims_marked": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     },
     "technical_validation": {
       "type": "object",
-      "required": ["plan_validated", "preview_reviewed"],
+      "required": [
+        "plan_validated",
+        "preview_reviewed"
+      ],
       "properties": {
-        "plan_validated": {"type": "boolean"},
-        "package_integrity_checked": {"type": "boolean"},
-        "relationships_checked": {"type": "boolean"},
-        "independent_render_check": {"enum": ["pass", "fail", "not_available", "not_run"]},
-        "preview_reviewed": {"type": "boolean"},
-        "limitations": {"type": "array", "items": {"type": "string"}}
+        "plan_validated": {
+          "type": "boolean"
+        },
+        "package_integrity_checked": {
+          "type": "boolean"
+        },
+        "relationships_checked": {
+          "type": "boolean"
+        },
+        "independent_render_check": {
+          "enum": [
+            "pass",
+            "fail",
+            "not_available",
+            "not_run"
+          ]
+        },
+        "preview_reviewed": {
+          "type": "boolean"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
     },
     "quality": {
       "type": "object",
-      "required": ["presentation_plan_gate_passed", "visuals_have_purpose", "visual_ambition_checked"],
+      "required": [
+        "presentation_plan_gate_passed",
+        "visuals_have_purpose",
+        "visual_ambition_checked"
+      ],
       "properties": {
-        "presentation_plan_gate_passed": {"const": true},
-        "visuals_have_purpose": {"const": true},
-        "layout_overflow_checked": {"type": "boolean"},
-        "technical_gate_passed": {"type": "boolean"},
-        "visual_ambition_checked": {"const": true},
-        "anchor_style_approved": {"type": "boolean"}
+        "presentation_plan_gate_passed": {
+          "const": true
+        },
+        "visuals_have_purpose": {
+          "const": true
+        },
+        "layout_overflow_checked": {
+          "type": "boolean"
+        },
+        "technical_gate_passed": {
+          "type": "boolean"
+        },
+        "visual_ambition_checked": {
+          "const": true
+        },
+        "anchor_style_approved": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     }
