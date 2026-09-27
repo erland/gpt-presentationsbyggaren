@@ -4,11 +4,11 @@ project:
   name: Presentationsbyggaren
 plan:
   path: docs/development-plan.md
-  total_steps: 24
+  total_steps: 27
 progress:
   current_phase: improvement_candidate
-  current_step: 24
-  last_completed_step: 24
+  current_step: 27
+  last_completed_step: 27
   completed_steps:
   - 1
   - 2
@@ -34,6 +34,9 @@ progress:
   - 22
   - 23
   - 24
+  - 25
+  - 26
+  - 27
   skipped_steps: []
   inserted_steps:
   - 14
@@ -47,16 +50,19 @@ progress:
   - 22
   - 23
   - 24
+  - 25
+  - 26
+  - 27
 state:
   overall: warning
   blocking_issues: []
   warnings:
   - Live cross-model-kvalificering mot minst en enklare och en starkare modell är fortfarande inte körd.
-  - 0.3 behöver praktiskt A/B-test av visual-first-presentation mot Copilot-handoff innan stabil release.
+  - 0.3.1 behöver praktiskt visual-first-test med en slide per generation.
 next_step:
-  recommended: visual-first-copilot-ab-test
-  title: Praktiskt A/B-testa visual-first och Copilot-handoff
-  reason: Presentation Plan, visual-first workflow, anchor-slide-strategi och Copilot-handoff är implementerade och behöver nu kvalificeras med samma verkliga presentationscase.
+  recommended: practical-single-slide-rendering-test
+  title: Praktiskt testa visual-first slide för slide
+  reason: En-slide-per-generation, anti-collage och persistent renderingsstatus är implementerade. Nästa test ska verifiera bildkvalitet och Gör nästa steg-flödet.
 resume:
   supported: true
   required_files:
@@ -65,4 +71,4 @@ resume:
   - docs/development-plan.md
   - STATUS.md
   - PROJECT.md
-  human_readable_status: Förbättringscykel 0.3 steg 19–24 är implementerad. Nästa aktivitet är ett praktiskt A/B-test med samma presentation i visual-first respektive Copilot-handoff.
+  human_readable_status: 0.3.1 steg 25–27 är implementerade. Visual-first är huvudspår, exakt en slide genereras åt gången och planen håller persistent renderingsstatus.
