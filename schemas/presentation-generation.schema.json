@@ -3,7 +3,7 @@
   "$id": "presentation-generation.schema.json",
   "title": "Presentation Generation Contract",
   "type": "object",
-  "required": ["input", "output", "rendering", "sources", "quality"],
+  "required": ["input", "output", "rendering", "sources", "technical_validation", "quality"],
   "properties": {
     "input": {
       "type": "object",
@@ -19,11 +19,11 @@
       "type": "object",
       "required": ["primary_artifact", "editable"],
       "properties": {
-        "primary_artifact": {"const": "pptx"},
-        "editable": {"const": true},
+        "primary_artifact": {"enum": ["pptx", "pdf", "html"]},
+        "editable": {"type": "boolean"},
         "support_artifacts": {
           "type": "array",
-          "items": {"enum": ["storyboard", "source-notes", "review"]},
+          "items": {"enum": ["storyboard", "source-notes", "review", "pdf", "html", "preview-images", "pptx-validation-report"]},
           "uniqueItems": true
         }
       },
@@ -31,12 +31,23 @@
     },
     "rendering": {
       "type": "object",
-      "required": ["editable_text", "prefer_native_objects", "image_policy"],
+      "required": ["editable_text", "design_priority", "native_object_policy", "image_policy"],
       "properties": {
-        "editable_text": {"const": true},
-        "prefer_native_objects": {"const": true},
+        "editable_text": {"type": "boolean"},
+        "design_priority": {"const": "communication_quality"},
+        "native_object_policy": {"enum": ["use_when_best_fit", "prefer_for_editability"]},
         "image_policy": {"enum": ["information_bearing_only", "user_requested"]},
-        "allow_full_slide_rasterization": {"type": "boolean", "default": false}
+        "allow_full_slide_rasterization": {"type": "boolean", "default": false},
+        "slide_render_modes": {
+          "type": "array",
+          "items": {"enum": ["native", "designed-composition", "generated-visual", "hybrid"]},
+          "uniqueItems": true
+        },
+        "companion_formats": {
+          "type": "array",
+          "items": {"enum": ["pdf", "html"]},
+          "uniqueItems": true
+        }
       },
       "additionalProperties": false
     },
@@ -50,13 +61,27 @@
       },
       "additionalProperties": false
     },
+    "technical_validation": {
+      "type": "object",
+      "required": ["package_integrity_checked", "relationships_checked", "independent_render_check", "preview_reviewed"],
+      "properties": {
+        "package_integrity_checked": {"type": "boolean"},
+        "relationships_checked": {"type": "boolean"},
+        "independent_render_check": {"enum": ["pass", "fail", "not_available", "not_run"]},
+        "preview_reviewed": {"type": "boolean"},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
     "quality": {
       "type": "object",
-      "required": ["storyboard_gate_passed", "visuals_have_purpose"],
+      "required": ["storyboard_gate_passed", "visuals_have_purpose", "technical_gate_passed", "visual_ambition_checked"],
       "properties": {
         "storyboard_gate_passed": {"const": true},
         "visuals_have_purpose": {"const": true},
-        "layout_overflow_checked": {"type": "boolean"}
+        "layout_overflow_checked": {"type": "boolean"},
+        "technical_gate_passed": {"type": "boolean"},
+        "visual_ambition_checked": {"type": "boolean"}
       },
       "additionalProperties": false
     }
