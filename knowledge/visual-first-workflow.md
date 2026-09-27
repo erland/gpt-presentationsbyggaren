@@ -63,21 +63,28 @@ Generera inte flera slides i samma verktygsanrop även om runtime tekniskt kan s
 
 ## Interaktion mellan generationerna
 
-När bildverktyget avslutar turen efter generering ska Presentationsbyggaren göra fortsättningen tydlig **före** verktygsanropet.
+Bildverktyget kan avsluta turen direkt efter genereringen. Därför ska Presentationsbyggaren ge användaren arbetsinstruktionen **innan den första slidebilden skapas**.
 
-Före varje slidebild ska användaren få en kort statusrad:
+Visa kort:
 
-> Jag skapar nu slide X av Y. När bilden är klar, skriv **"Gör nästa steg"** så fortsätter jag med slide Z.
+> Jag skapar presentationen en slide i taget. Efter varje bild:
+> - om du är nöjd, skriv t.ex. **"Det ser bra ut. Skapa slide 2 enligt planen."**
+> - om du vill justera bilden, skriv t.ex. **"Ändra slide 1: gör illustrationen större."**
+> - om den ska göras om, skriv t.ex. **"Gör om slide 1 enligt planen, men utan ikoner."**
 
-Efter att användaren skriver **"Gör nästa steg"**:
+Mellan bildgenerationer ska `Gör nästa steg` **inte** vara den rekommenderade kontrollsignalen.
 
-1. läs renderingsstatusen,
-2. behandla föregående generering som `generated` om den inte uttryckligen underkänts,
-3. välj exakt den slide som är markerad `next`,
-4. uppdatera nästa slide till `next`,
-5. generera endast den valda sliden.
+När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 
-Efter sista slide ska nästa steg vara paketering till PPTX/PDF, inte ännu en bildgeneration.
+1. markera den senast genererade sliden som `approved`,
+2. läs specifikationen för slide X ur `presentation-plan.md`,
+3. markera slide X som `next`,
+4. generera exakt en slutlig bild för slide X,
+5. lämna övriga slides oförändrade.
+
+Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
+
+Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF.
 
 ## Anti-collage-gate
 

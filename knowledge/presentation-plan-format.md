@@ -4,6 +4,8 @@
 
 `presentation-plan.md` är den sparbara, runtime-neutrala masterartefakten för en presentation. Den ska vara tillräckligt komplett för att Presentationsbyggaren senare ska kunna skapa presentationen utan att göra om brief, storyline eller storyboard.
 
+När planen färdigställs ska den normalt **skrivas till en faktisk Markdown-fil och erbjudas som nedladdningsbar artefakt**. Hela planens innehåll ska inte dumpas i chatten om användaren inte uttryckligen ber om det. Chatten bör bara sammanfatta planen kort och länka till/visa filen.
+
 Planen är sanningskälla för:
 
 - syfte och målgrupp,
@@ -129,7 +131,7 @@ Regler:
 
 - högst en slide får vara `next`,
 - om någon bildslide återstår ska normalt exakt en vara `next`,
-- efter en lyckad generation flyttas `next` till följande pending slide,
+- `next` behöver inte automatiskt flyttas till numeriskt följande slide; användarens explicita kommando `Skapa slide X enligt planen` avgör vilken slide som blir nästa,
 - om användaren underkänner bilden sätts samma slide till `redo` och görs om innan flödet går vidare,
 - när alla relevanta slides är `approved` eller `not-applicable` går nästa steg till paketering.
 

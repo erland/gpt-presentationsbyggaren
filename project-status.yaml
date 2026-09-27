@@ -4,11 +4,11 @@ project:
   name: Presentationsbyggaren
 plan:
   path: docs/development-plan.md
-  total_steps: 27
+  total_steps: 30
 progress:
   current_phase: improvement_candidate
-  current_step: 27
-  last_completed_step: 27
+  current_step: 30
+  last_completed_step: 30
   completed_steps:
   - 1
   - 2
@@ -37,6 +37,9 @@ progress:
   - 25
   - 26
   - 27
+  - 28
+  - 29
+  - 30
   skipped_steps: []
   inserted_steps:
   - 14
@@ -53,16 +56,19 @@ progress:
   - 25
   - 26
   - 27
+  - 28
+  - 29
+  - 30
 state:
   overall: warning
   blocking_issues: []
   warnings:
   - Live cross-model-kvalificering mot minst en enklare och en starkare modell är fortfarande inte körd.
-  - 0.3.1 behöver praktiskt visual-first-test med en slide per generation.
+  - 0.3.2 behöver praktiskt test av explicit slidekommando efter varje bild.
 next_step:
-  recommended: practical-single-slide-rendering-test
-  title: Praktiskt testa visual-first slide för slide
-  reason: En-slide-per-generation, anti-collage och persistent renderingsstatus är implementerade. Nästa test ska verifiera bildkvalitet och Gör nästa steg-flödet.
+  recommended: practical-explicit-slide-flow-test
+  title: Praktiskt testa explicit slidekommando
+  reason: Informationssteget, vänteläget och nedladdningsbar Presentation Plan är implementerade. Nästa test ska verifiera att användaren kan godkänna en bild och explicit välja nästa slide.
 resume:
   supported: true
   required_files:
@@ -71,4 +77,4 @@ resume:
   - docs/development-plan.md
   - STATUS.md
   - PROJECT.md
-  human_readable_status: 0.3.1 steg 25–27 är implementerade. Visual-first är huvudspår, exakt en slide genereras åt gången och planen håller persistent renderingsstatus.
+  human_readable_status: 0.3.2 steg 28–30 är implementerade. Bildflödet använder explicit godkännande + slide-nummer och presentation-plan.md levereras som fil.

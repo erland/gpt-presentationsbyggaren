@@ -38,3 +38,13 @@ def test_next_slide_pointer_must_match_status(tmp_path: Path) -> None:
     path.write_text(text, encoding="utf-8")
     errors = validate(path)
     assert any("must match" in error for error in errors)
+
+
+def test_generated_slide_can_wait_without_next(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "tests" / "presentation-plan-example.md").read_text(encoding="utf-8")
+    text = text.replace("- Next slide: 01", "- Next slide: none")
+    text = text.replace("- Slide 01: next", "- Slide 01: generated")
+    path = tmp_path / "waiting-review.md"
+    path.write_text(text, encoding="utf-8")
+    assert validate(path) == []

@@ -1,3 +1,27 @@
+# Release notes – 0.3.2-rc.1
+
+## Explicit slide interaction och nedladdningsbar Presentation Plan
+
+0.3.2 justerar visual-first-flödet efter praktisk testning. Explicit godkännande och val av nästa slide fungerade bättre än `Gör nästa steg` mellan separata bildgenerationer.
+
+### Ändringar
+
+- informationssteg före första bildgenereringen,
+- rekommenderad dialog: `Det ser bra ut. Skapa slide X enligt planen.`,
+- separata exempel för ändring och omgenerering,
+- `Gör nästa steg` rekommenderas inte längre mellan bildgenerationer,
+- `Next slide: none` är giltigt medan en genererad/redo slide väntar på användarens bedömning,
+- validatorn har regressionstest för vänteläget,
+- `presentation-plan.md` ska levereras som nedladdningsbar Markdown-fil när runtime stöder filskrivning,
+- hela planen visas inline endast på uttrycklig begäran,
+- version bump till 0.3.2-rc.1.
+
+## Kvalificering
+
+CI ska passera projektvalidering, lint, deterministiska tester, hygiene och runtime-distributioner. Praktiskt slide-för-slide-test återstår.
+
+---
+
 # Release notes – 0.3.1-rc.1
 
 ## En slide per bildgenerering

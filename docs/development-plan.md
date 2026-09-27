@@ -615,3 +615,46 @@ Bakgrund: praktisk visual-first-testning visade att bildmodellen kunde tolka fle
 - CI passerar,
 - visual-first kan fortsätta deterministiskt slide för slide,
 - praktiskt nästa test kan fokusera på bildkvalitet i stället för batchbeteende.
+
+
+---
+
+## Förbättringscykel 0.3.2 – Explicit bildgodkännande och nedladdningsbar plan
+
+Bakgrund: praktisk testning visade att `Gör nästa steg` inte var en tillräckligt robust kontrollsignal mellan separata bildgenerationer. Däremot fungerade explicita kommandon som `Det ser bra ut. Skapa slide 3 enligt planen.`. Planeringsdokumentet visades dessutom i sin helhet i chatten i stället för att levereras som fil.
+
+### Steg 28 – Informationssteg före bildproduktion
+
+**Mål:** Förklara arbetsformen innan första bildgenereringen.
+
+**Leverans**
+- visa kort instruktion före första bilden:
+  - godkänd bild → `Det ser bra ut. Skapa slide X enligt planen.`
+  - ändring → `Ändra slide X: ...`
+  - omgenerering → `Gör om slide X enligt planen, men ...`
+
+**Klart när**
+- `Gör nästa steg` inte rekommenderas mellan bildgenerationer,
+- användaren explicit anger både bedömning och nästa slide.
+
+### Steg 29 – Vänteläge för renderingsstatus
+
+**Mål:** Låta planen vänta på användarens bedömning efter en genererad bild.
+
+**Leverans**
+- `Next slide: none` tillåts när en slide är `generated` eller `redo`,
+- nästa slide väljs först av användarens explicita kommando,
+- regressionstest för vänteläget.
+
+### Steg 30 – Presentation Plan som nedladdningsbar fil
+
+**Mål:** Göra den kanoniska planen praktiskt sparbar och återanvändbar.
+
+**Leverans**
+- `presentation-plan.md` ska skrivas till fil när runtime kan skapa filer,
+- chatten visar endast kort sammanfattning och fil/länk,
+- hela Markdown-planen visas inline endast på uttrycklig begäran.
+
+**Klart när**
+- canonical instruktion, artifact contract och Knowledge beskriver samma beteende,
+- CI passerar.
