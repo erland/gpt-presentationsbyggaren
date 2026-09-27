@@ -122,6 +122,22 @@ artifacts:
       persistence: persistent
       multiplicity: one
       description: Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.
+    presentation_pdf:
+      kind: document
+      format: pdf
+      requirement: optional
+      condition: När runtime kan skapa en visuellt stabil följeslagare eller användaren föredrar PDF.
+      persistence: persistent
+      multiplicity: one
+      description: Visuellt stabil referensrendering av presentationen.
+    presentation_html:
+      kind: document
+      format: html
+      requirement: optional
+      condition: När hög visuell frihet eller webbpresentation är viktigare än PowerPoint-redigerbarhet.
+      persistence: persistent
+      multiplicity: one
+      description: Webbaserad presentationsversion med hög visuell frihet.
     storyboard:
       kind: data
       format: json-or-yaml
@@ -236,12 +252,27 @@ tools:
   - id: presentation_generate
     type: api_action
     requirement: required
-    purpose: Rendera ett validerat storyboard till en redigerbar PowerPoint när full
-      presentationsleverans krävs.
+    purpose: Rendera ett validerat storyboard till PPTX, PDF eller HTML enligt användarens behov.
     action: presentation.generate
     deterministic: false
     mutates_workspace: true
     runtime_fallback: block
+  - id: presentation_validate
+    type: api_action
+    requirement: recommended
+    purpose: Validera PPTX-paket, interna relationer och renderbarhet före leverans.
+    action: presentation.validate
+    deterministic: true
+    mutates_workspace: false
+    runtime_fallback: manual
+  - id: presentation_preview
+    type: api_action
+    requirement: recommended
+    purpose: Rendera slides till preview-bilder eller PDF för visuell kvalitetsgranskning.
+    action: presentation.preview
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: manual
   schema: schemas/tool-contract.schema.json
 model_robustness:
   level: guided
