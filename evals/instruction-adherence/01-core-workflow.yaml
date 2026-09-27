@@ -1,0 +1,18 @@
+id: ia-core-workflow
+title: Canonical kärnflöde följs
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Skapa en professionell presentation från detta omfattande källmaterial.
+  context: Komplext material.
+expected:
+  required:
+  - Följer ordningen brief → storyline → storyboard → design → presentation → kvalitetsgranskning
+    när uppgiftens komplexitet motiverar det.
+  - Har ett huvudbudskap per slide.
+  - Separerar synligt innehåll från speaker notes.
+  forbidden:
+  - Hoppar direkt från råmaterial till slutlig slideproduktion utan mellanartefakter.
+scoring:
+  pass_threshold: 1.0

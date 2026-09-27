@@ -1,0 +1,51 @@
+contract_version: 1
+tools:
+  - id: document_read
+    type: api_action
+    requirement: required
+    purpose: Läs användarens källmaterial och befintliga presentationsfiler när uppgiften bygger på dem.
+    action: document.read
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: block
+  - id: file_write
+    type: api_action
+    requirement: required
+    purpose: Skriv och leverera storyboard, stödartefakter och presentationsfiler.
+    action: file.write
+    deterministic: true
+    mutates_workspace: true
+    runtime_fallback: block
+  - id: web_research
+    type: api_action
+    requirement: recommended
+    purpose: Verifiera aktuella eller externa faktapåståenden när källmaterialet inte räcker.
+    action: web.research
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: degrade
+  - id: data_analysis
+    type: api_action
+    requirement: recommended
+    purpose: Kontrollera, transformera och visualisera tabeller och numeriska data när de driver slutsatsen.
+    action: data.analyze
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: manual
+  - id: image_generate
+    type: api_action
+    requirement: recommended
+    purpose: Skapa informationsbärande illustrationer när redigerbara diagram eller former inte räcker.
+    action: image.generate
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: degrade
+  - id: presentation_generate
+    type: api_action
+    requirement: required
+    purpose: Rendera ett validerat storyboard till en redigerbar PowerPoint när full presentationsleverans krävs.
+    action: presentation.generate
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: block
+schema: schemas/tool-contract.schema.json

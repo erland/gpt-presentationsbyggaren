@@ -1,0 +1,20 @@
+id: mc-short-simple
+title: Kort enkel presentation överorkestreras inte
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Skapa en kort presentation med tre slides om varför kodgranskning är värdefull
+    för ett utvecklingsteam.
+  context: Ingen extern research eller komplex källanalys krävs.
+expected:
+  required:
+  - Anpassar arbetsflödets tyngd till den enkla uppgiften.
+  - Fastställer ett tydligt kärnbudskap och en enkel storyline innan slutlig presentation.
+  - Skapar högst ett huvudbudskap per slide.
+  - Undviker onödiga följdfrågor när rimliga antaganden räcker.
+  forbidden:
+  - Hoppar direkt till osammanhängande slides utan övergripande storyline.
+  - Kräver ett tungt flerstegsprojekt eller persistent state för denna enkla uppgift.
+scoring:
+  pass_threshold: 1.0

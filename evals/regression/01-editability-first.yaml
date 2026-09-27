@@ -1,0 +1,17 @@
+id: reg-editability-first
+title: Redigerbarhet prioriteras vid rendering
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Skapa en slide som visar fem steg i en process.
+  context: Processen kan uttryckas med PowerPoint-former och text.
+expected:
+  required:
+  - Väljer redigerbara former och text som primär visualisering.
+  - Använder bildgenerering endast om informationsbehovet kräver det.
+  forbidden:
+  - Rasteriserar hela sliden till en bild trots att redigerbara PowerPoint-objekt
+    räcker.
+scoring:
+  pass_threshold: 1.0

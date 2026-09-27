@@ -1,0 +1,377 @@
+schema_version: 1
+project:
+  id: presentationsbyggaren
+  name: Presentationsbyggaren
+  version: 0.1.0-rc.1
+  language: sv
+  description: AI-assistent för storyline, storyboard, presentationsstil, visuell
+    design, kvalitetsgranskning och redigerbar PowerPoint.
+profile: workflow_research_heavy
+analysis:
+  recommended_profile: workflow_research_heavy
+  runtime:
+    strategy: peer_candidates
+    candidates:
+    - runtime_id: chatgpt_chat
+      suitability: equivalent
+      rationale: Stödjer iterativt arbete med filer, källmaterial och presentationsartefakter.
+      activate_by_default: true
+    - runtime_id: chatgpt_custom
+      suitability: equivalent
+      rationale: Passar som återanvändbar specialiserad presentationsassistent med
+        samma canonical metodik.
+      activate_by_default: true
+    - runtime_id: claude_project
+      suitability: reduced
+      rationale: Kan stödja analys och storyboard men full presentationsgenerering
+        och paritet är inte säkerställd i v1.
+      activate_by_default: false
+    - runtime_id: opencode
+      suitability: not_recommended
+      rationale: Kärnuppgiften är presentationsdesign snarare än kodutveckling.
+      activate_by_default: false
+    - runtime_id: openai_plugin
+      suitability: reduced
+      rationale: Skills kan senare återanvända presentationsmetodik men v1 behöver
+        en komplett artefaktorienterad assistent.
+      activate_by_default: false
+  capabilities:
+    web: recommended
+    data_analysis: recommended
+    image_generation: recommended
+    file_handling: required
+  project_features:
+    structured_knowledge: true
+    scripts: true
+    schemas: true
+    templates: true
+    deterministic_tests: true
+    evals: recommended
+  model_robustness:
+    level: guided
+    rationale: Flerstegsflödet behöver en kort operativ kärna och gates, men ingen
+      tung persistent workflowmotor för presentationsuppdrag.
+    operational_core: true
+    explicit_workflow: true
+    deterministic_gates: true
+    model_compatibility_evals: true
+instructions:
+  canonical: assistant/instructions.md
+  core_contract:
+    enabled: true
+    required_runtime_dependencies: []
+    max_required_file_hops: 1
+    knowledge_may_not_be_required_for_core_behavior: true
+    required_markers:
+    - '## Operativ kärna'
+    - En slide ska normalt bära **ett huvudbudskap**.
+    - Rubriken ska när det är lämpligt uttrycka **slutsatsen eller poängen**
+    - Separera det som ska **synas** från det som ska **sägas**.
+    - '## "Gör nästa steg"'
+capabilities:
+  contract_version: 1
+  recommendation_mode: inferred_from_use_case
+  ask_user_only_when_business_choice_is_ambiguous: true
+  requirements:
+    web:
+      level: recommended
+      reason: Aktuella externa fakta kan behöva verifieras.
+    filesystem:
+      read: required
+      write: required
+    shell:
+      level: optional
+    code_execution:
+      level: recommended
+    structured_data:
+      level: recommended
+    persistent_state:
+      level: recommended
+    external_tools:
+      level: optional
+    image_generation:
+      level: recommended
+  schema: schemas/capability-contract.schema.json
+artifacts:
+  contract_version: 1
+  outputs:
+    presentation_brief:
+      kind: data
+      format: json-or-yaml
+      requirement: conditional
+      condition: När en ny eller väsentligt omformad presentation behöver en explicit
+        brief.
+      persistence: persistent
+      multiplicity: one
+      description: Strukturerad brief med syfte, målgrupp, önskad effekt, källmaterial,
+        stilval, begränsningar och antaganden.
+    storyline:
+      kind: data
+      format: json-or-yaml
+      requirement: conditional
+      condition: När presentationens berättelse behöver fastställas eller omformas
+        före storyboard.
+      persistence: persistent
+      multiplicity: one
+      description: Strukturerad berättelse med kärnbudskap, valt berättelsemönster,
+        narrativa huvudpunkter och appendixkandidater.
+    presentation_pptx:
+      kind: document
+      format: pptx
+      requirement: required
+      persistence: persistent
+      multiplicity: one
+      description: Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.
+    storyboard:
+      kind: data
+      format: json-or-yaml
+      requirement: conditional
+      condition: När presentationens komplexitet motiverar ett explicit storyboard.
+      persistence: persistent
+      multiplicity: one
+      description: Strukturerad mellanartefakt enligt schemas/storyboard.schema.json
+        med ett huvudbudskap, kommunikationsjobb, pattern, visual intent, layout,
+        synligt innehåll och speaker notes per slide.
+    presentation_review:
+      kind: report
+      format: markdown-or-structured
+      requirement: conditional
+      condition: När användaren begär granskning eller när slutlig kvalitetsgate körs.
+      persistence: persistent
+      multiplicity: one
+      description: Kvalitetsgranskning av storyline, texttäthet, visuell konsekvens
+        och redundans.
+    project_package:
+      kind: package
+      format: zip
+      requirement: required
+      persistence: persistent
+      multiplicity: one
+      filename_pattern: presentationsbyggaren-project-*.zip
+      description: Komplett återupptagningsbart canonical GPT-projekt.
+    runtime_package:
+      kind: distribution
+      format: zip
+      requirement: conditional
+      condition: När en aktiverad runtime byggs.
+      persistence: persistent
+      multiplicity: many
+      description: Runtime-specifik distribution byggd från canonical projektet.
+    presentation_generation_spec:
+      kind: data
+      format: json-or-yaml
+      requirement: conditional
+      condition: När rendering behöver beskrivas eller valideras explicit mellan storyboard
+        och PPTX.
+      persistence: ephemeral
+      multiplicity: one
+      description: Runtime-neutral genereringsspecifikation enligt schemas/presentation-generation.schema.json.
+  schema: schemas/artifact-contract.schema.json
+workspace_state:
+  contract_version: 1
+  workspace:
+    requirement: required
+    persistence: required
+    portable: true
+    separate_from_assistant: true
+    artifact: project_package
+  state:
+    requirement: required
+    persistence: required
+    authority: workspace_file
+    format: yaml
+    path: project-status.yaml
+    conversation_fallback: false
+  runtime_preferences:
+    chat: conversation_or_file
+    agent: workspace_file
+  schema: schemas/workspace-state-contract.schema.json
+tools:
+  contract_version: 1
+  tools:
+  - id: document_read
+    type: api_action
+    requirement: required
+    purpose: Läs användarens källmaterial och befintliga presentationsfiler när uppgiften
+      bygger på dem.
+    action: document.read
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: block
+  - id: file_write
+    type: api_action
+    requirement: required
+    purpose: Skriv och leverera storyboard, stödartefakter och presentationsfiler.
+    action: file.write
+    deterministic: true
+    mutates_workspace: true
+    runtime_fallback: block
+  - id: web_research
+    type: api_action
+    requirement: recommended
+    purpose: Verifiera aktuella eller externa faktapåståenden när källmaterialet inte
+      räcker.
+    action: web.research
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: degrade
+  - id: data_analysis
+    type: api_action
+    requirement: recommended
+    purpose: Kontrollera, transformera och visualisera tabeller och numeriska data
+      när de driver slutsatsen.
+    action: data.analyze
+    deterministic: false
+    mutates_workspace: false
+    runtime_fallback: manual
+  - id: image_generate
+    type: api_action
+    requirement: recommended
+    purpose: Skapa informationsbärande illustrationer när redigerbara diagram eller
+      former inte räcker.
+    action: image.generate
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: degrade
+  - id: presentation_generate
+    type: api_action
+    requirement: required
+    purpose: Rendera ett validerat storyboard till en redigerbar PowerPoint när full
+      presentationsleverans krävs.
+    action: presentation.generate
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: block
+  schema: schemas/tool-contract.schema.json
+model_robustness:
+  level: guided
+  separate_model_instructions: false
+  prefer_deterministic_validation: true
+  max_core_policy_hops: 1
+runtime:
+  custom_gpt:
+    enabled: true
+    role: peer_distribution
+    instruction:
+      mode: identical
+      max_characters: 8000
+    knowledge:
+      strategy: identical
+      max_files: 20
+    builder:
+      instructions: builder/instructions.md
+      conversation_starters: builder/conversation-starters.md
+      capabilities: builder/capabilities.md
+      knowledge_package: builder/knowledge-package
+      runtime_contract: builder/runtime-contract.json
+    templates:
+      readme: templates/README.custom-gpt.md.tpl
+      capabilities: templates/capabilities.md.tpl
+      compatibility: templates/COMPATIBILITY.md.tpl
+    compatibility:
+      report_required: true
+      parity_symbols:
+        equivalent: equivalent
+        reduced: reduced
+        missing: missing
+    validation:
+      block_on_instruction_limit: true
+      block_on_knowledge_limit: true
+      block_on_misleading_core_functionality: true
+  chat_zip:
+    enabled: true
+    start_here_template: templates/START-HERE.chat.md.tpl
+    role: peer_distribution
+    entrypoint: START-HERE.md
+    layout:
+      assistant: assistant
+      knowledge: knowledge
+      schemas: schemas
+      scripts: scripts
+      templates: templates
+      runtime: assistant/runtime-contract.json
+    include:
+      instructions:
+      - assistant/instructions.md
+      policies:
+      - assistant/runtime-policies/*.md
+      conversation_starters:
+      - assistant/conversation-starters/*.md
+      knowledge:
+      - knowledge/*.md
+      schemas:
+      - schemas/*.json
+      scripts: []
+      templates:
+      - templates/START-HERE.chat.md.tpl
+    exclude:
+    - project-status.yaml
+    - docs/development-plan.md
+    - tests/**
+    - build/**
+    - dist/**
+    - '**/__pycache__/**'
+    manifest:
+      required: true
+      checksums: true
+    deterministic_build: true
+runtime_parity:
+  registered_runtimes:
+  - chatgpt_chat
+  - chatgpt_custom
+  - claude_project
+  - opencode
+  - openai_plugin
+build_system:
+  targets:
+  - project
+  - chat_zip
+  - custom_gpt
+  runtime_targets:
+    chat_zip:
+      runtime_id: chatgpt_chat
+      runtime_key: chat_zip
+      builder: chat
+      filename_pattern: <project-id>-chat-<version>.zip
+      artifact_type: runtime_package
+    custom_gpt:
+      runtime_id: chatgpt_custom
+      runtime_key: custom_gpt
+      builder: custom_gpt
+      filename_pattern: <project-id>-custom-gpt-<version>.zip
+      artifact_type: runtime_package
+    claude:
+      runtime_id: claude_project
+    opencode:
+      runtime_id: opencode
+    plugin:
+      runtime_id: openai_plugin
+  project_filename_pattern: <project-id>-project-<version>.zip
+knowledge_architecture:
+  canonical_root: knowledge
+workflow:
+  development_plan: docs/development-plan.md
+  create_project_zip_on_first_execution_step: true
+  resume_from_project_zip: true
+ci:
+  enabled: true
+  workflow: .github/workflows/ci.yml
+  version: 0.0.0-ci
+release:
+  github:
+    enabled: true
+    workflow: .github/workflows/release.yml
+    version_source: github.event.release.tag_name
+structure:
+  conversation_starters:
+    path: assistant/conversation-starters
+  runtime_policy:
+    path: assistant/runtime-policies
+  schemas:
+    path: schemas
+  templates:
+    path: templates
+testing:
+  manifest: tests/test-manifest.yaml
+  manifest_schema: schemas/test-manifest.schema.json
+  eval_case_schema: schemas/eval-case.schema.json

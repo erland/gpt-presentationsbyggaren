@@ -1,0 +1,26 @@
+schema_version: 1
+suites:
+  model_compatibility:
+    type: behavioral
+    path: evals/model-compatibility
+    blocking: true
+    profiles:
+    - workflow_research_heavy
+  instruction_adherence:
+    type: behavioral
+    path: evals/instruction-adherence
+    blocking: true
+    profiles:
+    - workflow_research_heavy
+  regression:
+    type: regression
+    path: evals/regression
+    blocking: true
+    profiles:
+    - workflow_research_heavy
+  deterministic_smoke:
+    type: deterministic
+    path: tests
+    blocking: true
+    profiles:
+    - workflow_research_heavy

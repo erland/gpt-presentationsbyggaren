@@ -1,0 +1,75 @@
+contract_version: 1
+outputs:
+  presentation_brief:
+    kind: data
+    format: json-or-yaml
+    requirement: conditional
+    condition: När en ny eller väsentligt omformad presentation behöver en explicit
+      brief.
+    persistence: persistent
+    multiplicity: one
+    description: Strukturerad brief med syfte, målgrupp, önskad effekt, källmaterial,
+      stilval, begränsningar och antaganden.
+  storyline:
+    kind: data
+    format: json-or-yaml
+    requirement: conditional
+    condition: När presentationens berättelse behöver fastställas eller omformas före
+      storyboard.
+    persistence: persistent
+    multiplicity: one
+    description: Strukturerad berättelse med kärnbudskap, valt berättelsemönster,
+      narrativa huvudpunkter och appendixkandidater.
+  presentation_pptx:
+    kind: document
+    format: pptx
+    requirement: required
+    persistence: persistent
+    multiplicity: one
+    description: Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.
+  storyboard:
+    kind: data
+    format: json-or-yaml
+    requirement: conditional
+    condition: När presentationens komplexitet motiverar ett explicit storyboard.
+    persistence: persistent
+    multiplicity: one
+    description: Strukturerad mellanartefakt enligt schemas/storyboard.schema.json
+      med ett huvudbudskap, kommunikationsjobb, pattern, visual intent, layout, synligt
+      innehåll och speaker notes per slide.
+  presentation_review:
+    kind: report
+    format: markdown-or-structured
+    requirement: conditional
+    condition: När användaren begär granskning eller när slutlig kvalitetsgate körs.
+    persistence: persistent
+    multiplicity: one
+    description: Strukturerad kvalitetsgranskning enligt schemas/presentation-review.schema.json
+      med blockerare, förbättringar, kvalitetsdimensioner, transformationslogg och
+      slutlig leveransgate.
+  project_package:
+    kind: package
+    format: zip
+    requirement: required
+    persistence: persistent
+    multiplicity: one
+    filename_pattern: presentationsbyggaren-project-*.zip
+    description: Komplett återupptagningsbart canonical GPT-projekt.
+  runtime_package:
+    kind: distribution
+    format: zip
+    requirement: conditional
+    condition: När en aktiverad runtime byggs.
+    persistence: persistent
+    multiplicity: many
+    description: Runtime-specifik distribution byggd från canonical projektet.
+  presentation_generation_spec:
+    kind: data
+    format: json-or-yaml
+    requirement: conditional
+    condition: När rendering behöver beskrivas eller valideras explicit mellan storyboard
+      och PPTX.
+    persistence: ephemeral
+    multiplicity: one
+    description: Runtime-neutral genereringsspecifikation enligt schemas/presentation-generation.schema.json.
+schema: schemas/artifact-contract.schema.json

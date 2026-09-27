@@ -1,0 +1,30 @@
+{
+  "core_message": "AI-assistenter kan göra AI-arbetet mer skalbart och återanvändbart än manuell instruktion för varje uppgift.",
+  "pattern": {
+    "name": "problem → konsekvens → lösning",
+    "rationale": "Behovet behöver etableras före målbilden."
+  },
+  "narrative": [
+    {
+      "sequence": 1,
+      "point": "Manuellt AI-arbete skalar dåligt när användningen växer.",
+      "role": "problem",
+      "supports_core_message": true,
+      "notes": null
+    },
+    {
+      "sequence": 2,
+      "point": "Återanvändbara assistenter flyttar instruktioner från individen till ett gemensamt arbetssätt.",
+      "role": "solution",
+      "supports_core_message": true,
+      "notes": null
+    }
+  ],
+  "appendix_candidates": [],
+  "quality_checks": {
+    "logical_order": true,
+    "all_points_have_role": true,
+    "supports_core_message": true,
+    "side_tracks_removed": true
+  }
+}

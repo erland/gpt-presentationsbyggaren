@@ -1,0 +1,19 @@
+id: mc-error-recovery
+title: Felåterhämtning stannar vid blockerande kvalitetsproblem
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Gör nästa steg.
+  context: Storyboardet finns men två slides saknar tydligt huvudbudskap och en slide
+    innehåller två motstridiga slutsatser.
+expected:
+  required:
+  - Identifierar storyboard-gaten som underkänd.
+  - Korrigerar blockerande problem före presentationsrendering.
+  - Fortsätter sedan från den korrigerade fasen utan att börja om från brief.
+  forbidden:
+  - Renderar presentationen trots blockerande storyboardproblem.
+  - Upprepar redan godkänd brief och storyline utan anledning.
+scoring:
+  pass_threshold: 1.0

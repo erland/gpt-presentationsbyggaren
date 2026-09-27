@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://presentationsbyggaren.local/schemas/presentation-review.schema.json",
+  "title": "Presentation Review and Transformation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review", "issues", "quality_dimensions", "transformation", "final_gate"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["presentation", "purpose", "audience", "core_message", "slide_count"],
+      "properties": {
+        "presentation": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1},
+        "audience": {"type": "string", "minLength": 1},
+        "core_message": {"type": "string", "minLength": 1},
+        "slide_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "dimension", "description", "recommended_action", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^issue-[0-9]{2,3}$"},
+          "severity": {"type": "string", "enum": ["blocker", "improvement"]},
+          "dimension": {"type": "string", "enum": ["purpose", "storyline", "audience", "slide-job", "title", "text-density", "visualization", "redundancy", "consistency", "sources", "editability", "rendering"]},
+          "slides": {"type": "array", "items": {"type": "string"}},
+          "description": {"type": "string", "minLength": 1},
+          "recommended_action": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "enum": ["open", "resolved", "accepted"]}
+        }
+      }
+    },
+    "quality_dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core_message_clear", "storyline_coherent", "audience_fit", "single_message_per_slide", "text_density_ok", "visuals_support_messages", "redundancy_controlled", "style_consistent", "sources_handled", "renderable"],
+      "properties": {
+        "core_message_clear": {"type": "boolean"},
+        "storyline_coherent": {"type": "boolean"},
+        "audience_fit": {"type": "boolean"},
+        "single_message_per_slide": {"type": "boolean"},
+        "text_density_ok": {"type": "boolean"},
+        "visuals_support_messages": {"type": "boolean"},
+        "redundancy_controlled": {"type": "boolean"},
+        "style_consistent": {"type": "boolean"},
+        "sources_handled": {"type": "boolean"},
+        "renderable": {"type": "boolean"}
+      }
+    },
+    "transformation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["type", "target", "preserve_core_message", "core_message_before", "core_message_after", "changes"],
+      "properties": {
+        "type": {"type": "string", "enum": ["shorter", "more-visual", "new-audience", "content-style", "visual-style", "combined"]},
+        "target": {"type": "string", "minLength": 1},
+        "preserve_core_message": {"type": "boolean"},
+        "core_message_before": {"type": "string", "minLength": 1},
+        "core_message_after": {"type": "string", "minLength": 1},
+        "source_slide_count": {"type": "integer", "minimum": 1},
+        "target_slide_count": {"type": "integer", "minimum": 1},
+        "content_style_before": {"type": ["string", "null"]},
+        "content_style_after": {"type": ["string", "null"]},
+        "visual_style_before": {"type": ["string", "null"]},
+        "visual_style_after": {"type": ["string", "null"]},
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["action", "reason"],
+            "properties": {
+              "action": {"type": "string", "enum": ["keep", "merge", "remove", "reorder", "rewrite", "restyle", "visualize", "move-to-appendix", "move-to-notes", "add"]},
+              "slides": {"type": "array", "items": {"type": "string"}},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "final_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "unresolved_blockers", "core_message_preserved", "ready_for_delivery"],
+      "properties": {
+        "status": {"type": "string", "enum": ["pass", "fail"]},
+        "unresolved_blockers": {"type": "integer", "minimum": 0},
+        "core_message_preserved": {"type": "boolean"},
+        "ready_for_delivery": {"type": "boolean"},
+        "notes": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
