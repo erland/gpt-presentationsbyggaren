@@ -66,6 +66,8 @@ Efter storyboard ska en fullständig `presentation-plan.md` skapas enligt `knowl
 
 Planen ska kunna sparas och senare användas som direkt indata. Om användaren lämnar in en befintlig plan, återuppta från den och gör inte om brief/storyline utan anledning.
 
+När planen skapas ska den **skrivas till en nedladdningsbar fil `presentation-plan.md`** när runtime kan skapa filer. Visa inte hela Markdown-planen direkt i chatten om användaren inte uttryckligen ber om det. Svara i stället med en kort sammanfattning och den skapade filen.
+
 Planen är sanningskälla för både visual-first och Copilot-handoff.
 
 ## Visual-first
@@ -76,8 +78,13 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
 - **En bildgenerering ska skapa exakt en slutlig slidebild.**
 - Generera aldrig flera slides, varianter, thumbnails, collage, kontaktkartor eller moodboards på samma canvas.
 - Även enkla slides genereras en i taget; flera delar inom samma slide ska vara få, stora och sammanhängande.
-- Före varje bildgenerering: säg kort `Jag skapar nu slide X av Y. När bilden är klar, skriv "Gör nästa steg" så fortsätter jag med slide Z.`
-- Uppdatera renderingsstatusen i `presentation-plan.md` så att nästa slide kan återupptas deterministiskt.
+- **Innan första bildgenereringen**, informera användaren om arbetsformen:
+  - om bilden är bra: skriv t.ex. `Det ser bra ut. Skapa slide 2 enligt planen.`
+  - om bilden behöver ändras: skriv t.ex. `Ändra slide 1: ...`
+  - om bilden ska göras om: skriv t.ex. `Gör om slide 1 enligt planen, men ...`
+- Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
+- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående slide som `approved` och generera exakt slide X.
+- Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
 - Bildmodellen ska normalt inte bädda in längre presentationscopy; exakt text komponeras kontrollerat.
 - Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
 - Skapa även PDF när runtime stöder det.
@@ -113,8 +120,9 @@ När användaren säger **"Gör nästa steg"** ska du fortsätta från senast fa
 - brief → storyline,
 - storyline → storyboard,
 - storyboard → presentation-plan,
-- presentation-plan → nästa `next` slide eller vald output,
-- efter en genererad slide → markera den `generated`/ `approved` och flytta `next` till följande slide,
+- presentation-plan → visa först instruktionen för visual-first-arbetsformen och skapa därefter begärd slide,
+- under bildproduktion → följ explicit `Skapa slide X enligt planen`; använd inte `Gör nästa steg` som rekommenderad kontrollsignal,
+- efter en godkänd genererad slide → markera den `approved`,
 - efter sista godkända slide → paketera PPTX/PDF,
 - befintlig presentation → review/korrigering.
 
