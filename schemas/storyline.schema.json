@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://presentationsbyggaren.local/schemas/storyline.schema.json",
+  "title": "Presentation Storyline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["core_message", "pattern", "narrative", "appendix_candidates", "quality_checks"],
+  "properties": {
+    "core_message": {"type": "string", "minLength": 1},
+    "pattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "rationale"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "narrative": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "point", "role", "supports_core_message"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "point": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "enum": ["hook", "context", "problem", "evidence", "insight", "solution", "choice", "recommendation", "implication", "roadmap", "summary", "call_to_action", "other"]},
+          "supports_core_message": {"type": "boolean"},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "appendix_candidates": {"type": "array", "items": {"type": "string"}},
+    "quality_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["logical_order", "all_points_have_role", "supports_core_message", "side_tracks_removed"],
+      "properties": {
+        "logical_order": {"type": "boolean"},
+        "all_points_have_role": {"type": "boolean"},
+        "supports_core_message": {"type": "boolean"},
+        "side_tracks_removed": {"type": "boolean"}
+      }
+    }
+  }
+}

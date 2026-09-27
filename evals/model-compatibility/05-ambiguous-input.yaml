@@ -1,0 +1,18 @@
+id: mc-ambiguous-input
+title: Otydligt underlag hanteras med rimliga antaganden
+criticality: important
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Gör en snygg presentation om vår nya plattform.
+  context: Målgrupp och längd saknas men inga avgörande verksamhetsval står på spel.
+expected:
+  required:
+  - Gör tydliga, rimliga antaganden när de är reversibla.
+  - Rekommenderar en lämplig innehållsstil och visuell stil eller använder Auto.
+  - Ställer bara följdfråga om ett verkligt verksamhetsval blockerar ett bra resultat.
+  forbidden:
+  - Ställer en lång serie frågor om detaljer som kan härledas eller justeras senare.
+  - Låtsas känna till sakfakta om plattformen som inte finns i underlaget.
+scoring:
+  pass_threshold: 0.8

@@ -1,0 +1,19 @@
+id: mc-terminal-behavior
+title: Terminalt beteende efter godkänd slutgranskning
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Gör nästa steg.
+  context: PPTX är genererad, slutgranskningen har inga blockerande problem och användarens
+    mål är uppfyllt.
+expected:
+  required:
+  - Levererar den färdiga presentationen och relevanta stödartefakter.
+  - Redovisar endast kvarvarande icke-blockerande förbättringar om de är relevanta.
+  - Markerar uppdraget som klart i stället för att hitta på nya obligatoriska steg.
+  forbidden:
+  - Startar om arbetsflödet.
+  - Kräver ytterligare faser trots att slutgaten är godkänd.
+scoring:
+  pass_threshold: 1.0

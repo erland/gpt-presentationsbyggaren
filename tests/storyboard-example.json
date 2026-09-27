@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "presentation": {
+    "title": "Från manuellt arbete till kortare ledtid",
+    "core_message": "Ett standardiserat arbetssätt minskar onödiga överlämningar och kortar ledtiden.",
+    "content_style": "executive",
+    "visual_style": "minimal-light",
+    "target_slides": 3
+  },
+  "slides": [
+    {
+      "id": "slide-01",
+      "sequence": 1,
+      "section": "Varför förändra",
+      "title": "Tre överlämningar gör dagens flöde onödigt långsamt",
+      "message": "Dagens arbetssätt tappar tid i återkommande överlämningar.",
+      "purpose": "explain",
+      "pattern": "problem",
+      "visual_intent": {
+        "mode": "diagram",
+        "objective": "Visa var väntetiden uppstår i dagens flöde.",
+        "primary_visual": "Linjärt flöde med tre markerade överlämningar och väntetid mellan dem.",
+        "elements": ["Start", "Team A", "Team B", "Team C", "Klart"],
+        "relationships": ["Arbetet går sekventiellt från Start till Klart", "Tre överlämningar skapar väntetid"],
+        "image_generation_needed": false
+      },
+      "layout": {
+        "composition": "Rubrik överst, processdiagram centralt, kort slutsats längst ned.",
+        "density": "low",
+        "hierarchy": ["Rubrik", "Processdiagram", "Slutsats"],
+        "alignment": "grid"
+      },
+      "content": {
+        "on_slide": ["Tre överlämningar", "Väntetid uppstår mellan varje steg"],
+        "key_data": [],
+        "source_refs": ["intern-processkartläggning"]
+      },
+      "speaker_notes": "Förklara att problemet inte är arbetstiden i respektive team utan väntan mellan stegen.",
+      "appendix_refs": [],
+      "quality_checks": {
+        "single_message": true,
+        "title_expresses_point": true,
+        "visual_supports_message": true,
+        "text_density_ok": true
+      }
+    },
+    {
+      "id": "slide-02",
+      "sequence": 2,
+      "section": "Förändringen",
+      "title": "Ett gemensamt flöde tar bort två av tre överlämningar",
+      "message": "Det standardiserade arbetssättet minskar antalet överlämningar från tre till en.",
+      "purpose": "compare",
+      "pattern": "before-after",
+      "visual_intent": {
+        "mode": "diagram",
+        "objective": "Jämför nuvarande och föreslaget flöde visuellt.",
+        "primary_visual": "Före/efter-diagram med tre respektive en överlämning.",
+        "elements": ["Före", "Efter", "Tre överlämningar", "En överlämning"],
+        "relationships": ["Efter-flödet förenklar samma arbete utan att ta bort ansvar"],
+        "image_generation_needed": false
+      },
+      "layout": {
+        "composition": "Två lika breda kolumner för före och efter.",
+        "density": "low",
+        "hierarchy": ["Rubrik", "Före/efter", "Skillnaden"],
+        "alignment": "grid"
+      },
+      "content": {
+        "on_slide": ["Före: 3 överlämningar", "Efter: 1 överlämning"],
+        "key_data": [],
+        "source_refs": ["framtida-processdesign"]
+      },
+      "speaker_notes": "Beskriv att ansvar finns kvar men att informationsöverföringen sker i samma standardiserade flöde.",
+      "appendix_refs": [],
+      "quality_checks": {
+        "single_message": true,
+        "title_expresses_point": true,
+        "visual_supports_message": true,
+        "text_density_ok": true
+      }
+    },
+    {
+      "id": "slide-03",
+      "sequence": 3,
+      "section": "Effekten",
+      "title": "Mindre väntan gör kortare ledtid till den primära effekten",
+      "message": "Kortare väntetid mellan stegen är den viktigaste förväntade effekten.",
+      "purpose": "summarize",
+      "pattern": "key-message",
+      "visual_intent": {
+        "mode": "text-led",
+        "objective": "Avsluta med en tydlig effekt att bära med sig.",
+        "primary_visual": "Stor slutsats med en enkel ledtidsindikator.",
+        "elements": ["Kortare väntetid", "Kortare ledtid"],
+        "relationships": ["Kortare väntetid driver kortare ledtid"],
+        "image_generation_needed": false
+      },
+      "layout": {
+        "composition": "Stor slutsats centralt med liten stödindikator under.",
+        "density": "low",
+        "hierarchy": ["Rubrik", "Huvudbudskap", "Stödindikator"],
+        "alignment": "center"
+      },
+      "content": {
+        "on_slide": ["Kortare väntetid → kortare ledtid"],
+        "key_data": [],
+        "source_refs": []
+      },
+      "speaker_notes": "Undvik att lova en exakt procentuell förbättring innan mätdata finns. Detaljerad mätmodell kan visas i appendix.",
+      "appendix_refs": ["appendix-matmodell"],
+      "quality_checks": {
+        "single_message": true,
+        "title_expresses_point": true,
+        "visual_supports_message": true,
+        "text_density_ok": true
+      }
+    }
+  ],
+  "appendix_candidates": ["appendix-matmodell"],
+  "quality_checks": {
+    "sequence_supports_storyline": true,
+    "no_duplicate_slide_jobs": true,
+    "all_slides_have_single_message": true,
+    "style_is_consistent": true,
+    "renderable_without_missing_core_content": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "input": {
+    "storyboard": "tests/storyboard-example.json",
+    "source_material": ["source-report.pdf"],
+    "existing_presentation": null
+  },
+  "output": {
+    "primary_artifact": "pptx",
+    "editable": true,
+    "support_artifacts": ["storyboard", "review"]
+  },
+  "rendering": {
+    "editable_text": true,
+    "prefer_native_objects": true,
+    "image_policy": "information_bearing_only",
+    "allow_full_slide_rasterization": false
+  },
+  "sources": {
+    "traceability": true,
+    "current_claims_verified_when_possible": true,
+    "unverified_claims_marked": true
+  },
+  "quality": {
+    "storyboard_gate_passed": true,
+    "visuals_have_purpose": true,
+    "layout_overflow_checked": true
+  }
+}

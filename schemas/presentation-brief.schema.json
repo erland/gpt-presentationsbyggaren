@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://presentationsbyggaren.local/schemas/presentation-brief.schema.json",
+  "title": "Presentation Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["purpose", "audience", "desired_outcome", "context", "length", "source_material", "style", "constraints", "assumptions"],
+  "properties": {
+    "purpose": {"type": "string", "minLength": 1},
+    "audience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "knowledge_level"],
+      "properties": {
+        "primary": {"type": "string", "minLength": 1},
+        "secondary": {"type": "array", "items": {"type": "string"}, "default": []},
+        "knowledge_level": {"type": "string", "enum": ["low", "mixed", "high", "unknown"]},
+        "decision_role": {"type": ["string", "null"]}
+      }
+    },
+    "desired_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["understand", "feel", "do"],
+      "properties": {
+        "understand": {"type": "array", "items": {"type": "string"}},
+        "feel": {"type": "array", "items": {"type": "string"}},
+        "do": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["situation", "delivery_mode"],
+      "properties": {
+        "situation": {"type": "string", "minLength": 1},
+        "delivery_mode": {"type": "string", "enum": ["live", "self_read", "hybrid", "unknown"]},
+        "occasion": {"type": ["string", "null"]}
+      }
+    },
+    "length": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_minutes", "target_slides"],
+      "properties": {
+        "target_minutes": {"type": ["integer", "null"], "minimum": 1},
+        "target_slides": {"type": ["integer", "null"], "minimum": 1}
+      }
+    },
+    "source_material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "summary"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "summary": {"type": "string"},
+        "items": {"type": "array", "items": {"type": "string"}, "default": []},
+        "gaps": {"type": "array", "items": {"type": "string"}, "default": []}
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content", "visual", "selection_mode", "rationale"],
+      "properties": {
+        "content": {"type": "string", "enum": ["auto", "executive", "strategy", "consulting", "technical", "teaching", "workshop", "visual-storytelling"]},
+        "visual": {"type": "string", "enum": ["auto", "minimal-light", "minimal-dark", "corporate", "editorial", "bold-visual", "diagram-heavy"]},
+        "selection_mode": {"type": "string", "enum": ["user_selected", "assistant_recommended", "assistant_inferred"]},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "confidence", "needs_confirmation"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 1},
+          "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+          "needs_confirmation": {"type": "boolean"}
+        }
+      }
+    },
+    "open_questions": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

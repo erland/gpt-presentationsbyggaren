@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://presentationsbyggaren.local/schemas/storyboard.schema.json",
+  "title": "Presentation Storyboard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "presentation", "slides", "appendix_candidates", "quality_checks"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "core_message", "content_style", "visual_style", "target_slides"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "core_message": {"type": "string", "minLength": 1},
+        "content_style": {"type": "string", "enum": ["executive", "strategy", "consulting", "technical", "teaching", "workshop", "visual-storytelling"]},
+        "visual_style": {"type": "string", "enum": ["minimal-light", "minimal-dark", "corporate", "editorial", "bold-visual", "diagram-heavy"]},
+        "target_slides": {"type": "integer", "minimum": 1}
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sequence", "title", "message", "purpose", "pattern", "visual_intent", "layout", "content", "speaker_notes", "quality_checks"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^slide-[0-9]{2,3}$"},
+          "sequence": {"type": "integer", "minimum": 1},
+          "section": {"type": ["string", "null"]},
+          "title": {"type": "string", "minLength": 1},
+          "message": {"type": "string", "minLength": 1},
+          "purpose": {
+            "type": "string",
+            "enum": ["open", "orient", "explain", "compare", "prove", "illustrate", "decide", "recommend", "summarize", "transition", "activate", "other"]
+          },
+          "pattern": {
+            "type": "string",
+            "enum": ["title", "section-divider", "key-message", "problem", "before-after", "comparison", "2x2-matrix", "three-pillars", "hierarchy", "process", "timeline", "roadmap", "architecture", "numbers-kpi", "case-example", "quote", "recommendation", "decision", "summary", "call-to-action"]
+          },
+          "visual_intent": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "objective", "primary_visual", "elements", "relationships", "image_generation_needed"],
+            "properties": {
+              "mode": {"type": "string", "enum": ["text-led", "diagram", "data", "image", "hybrid"]},
+              "objective": {"type": "string", "minLength": 1},
+              "primary_visual": {"type": "string", "minLength": 1},
+              "elements": {"type": "array", "items": {"type": "string"}},
+              "relationships": {"type": "array", "items": {"type": "string"}},
+              "image_generation_needed": {"type": "boolean"}
+            }
+          },
+          "layout": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["composition", "density", "hierarchy", "alignment"],
+            "properties": {
+              "composition": {"type": "string", "minLength": 1},
+              "density": {"type": "string", "enum": ["low", "medium", "high"]},
+              "hierarchy": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+              "alignment": {"type": "string", "enum": ["left", "center", "grid", "mixed"]}
+            }
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["on_slide", "key_data", "source_refs"],
+            "properties": {
+              "on_slide": {"type": "array", "items": {"type": "string"}, "maxItems": 7},
+              "key_data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["label", "value"],
+                  "properties": {
+                    "label": {"type": "string", "minLength": 1},
+                    "value": {"type": "string", "minLength": 1},
+                    "unit": {"type": ["string", "null"]}
+                  }
+                }
+              },
+              "source_refs": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "speaker_notes": {"type": ["string", "null"]},
+          "appendix_refs": {"type": "array", "items": {"type": "string"}, "default": []},
+          "quality_checks": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["single_message", "title_expresses_point", "visual_supports_message", "text_density_ok"],
+            "properties": {
+              "single_message": {"type": "boolean"},
+              "title_expresses_point": {"type": "boolean"},
+              "visual_supports_message": {"type": "boolean"},
+              "text_density_ok": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "appendix_candidates": {"type": "array", "items": {"type": "string"}},
+    "quality_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence_supports_storyline", "no_duplicate_slide_jobs", "all_slides_have_single_message", "style_is_consistent", "renderable_without_missing_core_content"],
+      "properties": {
+        "sequence_supports_storyline": {"type": "boolean"},
+        "no_duplicate_slide_jobs": {"type": "boolean"},
+        "all_slides_have_single_message": {"type": "boolean"},
+        "style_is_consistent": {"type": "boolean"},
+        "renderable_without_missing_core_content": {"type": "boolean"}
+      }
+    }
+  }
+}

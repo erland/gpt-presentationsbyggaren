@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "presentation-generation.schema.json",
+  "title": "Presentation Generation Contract",
+  "type": "object",
+  "required": ["input", "output", "rendering", "sources", "quality"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["storyboard"],
+      "properties": {
+        "storyboard": {"type": "string", "minLength": 1},
+        "source_material": {"type": "array", "items": {"type": "string"}},
+        "existing_presentation": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "required": ["primary_artifact", "editable"],
+      "properties": {
+        "primary_artifact": {"const": "pptx"},
+        "editable": {"const": true},
+        "support_artifacts": {
+          "type": "array",
+          "items": {"enum": ["storyboard", "source-notes", "review"]},
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "rendering": {
+      "type": "object",
+      "required": ["editable_text", "prefer_native_objects", "image_policy"],
+      "properties": {
+        "editable_text": {"const": true},
+        "prefer_native_objects": {"const": true},
+        "image_policy": {"enum": ["information_bearing_only", "user_requested"]},
+        "allow_full_slide_rasterization": {"type": "boolean", "default": false}
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "object",
+      "required": ["traceability", "current_claims_verified_when_possible"],
+      "properties": {
+        "traceability": {"type": "boolean"},
+        "current_claims_verified_when_possible": {"type": "boolean"},
+        "unverified_claims_marked": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "quality": {
+      "type": "object",
+      "required": ["storyboard_gate_passed", "visuals_have_purpose"],
+      "properties": {
+        "storyboard_gate_passed": {"const": true},
+        "visuals_have_purpose": {"const": true},
+        "layout_overflow_checked": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

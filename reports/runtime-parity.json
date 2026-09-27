@@ -1,0 +1,437 @@
+{
+  "schema_version": 2,
+  "reference": {
+    "type": "canonical_contract",
+    "description": "gpt-project.yaml and assistant/instructions.md"
+  },
+  "runtimes": {
+    "chatgpt_chat": {
+      "level": "high",
+      "release_recommendation": "publish",
+      "notes": [
+        "Canonical instruction and Knowledge are packaged directly. Tool availability depends on the active ChatGPT environment."
+      ]
+    },
+    "chatgpt_custom": {
+      "level": "high",
+      "release_recommendation": "publish_with_warning",
+      "notes": [
+        "Canonical instruction is identical. Knowledge is packaged within configured limits. Presentation/file tools depend on enabled Custom GPT capabilities."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "category": "behavior",
+      "id": "behavior_1",
+      "title": "## Operativ kärna",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "behavior",
+      "id": "behavior_2",
+      "title": "En slide ska normalt bära **ett huvudbudskap**.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "behavior",
+      "id": "behavior_3",
+      "title": "Rubriken ska när det är lämpligt uttrycka **slutsatsen eller poängen**",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "behavior",
+      "id": "behavior_4",
+      "title": "Separera det som ska **synas** från det som ska **sägas**.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "behavior",
+      "id": "behavior_5",
+      "title": "## \"Gör nästa steg\"",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "web",
+      "title": "web",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "filesystem",
+      "title": "filesystem",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "shell",
+      "title": "shell",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "code_execution",
+      "title": "code_execution",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "structured_data",
+      "title": "structured_data",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "persistent_state",
+      "title": "persistent_state",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "external_tools",
+      "title": "external_tools",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "capability",
+      "id": "image_generation",
+      "title": "image_generation",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Availability depends on the active ChatGPT tool configuration."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Availability depends on capabilities enabled for the Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "document_read",
+      "title": "Läs användarens källmaterial och befintliga presentationsfiler när uppgiften bygger på dem.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "file_write",
+      "title": "Skriv och leverera storyboard, stödartefakter och presentationsfiler.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "web_research",
+      "title": "Verifiera aktuella eller externa faktapåståenden när källmaterialet inte räcker.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "data_analysis",
+      "title": "Kontrollera, transformera och visualisera tabeller och numeriska data när de driver slutsatsen.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "image_generate",
+      "title": "Skapa informationsbärande illustrationer när redigerbara diagram eller former inte räcker.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "tool",
+      "id": "presentation_generate",
+      "title": "Rendera ett validerat storyboard till en redigerbar PowerPoint när full presentationsleverans krävs.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided rather than embedded in the package."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "Tool is runtime-provided and must be enabled/available in the GPT."
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "presentation_brief",
+      "title": "Strukturerad brief med syfte, målgrupp, önskad effekt, källmaterial, stilval, begränsningar och antaganden.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "storyline",
+      "title": "Strukturerad berättelse med kärnbudskap, valt berättelsemönster, narrativa huvudpunkter och appendixkandidater.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "presentation_pptx",
+      "title": "Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "reduced",
+          "reason": "PPTX creation depends on presentation/file-generation support in the active ChatGPT runtime."
+        },
+        "chatgpt_custom": {
+          "state": "reduced",
+          "reason": "PPTX creation depends on capabilities available to the configured Custom GPT."
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "storyboard",
+      "title": "Strukturerad mellanartefakt enligt schemas/storyboard.schema.json med ett huvudbudskap, kommunikationsjobb, pattern, visual intent, layout, synligt innehåll och speaker notes per slide.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "presentation_review",
+      "title": "Kvalitetsgranskning av storyline, texttäthet, visuell konsekvens och redundans.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "project_package",
+      "title": "Komplett återupptagningsbart canonical GPT-projekt.",
+      "criticality": "critical",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "runtime_package",
+      "title": "Runtime-specifik distribution byggd från canonical projektet.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    },
+    {
+      "category": "artifact",
+      "id": "presentation_generation_spec",
+      "title": "Runtime-neutral genereringsspecifikation enligt schemas/presentation-generation.schema.json.",
+      "criticality": "important",
+      "runtime_states": {
+        "chatgpt_chat": {
+          "state": "equivalent"
+        },
+        "chatgpt_custom": {
+          "state": "equivalent"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "No canonical behavior drift detected by source/build parity checks.",
+    "Reduced tool states reflect runtime capability availability, not divergent assistant policy."
+  ]
+}

@@ -1,0 +1,20 @@
+id: mc-style-change
+title: Stilbyte bevarar kärnbudskap
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Gör om presentationen från Technical + Diagram Heavy till Executive + Minimal
+    Light.
+  context: Befintlig presentation och storyboard finns.
+expected:
+  required:
+  - Bevarar kärnbudskapet om användaren inte uttryckligen ber om annat.
+  - Ändrar detaljnivå och berättargrepp enligt Executive.
+  - Ändrar komposition och uttryck enligt Minimal Light.
+  - Återanvänder fungerande innehåll i stället för att börja om utan anledning.
+  forbidden:
+  - Byter sakbudskap som en bieffekt av stilbytet.
+  - Behandlar innehållsstil och visuell stil som samma dimension.
+scoring:
+  pass_threshold: 1.0

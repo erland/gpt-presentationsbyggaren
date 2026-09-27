@@ -1,0 +1,44 @@
+{
+  "purpose": "Få ledningsgruppen att förstå och stödja en övergång till AI-assistenter.",
+  "audience": {
+    "primary": "Ledningsgruppen",
+    "secondary": [],
+    "knowledge_level": "mixed",
+    "decision_role": "Beslutsfattare"
+  },
+  "desired_outcome": {
+    "understand": ["Varför nuvarande arbetssätt inte skalar"],
+    "feel": ["Trygghet i riktningen"],
+    "do": ["Godkänna nästa steg"]
+  },
+  "context": {
+    "situation": "Ledningspresentation",
+    "delivery_mode": "live",
+    "occasion": null
+  },
+  "length": {
+    "target_minutes": 15,
+    "target_slides": 8
+  },
+  "source_material": {
+    "available": false,
+    "summary": "Kort idé från användaren",
+    "items": [],
+    "gaps": []
+  },
+  "style": {
+    "content": "executive",
+    "visual": "minimal-light",
+    "selection_mode": "assistant_inferred",
+    "rationale": "Kort beslutsorienterad presentation för ledning."
+  },
+  "constraints": [],
+  "assumptions": [
+    {
+      "statement": "Presentationen hålls live.",
+      "confidence": "medium",
+      "needs_confirmation": false
+    }
+  ],
+  "open_questions": []
+}

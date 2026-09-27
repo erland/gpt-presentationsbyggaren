@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "review": {
+    "presentation": "Teknisk målarkitektur",
+    "purpose": "Ge ledningsgruppen beslutsunderlag för nästa investeringssteg.",
+    "audience": "Ledningsgrupp",
+    "core_message": "Investeringen minskar integrationsrisk och förenklar framtida förändring.",
+    "slide_count": 25
+  },
+  "issues": [
+    {
+      "id": "issue-01",
+      "severity": "blocker",
+      "dimension": "audience",
+      "slides": ["slide-03", "slide-04", "slide-05"],
+      "description": "Teknisk detalj dominerar huvudflödet och skymmer beslutsfrågan.",
+      "recommended_action": "Flytta implementation till appendix och lyft konsekvens och beslut.",
+      "status": "resolved"
+    },
+    {
+      "id": "issue-02",
+      "severity": "improvement",
+      "dimension": "title",
+      "slides": ["slide-02"],
+      "description": "Rubriken beskriver ämnet men inte slutsatsen.",
+      "recommended_action": "Formulera rubriken som ett påstående om den viktigaste konsekvensen.",
+      "status": "open"
+    }
+  ],
+  "quality_dimensions": {
+    "core_message_clear": true,
+    "storyline_coherent": true,
+    "audience_fit": true,
+    "single_message_per_slide": true,
+    "text_density_ok": true,
+    "visuals_support_messages": true,
+    "redundancy_controlled": true,
+    "style_consistent": true,
+    "sources_handled": true,
+    "renderable": true
+  },
+  "transformation": {
+    "type": "combined",
+    "target": "Högst 10 slides och Executive-anpassning för ledningsgrupp.",
+    "preserve_core_message": true,
+    "core_message_before": "Investeringen minskar integrationsrisk och förenklar framtida förändring.",
+    "core_message_after": "Investeringen minskar integrationsrisk och förenklar framtida förändring.",
+    "source_slide_count": 25,
+    "target_slide_count": 10,
+    "content_style_before": "technical",
+    "content_style_after": "executive",
+    "visual_style_before": "diagram-heavy",
+    "visual_style_after": "minimal-light",
+    "changes": [
+      {
+        "action": "merge",
+        "slides": ["slide-03", "slide-04", "slide-05"],
+        "reason": "Tre tekniska slides stödjer samma beslutspunkt och kan sammanfattas i huvudflödet."
+      },
+      {
+        "action": "move-to-appendix",
+        "slides": ["slide-11", "slide-12", "slide-13"],
+        "reason": "Implementation behövs som referens men inte för huvudbeslutet."
+      },
+      {
+        "action": "rewrite",
+        "slides": ["slide-02"],
+        "reason": "Rubriken behöver uttrycka slutsatsen för ledningsmålgruppen."
+      }
+    ]
+  },
+  "final_gate": {
+    "status": "pass",
+    "unresolved_blockers": 0,
+    "core_message_preserved": true,
+    "ready_for_delivery": true,
+    "notes": "En mindre rubrikförbättring återstår men blockerar inte leverans."
+  }
+}

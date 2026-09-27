@@ -1,0 +1,20 @@
+contract_version: 1
+workspace:
+  requirement: required
+  persistence: required
+  portable: true
+  separate_from_assistant: true
+  artifact: project_package
+  description: Canonical projekt och utvecklingsstatus ska kunna flyttas och återupptas utan tidigare chatthistorik.
+state:
+  requirement: required
+  persistence: required
+  authority: workspace_file
+  format: yaml
+  path: project-status.yaml
+  conversation_fallback: false
+  description: project-status.yaml är auktoritativ statuskälla för GPT-projektets utveckling.
+runtime_preferences:
+  chat: conversation_or_file
+  agent: workspace_file
+schema: schemas/workspace-state-contract.schema.json

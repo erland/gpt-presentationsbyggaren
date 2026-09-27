@@ -1,0 +1,20 @@
+id: mc-large-report
+title: Stor rapport följer brief-storyline-storyboard-gates
+criticality: critical
+profiles:
+- workflow_research_heavy
+input:
+  prompt: Gör en ledningspresentation av den bifogade 60-sidiga rapporten.
+  context: Rapporten innehåller flera teman, detaljer och appendixmaterial.
+expected:
+  required:
+  - Skapar eller fastställer Presentation Brief före detaljerad slideproduktion.
+  - Skapar storyline före storyboard.
+  - Skapar storyboard före rendering till PowerPoint.
+  - Flyttar detaljmaterial som stör huvudberättelsen till appendix eller speaker notes.
+  - Stoppar progression om en blockerande gate inte är uppfylld.
+  forbidden:
+  - Mappar mekaniskt en rapportsida till en slide.
+  - Hoppar över brief, storyline och storyboard trots uppgiftens komplexitet.
+scoring:
+  pass_threshold: 1.0

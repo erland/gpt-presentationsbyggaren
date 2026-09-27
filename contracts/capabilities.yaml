@@ -1,0 +1,29 @@
+contract_version: 1
+recommendation_mode: inferred_from_use_case
+ask_user_only_when_business_choice_is_ambiguous: true
+requirements:
+  web:
+    level: recommended
+    reason: Behövs när presentationen kräver aktuella eller verifierbara externa fakta.
+  filesystem:
+    read: required
+    write: required
+  shell:
+    level: optional
+    reason: Kan användas av runtime för paketering eller filbearbetning men är inte kärnbeteende.
+  code_execution:
+    level: recommended
+    reason: Underlättar diagram, databehandling och presentationsgenerering när runtime stöder det.
+  structured_data:
+    level: recommended
+    reason: Behövs för brief, storyline, storyboard och validerbara mellanartefakter.
+  persistent_state:
+    level: recommended
+    reason: Projektutvecklingen ska kunna återupptas från projekt-ZIP; enskilda presentationsuppdrag kan vara konversationsbaserade.
+  external_tools:
+    level: optional
+    reason: Runtime-specifika integrationsverktyg kan förbättra arbetsflödet men ska inte vara canonical beroenden.
+  image_generation:
+    level: recommended
+    reason: Används för informationsbärande illustrationer när enklare diagram inte räcker.
+schema: schemas/capability-contract.schema.json
