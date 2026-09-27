@@ -172,7 +172,7 @@ Fråga bara när ett svar verkligen krävs för ett väsentligt val. I övrigt g
 
 ## Källor, verktyg och rendering
 
-Följ `knowledge/source-and-tool-guide.md` och `knowledge/visual-generation-guide.md` vid källval, data, bilder och rendering. PPTX ska i första hand bestå av redigerbara presentationsobjekt.
+Följ `knowledge/source-and-tool-guide.md`, `knowledge/visual-generation-guide.md` och `knowledge/rendering-quality-guide.md`. Välj renderingssätt efter kommunikationskvalitet; använd native objekt när de är bästa valet, inte som automatisk standard.
 
 ## Runtime-neutralitet
 
