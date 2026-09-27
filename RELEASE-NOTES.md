@@ -1,3 +1,28 @@
+# Release notes – 0.3.0-rc.1
+
+## Presentation Plan, visual-first och Copilot-handoff
+
+0.3 separerar presentationsplanering från rendering. `presentation-plan.md` är nu den kanoniska sparbara artefakten som kan återanvändas senare utan att brief, storyline eller storyboard behöver göras om.
+
+### Nytt
+
+- Visual-first är huvudspår när visuell kvalitet prioriteras framför objektredigerbarhet.
+- Bildbaserad PPTX och PDF kan skapas från samma plan.
+- 1–2 anchor slides etablerar formspråket före övrig bildgenerering.
+- Hero-/komplexa slides genereras normalt en i taget.
+- Enklare närbesläktade assets får genereras i batcher om högst 2–4.
+- Hela decket får inte genereras i en enda bildprompt som standard.
+- Exakt presentationscopy hålls normalt utanför bildgenereringen.
+- Copilot-handoff ger DOCX/PDF + kort startprompt för redigerbar presentation.
+- Presentation-planen har deterministisk strukturvalidator.
+- Generation-kontraktet använder presentation-planen som primär indata.
+
+## Kvalificering
+
+CI ska validera planformat, generation-schema, lint, tester, hygiene och båda runtime-distributionerna. Praktiskt A/B-test med samma presentation återstår före stabil 0.3.
+
+---
+
 # Release notes – 0.2.0-rc.1
 
 ## Rendering och visuell kvalitet

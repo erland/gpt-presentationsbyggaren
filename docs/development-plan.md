@@ -477,3 +477,95 @@ Bakgrund: praktisk RC1-testning visade två blockerande problem: en genererad PP
 - Canonical instruktion ryms inom 8 000 tecken
 - Chat och Custom bygger från samma canonical källa
 - Praktisk presentationstestning är nästa rekommenderade aktivitet
+
+
+---
+
+## Förbättringscykel 0.3 – Presentation Plan, visual-first och Copilot-handoff
+
+Bakgrund: 0.2 löste PPTX-integritet men praktisk testning visade att native/hybrid rendering fortfarande blev för wireframe-lik. Användaren prioriterar nu visuell kvalitet framför objektredigerbarhet och vill samtidigt ha ett separat underlag för att skapa en redigerbar presentation i Microsoft Copilot.
+
+### Steg 19 – Presentation Plan som kanonisk artefakt
+
+**Mål:** Skapa ett sparbart Markdown-format som kan återanvändas som direkt indata vid en senare körning.
+
+**Leveranser**
+- `knowledge/presentation-plan-format.md`
+- `templates/presentation-plan.md.tpl`
+- `tests/presentation-plan-example.md`
+- deterministisk plan-validator
+
+**Klart när**
+- planen bär brief, storyline, design direction, visual system och slide-för-slide-specifikation,
+- en sparad plan kan återupptas utan att brief/storyline görs om.
+
+### Steg 20 – Copilot-handoff
+
+**Mål:** Projicera samma plan till ett strukturerat underlag för redigerbar presentation i Copilot eller motsvarande presentationsverktyg.
+
+**Leveranser**
+- `knowledge/copilot-handoff-guide.md`
+- DOCX/PDF-kontrakt
+- `copilot-prompt.md`-mall
+
+**Klart när**
+- handoff kan skapas utan att duplicera planeringslogik,
+- slideordning, budskap, exakt text och design direction bevaras.
+
+### Steg 21 – Visual-first som huvudspår utan redigerbarhetskrav
+
+**Mål:** Optimera slutpresentationen för visuell kvalitet och tillåta helslide-rendering.
+
+**Leveranser**
+- `knowledge/visual-first-workflow.md`
+- uppdaterad canonical instruktion
+- uppdaterad rendering-quality guide
+- generation-kontrakt med `visual-first`
+
+**Klart när**
+- visual-first kan leverera bildbaserad PPTX + PDF,
+- objektredigerbarhet är inte ett implicit krav.
+
+### Steg 22 – Anchor-slide och bildgenereringsstrategi
+
+**Mål:** Säkerställa hög kvalitet och visuell konsistens utan att försöka generera hela presentationen i en prompt.
+
+**Regler**
+- 1–2 anchor slides först,
+- viktiga/komplexa slides normalt en i taget,
+- små batcher om 2–4 endast för enklare närbesläktade assets,
+- aldrig hela decket i en enda bildgeneration som standard,
+- exakt presentationscopy genereras normalt separat från bildasset.
+
+**Klart när**
+- reglerna finns både i Knowledge och generation-kontraktet,
+- anchor-style-gate måste passera före massgenerering.
+
+### Steg 23 – Paketering till PPTX/PDF och plan
+
+**Mål:** Göra visual-first levererbar i vanliga presentationsformat.
+
+**Leveranser**
+- `presentation-plan.md`
+- bildbaserad `presentation.pptx`
+- `presentation.pdf`
+- teknisk PPTX-validering och visuell preview-gate
+
+**Klart när**
+- PPTX kan fungera som presentationsskal för helslidebilder,
+- PDF motsvarar samma visuella rendering.
+
+### Steg 24 – Regression, parity och 0.3 readiness
+
+**Mål:** Säkerställa att nya artefakter och regler fungerar i Chat och Custom utan regression.
+
+**Validering**
+- presentation-plan-validator passerar,
+- generation-schema och exempel passerar,
+- canonical instruktion < 8 000 tecken,
+- lint, pytest, hygiene och distributionsvalidering passerar,
+- Chat och Custom bygger från samma canonical källa.
+
+**Klart när**
+- CI är grön,
+- nästa rekommenderade aktivitet är praktiskt A/B-test: visual-first-resultat kontra Copilot-handoff-resultat.

@@ -1,0 +1,171 @@
+# Presentation Plan – kanoniskt återupptagningsformat
+
+## Syfte
+
+`presentation-plan.md` är den sparbara, runtime-neutrala masterartefakten för en presentation. Den ska vara tillräckligt komplett för att Presentationsbyggaren senare ska kunna skapa presentationen utan att göra om brief, storyline eller storyboard.
+
+Planen är sanningskälla för:
+
+- syfte och målgrupp,
+- kärnbudskap och narrativ båge,
+- innehålls- och visuell stil,
+- visuellt system och art direction,
+- slideordning,
+- exakt synlig text,
+- huvudbudskap per slide,
+- speaker notes,
+- visual intent och renderingsstrategi,
+- källreferenser,
+- Copilot-handoff och visual-first rendering.
+
+## Format
+
+Använd Markdown med YAML-frontmatter.
+
+Obligatoriskt frontmatter:
+
+```yaml
+---
+schema_version: 1
+title: Presentationens titel
+language: sv
+target_slides: 10
+primary_output: visual-first
+status: planned
+---
+```
+
+Tillåtna `primary_output`:
+
+- `visual-first`
+- `copilot-handoff`
+- `both`
+
+## Obligatoriska huvudsektioner
+
+1. `# Presentation Plan`
+2. `## Brief`
+3. `## Storyline`
+4. `## Design direction`
+5. `## Visual system`
+6. `## Slides`
+7. `## Sources and assumptions`
+
+## Brief
+
+Dokumentera minst:
+
+- syfte,
+- primär målgrupp,
+- önskad effekt,
+- presentationssituation,
+- ungefärlig tid/längd,
+- viktiga begränsningar.
+
+## Storyline
+
+Dokumentera:
+
+- kärnbudskap,
+- berättelsemönster,
+- narrativ båge i ordning,
+- eventuella appendixkandidater.
+
+## Design direction
+
+Dokumentera:
+
+- innehållsstil,
+- visuell stil,
+- tonalitet,
+- ambitionsnivå,
+- vad presentationen ska kännas som,
+- vad som uttryckligen ska undvikas.
+
+## Visual system
+
+Detta är gemensam art direction för alla bildgenereringar:
+
+- färgkaraktär,
+- kontrast,
+- illustrationstyp,
+- perspektiv,
+- material/känsla,
+- typ av människor/objekt om relevant,
+- bakgrundsprincip,
+- kompositionsprincip,
+- förbjudna element,
+- textregel: genererade bilder ska normalt inte innehålla presentationscopy.
+
+Visual system ska fastställas **före** massgenerering av slide-assets.
+
+## Slide-format
+
+Varje slide dokumenteras så här:
+
+```markdown
+### Slide 07 — Människans roll förändras från utförare till designer av arbete
+
+**Purpose:** explain
+**Message:** Förflyttningen sker i tre nivåer.
+**Pattern:** three-pillars
+**Render mode:** image-slide
+**Visual priority:** hero
+
+**Visible text**
+- 1. Bygg själv
+- 2. Bygg assistenter
+- 3. Bygg med en assistent
+
+**Visual concept**
+Tre tydliga scener med stigande abstraktionsnivå ...
+
+**Image asset**
+- Needed: yes
+- Generation group: anchor-2
+- Prompt intent: ...
+- Must show: ...
+- Must avoid: ...
+
+**Composition**
+Rubrik överst, tre stora scener över hela canvasen ...
+
+**Speaker notes**
+...
+
+**Sources**
+- ...
+```
+
+## Render mode
+
+Planen använder i första hand:
+
+- `image-slide` – färdig visuell slide där raster/SVG/PDF-komposition är huvudytan,
+- `hybrid-slide` – bild/illustration plus separat exakt text eller data,
+- `native-slide` – endast när native diagram/tabell/teknisk struktur faktiskt är bättre,
+- `copilot-only` – renderas inte lokalt; används bara i Copilot-handoff.
+
+När redigerbarhet inte är krav är `image-slide` normalfallet för visuellt drivna presentationer.
+
+## Återupptagning
+
+När användaren lämnar in en befintlig `presentation-plan.md`:
+
+1. behandla den som senast fastställda planeringsartefakt,
+2. gör inte om brief/storyline utan anledning,
+3. kontrollera endast om planen är komplett för önskad output,
+4. fortsätt direkt med rendering, Copilot-handoff eller begärd transformation,
+5. uppdatera planen om användaren gör innehålls- eller designändringar.
+
+## Gate
+
+Planen är redo för rendering när:
+
+- kärnbudskap och narrativ båge är tydliga,
+- varje slide har ett huvudbudskap,
+- synlig text är separat från speaker notes,
+- varje slide har render mode och visual concept,
+- visual system är definierat,
+- bildgenereringsbehov är grupperade,
+- inga centrala fakta behöver hittas på under renderingen.

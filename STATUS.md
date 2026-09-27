@@ -1,25 +1,31 @@
 # Status – Presentationsbyggaren
 
-Grundplanens steg 1–13 och förbättringscykelns steg 14–18 är implementerade.
+Grundplanens steg 1–13, 0.2-stegen 14–18 och 0.3-stegen 19–24 är implementerade.
 
-## 0.2-förbättring
+## 0.3-arkitektur
 
-Praktisk testning av 0.1 RC1 visade att presentationsmetodiken var bättre än den faktiska renderingens kvalitet. Två problem styr 0.2:
+`presentation-plan.md` är nu kanonisk presentationsartefakt efter planeringen.
 
-1. PPTX måste vara tekniskt giltig, inte bara skrivbar.
-2. presentationen ska se designad ut, inte som ett wireframe byggt av små boxar och linjer.
+Från planen finns två primära leveransspår:
 
-Projektet prioriterar nu kommunikationskvalitet före teknisk bekvämlighet, använder en explicit rendering/preview-gate och har en deterministisk Open XML-validator.
+### Visual-first
 
-## Leveransformat
+- 1–2 anchor slides först.
+- Viktiga/komplexa bilder genereras normalt en i taget.
+- Enklare assets kan genereras i små batcher om högst 2–4.
+- Hela decket genereras inte i en enda bildprompt.
+- Slutlig PowerPoint får vara bildbaserad och behöver inte vara objektredigerbar.
+- PDF levereras som motsvarande visuellt stabil representation när runtime stöder det.
 
-- PPTX när PowerPoint och fortsatt redigering krävs.
-- PDF som rekommenderad visuellt stabil följeslagare.
-- HTML som alternativ när hög visuell frihet är viktigare än PowerPoint-redigering.
+### Copilot-handoff
 
-## Kvar före 0.2 releasekandidat
+- DOCX är primärt strukturerat underlag för redigerbar presentation.
+- PDF är valfri stabil referens.
+- En kort Markdown-prompt används tillsammans med dokumentet.
+- Handoff projiceras från samma presentation-plan och ska inte ändra kärnbudskapet.
 
-- Kör CI på ändringsbranchen.
-- Praktiskt end-to-end-test med en verklig presentation.
-- Öppna PPTX i PowerPoint och jämför med PDF/preview.
-- Live cross-model-kvalificering kvarstår från 0.1-planen.
+## Kvar före 0.3 releasekandidat
+
+- CI ska passera på förbättringsbranchen.
+- Praktiskt A/B-test med samma case: visual-first vs Copilot-handoff.
+- Live cross-model-kvalificering kvarstår från tidigare plan.

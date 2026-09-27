@@ -7,9 +7,10 @@
   "properties": {
     "input": {
       "type": "object",
-      "required": ["storyboard"],
+      "required": ["presentation_plan"],
       "properties": {
-        "storyboard": {"type": "string", "minLength": 1},
+        "presentation_plan": {"type": "string", "minLength": 1},
+        "storyboard": {"type": ["string", "null"]},
         "source_material": {"type": "array", "items": {"type": "string"}},
         "existing_presentation": {"type": ["string", "null"]}
       },
@@ -17,13 +18,28 @@
     },
     "output": {
       "type": "object",
-      "required": ["primary_artifact", "editable"],
+      "required": ["generation_mode", "primary_artifact", "editable"],
       "properties": {
-        "primary_artifact": {"enum": ["pptx", "pdf", "html"]},
+        "generation_mode": {"enum": ["visual-first", "copilot-handoff", "native"]},
+        "primary_artifact": {"enum": ["pptx", "pdf", "docx", "html"]},
         "editable": {"type": "boolean"},
         "support_artifacts": {
           "type": "array",
-          "items": {"enum": ["storyboard", "source-notes", "review", "pdf", "html", "preview-images", "pptx-validation-report"]},
+          "items": {
+            "enum": [
+              "presentation-plan",
+              "storyboard",
+              "source-notes",
+              "review",
+              "pdf",
+              "html",
+              "preview-images",
+              "pptx-validation-report",
+              "copilot-handoff-docx",
+              "copilot-handoff-pdf",
+              "copilot-prompt"
+            ]
+          },
           "uniqueItems": true
         }
       },
@@ -31,22 +47,32 @@
     },
     "rendering": {
       "type": "object",
-      "required": ["editable_text", "design_priority", "native_object_policy", "image_policy"],
+      "required": ["design_priority", "text_strategy", "image_generation"],
       "properties": {
-        "editable_text": {"type": "boolean"},
         "design_priority": {"const": "communication_quality"},
-        "native_object_policy": {"enum": ["use_when_best_fit", "prefer_for_editability"]},
-        "image_policy": {"enum": ["information_bearing_only", "user_requested"]},
-        "allow_full_slide_rasterization": {"type": "boolean", "default": false},
+        "text_strategy": {"enum": ["compose_after_image_generation", "native_text", "tool_managed"]},
+        "allow_full_slide_rasterization": {"type": "boolean"},
         "slide_render_modes": {
           "type": "array",
-          "items": {"enum": ["native", "designed-composition", "generated-visual", "hybrid"]},
+          "items": {"enum": ["image-slide", "hybrid-slide", "native-slide", "copilot-only"]},
           "uniqueItems": true
         },
         "companion_formats": {
           "type": "array",
-          "items": {"enum": ["pdf", "html"]},
+          "items": {"enum": ["pdf", "html", "docx"]},
           "uniqueItems": true
+        },
+        "image_generation": {
+          "type": "object",
+          "required": ["anchor_slides_first", "max_batch_size", "whole_deck_single_prompt"],
+          "properties": {
+            "anchor_slides_first": {"const": true},
+            "anchor_count": {"type": "integer", "minimum": 1, "maximum": 2},
+            "max_batch_size": {"type": "integer", "minimum": 1, "maximum": 4},
+            "whole_deck_single_prompt": {"const": false},
+            "exact_copy_in_generated_images": {"type": "boolean"}
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -63,8 +89,9 @@
     },
     "technical_validation": {
       "type": "object",
-      "required": ["package_integrity_checked", "relationships_checked", "independent_render_check", "preview_reviewed"],
+      "required": ["plan_validated", "preview_reviewed"],
       "properties": {
+        "plan_validated": {"type": "boolean"},
         "package_integrity_checked": {"type": "boolean"},
         "relationships_checked": {"type": "boolean"},
         "independent_render_check": {"enum": ["pass", "fail", "not_available", "not_run"]},
@@ -75,13 +102,14 @@
     },
     "quality": {
       "type": "object",
-      "required": ["storyboard_gate_passed", "visuals_have_purpose", "technical_gate_passed", "visual_ambition_checked"],
+      "required": ["presentation_plan_gate_passed", "visuals_have_purpose", "visual_ambition_checked"],
       "properties": {
-        "storyboard_gate_passed": {"const": true},
+        "presentation_plan_gate_passed": {"const": true},
         "visuals_have_purpose": {"const": true},
         "layout_overflow_checked": {"type": "boolean"},
         "technical_gate_passed": {"type": "boolean"},
-        "visual_ambition_checked": {"type": "boolean"}
+        "visual_ambition_checked": {"const": true},
+        "anchor_style_approved": {"type": "boolean"}
       },
       "additionalProperties": false
     }
