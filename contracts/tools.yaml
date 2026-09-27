@@ -51,9 +51,25 @@ tools:
   - id: presentation_generate
     type: api_action
     requirement: required
-    purpose: Rendera ett validerat storyboard till en redigerbar PowerPoint när full presentationsleverans krävs.
+    purpose: Rendera ett validerat storyboard till PPTX, PDF eller HTML enligt användarens behov.
     action: presentation.generate
     deterministic: false
     mutates_workspace: true
     runtime_fallback: block
+  - id: presentation_validate
+    type: api_action
+    requirement: recommended
+    purpose: Validera PPTX-paket, interna relationer och renderbarhet före leverans.
+    action: presentation.validate
+    deterministic: true
+    mutates_workspace: false
+    runtime_fallback: manual
+  - id: presentation_preview
+    type: api_action
+    requirement: recommended
+    purpose: Rendera slides till preview-bilder eller PDF för visuell kvalitetsgranskning.
+    action: presentation.preview
+    deterministic: false
+    mutates_workspace: true
+    runtime_fallback: manual
 schema: schemas/tool-contract.schema.json
