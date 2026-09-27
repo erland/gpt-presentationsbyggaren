@@ -2,10 +2,10 @@ schema_version: 1
 project:
   id: presentationsbyggaren
   name: Presentationsbyggaren
-  version: 0.2.0-rc.1
+  version: 0.3.0-rc.1
   language: sv
-  description: AI-assistent för storyline, storyboard, presentationsstil, visuell
-    design, robust rendering, kvalitetsgranskning och PPTX/PDF/HTML-leverans.
+  description: AI-assistent för återupptagningsbar presentation plan, visual-first rendering,
+    Copilot-handoff, kvalitetsgranskning och PPTX/PDF-leverans.
 profile: workflow_research_heavy
 analysis:
   recommended_profile: workflow_research_heavy
@@ -115,13 +115,21 @@ artifacts:
       multiplicity: one
       description: Strukturerad berättelse med kärnbudskap, valt berättelsemönster,
         narrativa huvudpunkter och appendixkandidater.
+    presentation_plan:
+      kind: document
+      format: markdown
+      requirement: required
+      persistence: persistent
+      multiplicity: one
+      filename_pattern: presentation-plan.md
+      description: Kanonisk återupptagningsbar presentationsplan med brief, storyline, design direction, visual system och slide-för-slide-specifikation.
     presentation_pptx:
       kind: document
       format: pptx
       requirement: required
       persistence: persistent
       multiplicity: one
-      description: Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.
+      description: PowerPoint-leverans. I visual-first-läge får varje slide vara en färdigrenderad helslidebild och behöver inte vara objektredigerbar.
     presentation_pdf:
       kind: document
       format: pdf
@@ -138,6 +146,33 @@ artifacts:
       persistence: persistent
       multiplicity: one
       description: Webbaserad presentationsversion med hög visuell frihet.
+    copilot_handoff_docx:
+      kind: document
+      format: docx
+      requirement: optional
+      condition: När användaren vill skapa en redigerbar presentation via Microsoft Copilot eller motsvarande presentationsverktyg.
+      persistence: persistent
+      multiplicity: one
+      filename_pattern: copilot-handoff.docx
+      description: Strukturerat presentationsunderlag projicerat från presentation-plan.md.
+    copilot_handoff_pdf:
+      kind: document
+      format: pdf
+      requirement: optional
+      condition: När Copilot-handoff skapas och en stabil referens kan produceras.
+      persistence: persistent
+      multiplicity: one
+      filename_pattern: copilot-handoff.pdf
+      description: Visuellt stabil representation av Copilot-underlaget.
+    copilot_prompt:
+      kind: document
+      format: markdown
+      requirement: optional
+      condition: När Copilot-handoff skapas.
+      persistence: persistent
+      multiplicity: one
+      filename_pattern: copilot-prompt.md
+      description: Kort startprompt som används tillsammans med Copilot-handoff-dokumentet.
     storyboard:
       kind: data
       format: json-or-yaml
@@ -249,6 +284,14 @@ tools:
     deterministic: false
     mutates_workspace: true
     runtime_fallback: degrade
+  - id: presentation_plan_validate
+    type: script
+    requirement: recommended
+    purpose: Validera strukturen i en sparbar presentation-plan.md före rendering eller återupptagning.
+    script: scripts/validate_presentation_plan.py
+    deterministic: true
+    mutates_workspace: false
+    runtime_fallback: manual
   - id: pptx_validate
     type: script
     requirement: recommended
