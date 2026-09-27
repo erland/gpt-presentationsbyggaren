@@ -1,22 +1,27 @@
 # Presentationsbyggaren
 
-Presentationsbyggaren hjälper användaren från idé eller källmaterial till en återupptagningsbar presentationsplan och därefter till visuella eller redigerbara presentationsspår.
+Presentationsbyggaren hjälper användaren från idé eller källmaterial till en återupptagningsbar presentationsplan och därefter till en visuellt driven presentation.
 
 Kärnflödet är:
 
-**brief → storyline → storyboard → presentation-plan → visual-first och/eller Copilot-handoff → kvalitetsgranskning**
+**brief → storyline → storyboard → presentation-plan → visual-first → kvalitetsgranskning → PPTX/PDF**
 
-## 0.3
+## 0.3.1
 
-Version 0.3 ändrar huvudarkitekturen:
+Visual-first är huvudspåret när visuell kvalitet prioriteras framför objektredigerbarhet.
+
+Produktionsregler:
 
 - `presentation-plan.md` är kanonisk sparbar masterartefakt,
-- visual-first är huvudspår när visuell kvalitet prioriteras framför objektredigerbarhet,
-- 1–2 anchor slides etablerar formspråket innan resten genereras,
-- viktiga slides genereras normalt en i taget; små batcher får vara högst 2–4,
-- hela presentationen genereras inte i en enda bildprompt,
-- bildbaserad PPTX + PDF är visual-first-leveransen,
-- `copilot-handoff.docx`/PDF + `copilot-prompt.md` är spåret för redigerbar presentation via Copilot.
+- 1–2 anchor slides etablerar formspråket,
+- **exakt en slide genereras per bildgenerering**,
+- collage, kontaktkartor, moodboards, storyboardark och thumbnail-grids är blockerande fel,
+- flera delar inom samma slide ska vara få, stora och sammanhängande,
+- före varje bildgenerering får användaren veta vilken slide som skapas och att skriva **Gör nästa steg** när bilden är klar,
+- `presentation-plan.md` håller persistent renderingstatus och pekar ut exakt en `next` slide,
+- efter sista godkända slide är nästa steg paketering till bildbaserad PPTX och PDF.
+
+Copilot-handoff finns kvar som ett **kompletterande/experimentellt** spår för den som vill prova att skapa en redigerbar presentation från samma plan.
 
 ## Aktiverade runtimes
 
@@ -25,4 +30,4 @@ Version 0.3 ändrar huvudarkitekturen:
 
 ## Fortsättning
 
-Läs `project-status.yaml` och `docs/development-plan.md`. Nästa rekommenderade aktivitet är ett praktiskt A/B-test med samma presentationsplan: visual-first-resultat jämfört med presentation skapad från Copilot-handoff.
+Läs `project-status.yaml` och `docs/development-plan.md`. Nästa rekommenderade aktivitet är ett praktiskt visual-first-test där presentationen skapas en slide i taget och `Gör nästa steg` används mellan bildgenerationerna.

@@ -13,6 +13,7 @@ REQUIRED_SECTIONS = [
     "## Storyline",
     "## Design direction",
     "## Visual system",
+    "## Rendering status",
     "## Slides",
     "## Sources and assumptions",
 ]
@@ -31,6 +32,7 @@ REQUIRED_SLIDE_FIELDS = [
 ]
 VALID_OUTPUTS = {"visual-first", "copilot-handoff", "both"}
 VALID_STATUS = {"draft", "planned", "approved", "rendered"}
+VALID_RENDERING_STATUS = {"pending", "next", "generated", "approved", "redo", "not-applicable"}
 
 
 def parse_frontmatter(text: str) -> tuple[dict, str]:
@@ -41,6 +43,50 @@ def parse_frontmatter(text: str) -> tuple[dict, str]:
         raise ValueError("Unclosed YAML frontmatter")
     data = yaml.safe_load(text[4:end]) or {}
     return data, text[end + 5:]
+
+
+def _validate_rendering_status(body: str, slide_ids: list[str]) -> list[str]:
+    errors: list[str] = []
+    start = body.find("## Rendering status")
+    end = body.find("## Slides", start + 1)
+    if start < 0 or end < 0:
+        return errors
+    block = body[start:end]
+    declared_next_match = re.search(r"^- Next slide:\s*(\d{2,3}|none)\s*$", block, re.M)
+    if not declared_next_match:
+        errors.append("Rendering status: missing '- Next slide: NN|none'")
+        declared_next = None
+    else:
+        declared_next = declared_next_match.group(1)
+
+    entries = re.findall(r"^- Slide\s+(\d{2,3}):\s*([a-z-]+)\s*$", block, re.M)
+    statuses = {slide_id: status for slide_id, status in entries}
+
+    for slide_id in slide_ids:
+        if slide_id not in statuses:
+            errors.append(f"Rendering status: missing Slide {slide_id}")
+    for slide_id, status in statuses.items():
+        if slide_id not in slide_ids:
+            errors.append(f"Rendering status: unknown Slide {slide_id}")
+        if status not in VALID_RENDERING_STATUS:
+            errors.append(f"Rendering status: invalid status for Slide {slide_id}: {status}")
+
+    next_ids = [slide_id for slide_id, status in entries if status == "next"]
+    if len(next_ids) > 1:
+        errors.append("Rendering status: at most one slide may be 'next'")
+    if declared_next == "none" and next_ids:
+        errors.append("Rendering status: Next slide is none but a slide is marked next")
+    if declared_next not in {None, "none"}:
+        if declared_next not in slide_ids:
+            errors.append(f"Rendering status: Next slide {declared_next} does not exist")
+        if next_ids != [declared_next]:
+            errors.append("Rendering status: '- Next slide' must match the single slide marked next")
+
+    remaining = [status for status in statuses.values() if status in {"pending", "next", "generated", "redo"}]
+    if remaining and not next_ids:
+        errors.append("Rendering status: a remaining image slide requires exactly one 'next' slide")
+
+    return errors
 
 
 def validate(path: Path) -> list[str]:
@@ -67,7 +113,7 @@ def validate(path: Path) -> list[str]:
         if section not in body:
             errors.append(f"Missing section: {section}")
 
-    slide_matches = list(re.finditer(r"^### Slide\s+\d{2,3}\s+—\s+.+$", body, re.M))
+    slide_matches = list(re.finditer(r"^### Slide\s+(\d{2,3})\s+—\s+.+$", body, re.M))
     if not slide_matches:
         errors.append("No slide sections found")
         return errors
@@ -75,6 +121,9 @@ def validate(path: Path) -> list[str]:
     target = fm.get("target_slides")
     if isinstance(target, int) and len(slide_matches) != target:
         errors.append(f"target_slides is {target} but plan contains {len(slide_matches)} slides")
+
+    slide_ids = [match.group(1) for match in slide_matches]
+    errors.extend(_validate_rendering_status(body, slide_ids))
 
     for idx, match in enumerate(slide_matches):
         start = match.start()

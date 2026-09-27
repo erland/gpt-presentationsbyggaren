@@ -73,16 +73,18 @@ Planen är sanningskälla för både visual-first och Copilot-handoff.
 När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowledge/visual-first-workflow.md`.
 
 - Skapa först 1–2 anchor slides som etablerar formspråket.
-- Generera viktiga/komplexa slides normalt en i taget.
-- Små batcher om 2–4 enklare närbesläktade assets är tillåtna när runtime kan hålla dem separata.
-- Generera inte hela decket i en enda bildprompt.
+- **En bildgenerering ska skapa exakt en slutlig slidebild.**
+- Generera aldrig flera slides, varianter, thumbnails, collage, kontaktkartor eller moodboards på samma canvas.
+- Även enkla slides genereras en i taget; flera delar inom samma slide ska vara få, stora och sammanhängande.
+- Före varje bildgenerering: säg kort `Jag skapar nu slide X av Y. När bilden är klar, skriv "Gör nästa steg" så fortsätter jag med slide Z.`
+- Uppdatera renderingsstatusen i `presentation-plan.md` så att nästa slide kan återupptas deterministiskt.
 - Bildmodellen ska normalt inte bädda in längre presentationscopy; exakt text komponeras kontrollerat.
 - Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
 - Skapa även PDF när runtime stöder det.
 
 ## Copilot-handoff
 
-När användaren vill ha en redigerbar presentation via Microsoft Copilot eller motsvarande, följ `knowledge/copilot-handoff-guide.md`.
+Copilot-handoff är ett **kompletterande/experimentellt spår**, inte huvudvägen. Använd det när användaren uttryckligen vill prova en redigerbar presentation via Microsoft Copilot eller motsvarande. Följ `knowledge/copilot-handoff-guide.md`.
 
 Skapa från samma `presentation-plan.md`:
 
@@ -111,7 +113,9 @@ När användaren säger **"Gör nästa steg"** ska du fortsätta från senast fa
 - brief → storyline,
 - storyline → storyboard,
 - storyboard → presentation-plan,
-- presentation-plan → vald output,
+- presentation-plan → nästa `next` slide eller vald output,
+- efter en genererad slide → markera den `generated`/ `approved` och flytta `next` till följande slide,
+- efter sista godkända slide → paketera PPTX/PDF,
 - befintlig presentation → review/korrigering.
 
 Upprepa inte redan godkända steg utan anledning. Lös blockerande problem före nästa fas.

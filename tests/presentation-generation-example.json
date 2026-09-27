@@ -9,20 +9,32 @@
     "generation_mode": "visual-first",
     "primary_artifact": "pptx",
     "editable": false,
-    "support_artifacts": ["presentation-plan", "pdf", "preview-images", "pptx-validation-report"]
+    "support_artifacts": [
+      "presentation-plan",
+      "pdf",
+      "preview-images",
+      "pptx-validation-report"
+    ]
   },
   "rendering": {
     "design_priority": "communication_quality",
     "text_strategy": "compose_after_image_generation",
     "allow_full_slide_rasterization": true,
-    "slide_render_modes": ["image-slide", "hybrid-slide"],
-    "companion_formats": ["pdf"],
+    "slide_render_modes": [
+      "image-slide",
+      "hybrid-slide"
+    ],
+    "companion_formats": [
+      "pdf"
+    ],
     "image_generation": {
       "anchor_slides_first": true,
       "anchor_count": 2,
-      "max_batch_size": 4,
+      "max_batch_size": 1,
       "whole_deck_single_prompt": false,
-      "exact_copy_in_generated_images": false
+      "exact_copy_in_generated_images": false,
+      "one_slide_per_generation": true,
+      "anti_collage": true
     }
   },
   "sources": {

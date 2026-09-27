@@ -2,10 +2,10 @@ schema_version: 1
 project:
   id: presentationsbyggaren
   name: Presentationsbyggaren
-  version: 0.3.0-rc.1
+  version: 0.3.1-rc.1
   language: sv
-  description: AI-assistent för återupptagningsbar presentation plan, visual-first rendering,
-    Copilot-handoff, kvalitetsgranskning och PPTX/PDF-leverans.
+  description: AI-assistent för återupptagningsbar presentation plan, en-slide-i-taget visual-first rendering,
+    kvalitetsgranskning samt kompletterande Copilot-handoff.
 profile: workflow_research_heavy
 analysis:
   recommended_profile: workflow_research_heavy

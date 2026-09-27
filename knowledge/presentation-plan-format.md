@@ -48,8 +48,9 @@ Tillåtna `primary_output`:
 3. `## Storyline`
 4. `## Design direction`
 5. `## Visual system`
-6. `## Slides`
-7. `## Sources and assumptions`
+6. `## Rendering status`
+7. `## Slides`
+8. `## Sources and assumptions`
 
 ## Brief
 
@@ -98,6 +99,39 @@ Detta är gemensam art direction för alla bildgenereringar:
 - textregel: genererade bilder ska normalt inte innehålla presentationscopy.
 
 Visual system ska fastställas **före** massgenerering av slide-assets.
+
+## Rendering status
+
+Planen ska bära produktionsstatus så att arbetet kan återupptas efter varje separat bildgenerering.
+
+Exempel:
+
+```markdown
+## Rendering status
+
+- Phase: anchors
+- Next slide: 01
+- Slide 01: next
+- Slide 02: pending
+- Slide 03: pending
+```
+
+Tillåtna slide-statusar:
+
+- `pending` – ännu inte genererad,
+- `next` – exakt den slide som ska genereras vid nästa `Gör nästa steg`,
+- `generated` – bild finns men är ännu inte uttryckligen godkänd,
+- `approved` – godkänd för paketering,
+- `redo` – behöver göras om innan den kan godkännas,
+- `not-applicable` – ingen bildgenerering behövs.
+
+Regler:
+
+- högst en slide får vara `next`,
+- om någon bildslide återstår ska normalt exakt en vara `next`,
+- efter en lyckad generation flyttas `next` till följande pending slide,
+- om användaren underkänner bilden sätts samma slide till `redo` och görs om innan flödet går vidare,
+- när alla relevanta slides är `approved` eller `not-applicable` går nästa steg till paketering.
 
 ## Slide-format
 
@@ -167,5 +201,6 @@ Planen är redo för rendering när:
 - synlig text är separat från speaker notes,
 - varje slide har render mode och visual concept,
 - visual system är definierat,
-- bildgenereringsbehov är grupperade,
+- renderingsstatus finns och pekar ut högst en nästa slide,
+- varje bildgeneration avser exakt en slide,
 - inga centrala fakta behöver hittas på under renderingen.

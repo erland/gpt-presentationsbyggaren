@@ -1,31 +1,28 @@
 # Status – Presentationsbyggaren
 
-Grundplanens steg 1–13, 0.2-stegen 14–18 och 0.3-stegen 19–24 är implementerade.
+Grundplanens steg 1–13 och förbättringsstegen 14–27 är implementerade.
 
-## 0.3-arkitektur
+## 0.3.1
 
-`presentation-plan.md` är nu kanonisk presentationsartefakt efter planeringen.
-
-Från planen finns två primära leveransspår:
+Praktisk visual-first-testning visade att flera slide-assets i samma bildgeneration kunde bli ett montage med många små bilder. 0.3.1 gör därför produktionsflödet strikt sekventiellt.
 
 ### Visual-first
 
-- 1–2 anchor slides först.
-- Viktiga/komplexa bilder genereras normalt en i taget.
-- Enklare assets kan genereras i små batcher om högst 2–4.
-- Hela decket genereras inte i en enda bildprompt.
-- Slutlig PowerPoint får vara bildbaserad och behöver inte vara objektredigerbar.
-- PDF levereras som motsvarande visuellt stabil representation när runtime stöder det.
+- Exakt en slutlig slidebild per bildgenerering.
+- Ingen batchgenerering av flera slides.
+- Collage, kontaktkartor, moodboards, storyboardark och thumbnail-grids underkänns.
+- 1–2 anchor slides etablerar formspråket.
+- Presentation Plan innehåller persistent status för varje slide.
+- Högst en slide får vara `next`.
+- Före bildgenereringen informeras användaren att skriva `Gör nästa steg` när bilden är klar.
+- Efter sista godkända slide går flödet vidare till PPTX/PDF-paketering.
 
-### Copilot-handoff
+### Copilot
 
-- DOCX är primärt strukturerat underlag för redigerbar presentation.
-- PDF är valfri stabil referens.
-- En kort Markdown-prompt används tillsammans med dokumentet.
-- Handoff projiceras från samma presentation-plan och ska inte ändra kärnbudskapet.
+Copilot-handoff finns kvar men är ett kompletterande/experimentellt spår. Visual-first är standardvägen.
 
-## Kvar före 0.3 releasekandidat
+## Kvar före releasekandidat
 
 - CI ska passera på förbättringsbranchen.
-- Praktiskt A/B-test med samma case: visual-first vs Copilot-handoff.
+- Praktiskt test av en riktig presentation slide för slide.
 - Live cross-model-kvalificering kvarstår från tidigare plan.
