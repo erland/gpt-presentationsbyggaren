@@ -20,13 +20,21 @@ outputs:
     multiplicity: one
     description: Strukturerad berättelse med kärnbudskap, valt berättelsemönster,
       narrativa huvudpunkter och appendixkandidater.
+  presentation_plan:
+    kind: document
+    format: markdown
+    requirement: required
+    persistence: persistent
+    multiplicity: one
+    filename_pattern: presentation-plan.md
+    description: Kanonisk återupptagningsbar presentationsplan med brief, storyline, design direction, visual system och slide-för-slide-specifikation.
   presentation_pptx:
     kind: document
     format: pptx
     requirement: required
     persistence: persistent
     multiplicity: one
-    description: Redigerbar PowerPoint är huvudartefakten för ett fullständigt presentationsuppdrag.
+    description: PowerPoint-leverans. I visual-first-läge får varje slide vara en färdigrenderad helslidebild och behöver inte vara objektredigerbar.
   presentation_pdf:
     kind: document
     format: pdf
@@ -43,6 +51,33 @@ outputs:
     persistence: persistent
     multiplicity: one
     description: Webbaserad presentationsversion med hög visuell frihet.
+  copilot_handoff_docx:
+    kind: document
+    format: docx
+    requirement: optional
+    condition: När användaren vill skapa en redigerbar presentation via Microsoft Copilot eller motsvarande presentationsverktyg.
+    persistence: persistent
+    multiplicity: one
+    filename_pattern: copilot-handoff.docx
+    description: Strukturerat presentationsunderlag projicerat från presentation-plan.md.
+  copilot_handoff_pdf:
+    kind: document
+    format: pdf
+    requirement: optional
+    condition: När Copilot-handoff skapas och en stabil referens kan produceras.
+    persistence: persistent
+    multiplicity: one
+    filename_pattern: copilot-handoff.pdf
+    description: Visuellt stabil representation av Copilot-underlaget.
+  copilot_prompt:
+    kind: document
+    format: markdown
+    requirement: optional
+    condition: När Copilot-handoff skapas.
+    persistence: persistent
+    multiplicity: one
+    filename_pattern: copilot-prompt.md
+    description: Kort startprompt som används tillsammans med Copilot-handoff-dokumentet.
   storyboard:
     kind: data
     format: json-or-yaml
