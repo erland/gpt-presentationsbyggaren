@@ -249,6 +249,14 @@ tools:
     deterministic: false
     mutates_workspace: true
     runtime_fallback: degrade
+  - id: pptx_validate
+    type: script
+    requirement: recommended
+    purpose: Validera PPTX som ZIP/Open XML och hitta saknade Content-Type-delar eller relationship-targets före leverans.
+    script: scripts/validate_pptx.py
+    deterministic: true
+    mutates_workspace: false
+    runtime_fallback: manual
   - id: presentation_generate
     type: api_action
     requirement: required
