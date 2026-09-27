@@ -47,17 +47,49 @@ Anchor slides ska testa:
 
 Om anchor-resultatet är svagt ska visual system justeras **innan** resten genereras.
 
-## Hur många bilder per prompt?
+## En slide per bildgenerering
 
-Generera inte hela presentationen i en enda bildprompt.
+**Hård standardregel: en bildgenerering = exakt en slutlig slidebild.**
 
-Standard:
+Det gäller även enkla slides.
 
-- **1 slide per generation** för hero-slides, konceptuella slides, människor/scener, komplexa metaforer och slides som är viktiga för presentationens identitet.
-- **2–4 slides i en liten batch** kan användas för enklare och närbesläktade assets när runtime faktiskt kan hålla dem separata och konsekventa.
-- **Aldrig hela decket i en enda bildgeneration** som standard.
+Varje bildprompt ska uttryckligen säga:
 
-Kvalitet och kontroll går före minimering av antal generationer.
+> Skapa exakt en slutlig 16:9-slidebild för denna slide. Använd hela canvasen för en sammanhängande professionell komposition. Skapa inte collage, grid, kontaktkarta, moodboard, storyboardark, flera alternativa versioner eller flera små slidebilder på samma canvas.
+
+Om sliden innehåller flera steg eller perspektiv får de visas inom samma slide, men som **få stora integrerade delar**. Tre steg kan exempelvis vara tre stora scener över bredden; de ska inte bli thumbnails.
+
+Generera inte flera slides i samma verktygsanrop även om runtime tekniskt kan skapa flera bilder. Produktionsflödet behöver ett separat kvalitetsbeslut för varje slide.
+
+## Interaktion mellan generationerna
+
+När bildverktyget avslutar turen efter generering ska Presentationsbyggaren göra fortsättningen tydlig **före** verktygsanropet.
+
+Före varje slidebild ska användaren få en kort statusrad:
+
+> Jag skapar nu slide X av Y. När bilden är klar, skriv **"Gör nästa steg"** så fortsätter jag med slide Z.
+
+Efter att användaren skriver **"Gör nästa steg"**:
+
+1. läs renderingsstatusen,
+2. behandla föregående generering som `generated` om den inte uttryckligen underkänts,
+3. välj exakt den slide som är markerad `next`,
+4. uppdatera nästa slide till `next`,
+5. generera endast den valda sliden.
+
+Efter sista slide ska nästa steg vara paketering till PPTX/PDF, inte ännu en bildgeneration.
+
+## Anti-collage-gate
+
+En bild underkänns om den:
+
+- visar flera slide-miniatyrer,
+- ser ut som en kontaktkarta eller storyboard,
+- innehåller ett grid av små alternativa illustrationer,
+- delar canvasen i många små oberoende paneler utan att detta är själva slidebudskapet,
+- återger flera designvarianter i samma bild.
+
+Vid sådant resultat: gör om **samma slide**, inte nästa slide.
 
 ## Bild kontra text
 
