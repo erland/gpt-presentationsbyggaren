@@ -1,3 +1,28 @@
+# Release notes – 0.3.1-rc.1
+
+## En slide per bildgenerering
+
+0.3.1 skärper visual-first-flödet efter praktisk testning där flera slide-assets i samma generation blev ett montage med många små bilder.
+
+### Ändringar
+
+- exakt en slutlig 16:9-slidebild per bildgenerering,
+- `max_batch_size = 1` i generation-kontraktet,
+- explicit anti-collage-regel,
+- collage, kontaktkartor, moodboards, storyboardark och thumbnail-grids är blockerande,
+- persistent `## Rendering status` i `presentation-plan.md`,
+- högst en slide får vara `next`,
+- validatorn kontrollerar att `Next slide` matchar statusen,
+- före varje bildgenerering instrueras användaren att skriva **Gör nästa steg** när bilden är klar,
+- efter sista slide går flödet till PPTX/PDF-paketering,
+- Copilot-handoff är nu kompletterande/experimentellt medan visual-first är huvudspår.
+
+## Kvalificering
+
+CI ska validera schema, planstatus, regressionstester, lint, hygiene och runtime-distributioner. Praktiskt visual-first-test återstår före release.
+
+---
+
 # Release notes – 0.3.0-rc.1
 
 ## Presentation Plan, visual-first och Copilot-handoff
