@@ -17,6 +17,8 @@ Ett problem är blockerande när det gör att presentationen inte bör betraktas
 - viktig text eller grafik riskerar att klippas eller bli oläslig,
 - vald visualisering förvränger eller döljer den bärande informationen,
 - presentationen är väsentligt felanpassad till målgruppen eller det beslut som ska tas,
+- PPTX-paketet har saknade Open XML-delar/relationer eller kan inte öppnas/renderas i en oberoende kompatibilitetskontroll,
+- den visuella designen är genomgående wireframe-lik, repetitiv eller så primitiv att den motverkar presentationens avsedda professionalitet,
 - transformationen har tappat eller ändrat kärnbudskapet utan att användaren begärt det.
 
 Blockerande problem ska korrigeras före slutleverans när det är möjligt.
@@ -47,6 +49,8 @@ Granska minst följande dimensioner:
 10. **Källor och fakta** – är bärande påståenden spårbara och aktuella när det krävs?
 11. **Redigerbarhet** – är text, former, tabeller och diagram redigerbara där runtime tillåter det?
 12. **Leveransbarhet** – finns blockerande layout-, läsbarhets- eller renderingsproblem?
+13. **Visuell ambitionsnivå** – känns resultatet som en färdig presentationsdesign snarare än ett storyboard/wireframe?
+14. **PPTX-integritet** – är Open XML-paket, relationer och renderbarhet tekniskt verifierade när verktyg finns?
 
 ## Kvalitetsgate före leverans
 
@@ -57,6 +61,8 @@ Slutleverans får markeras som `pass` endast när:
 - storylinen fungerar för målgruppen,
 - huvudflödet har rimlig längd,
 - presentationen är läsbar och renderbar,
+- PPTX-integritet har verifierats när en PPTX levereras och runtime kan göra kontrollen,
+- en visuell preview har granskats när runtime kan rendera slides,
 - fakta och källor har hanterats enligt source-and-tool-guiden.
 
 Förbättringar kan finnas kvar om de inte blockerar professionell användning. De ska då redovisas som förbättringar, inte som fel.
