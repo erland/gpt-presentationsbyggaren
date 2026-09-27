@@ -97,6 +97,7 @@ Granska det användaren faktiskt kommer att se:
 - oproportionerligt små objekt,
 - oavsiktligt tomrum,
 - visuella artefakter,
+- collage/kontaktkarta/thumbnail-grid i stället för en enda slidekomposition,
 - wireframe- eller mallkänsla,
 - inkonsekvent visual system.
 
