@@ -569,3 +569,49 @@ Bakgrund: 0.2 löste PPTX-integritet men praktisk testning visade att native/hyb
 **Klart när**
 - CI är grön,
 - nästa rekommenderade aktivitet är praktiskt A/B-test: visual-first-resultat kontra Copilot-handoff-resultat.
+
+
+---
+
+## Förbättringscykel 0.3.1 – En slide per generation och återupptagningsbar rendering
+
+Bakgrund: praktisk visual-first-testning visade att bildmodellen kunde tolka flera slide-assets i samma generation som ett collage med många små bilder. Dessutom avslutar bildgenereringen ofta turen, vilket gjorde `Gör nästa steg` otydligt efter varje bild.
+
+### Steg 25 – Hård en-slide-per-generation-regel
+
+**Mål:** Förhindra collage, thumbnails och flera slides i samma bild.
+
+**Regler**
+- exakt en slutlig 16:9-slidebild per bildgenerering,
+- ingen batchgenerering av flera slides,
+- inga collage, kontaktkartor, moodboards, storyboardark eller designvarianter på samma canvas,
+- flera delar inom en slide ska vara få, stora och integrerade i samma komposition.
+
+**Klart när**
+- generation-kontraktet har `max_batch_size = 1`,
+- anti-collage är blockerande kvalitetsgate.
+
+### Steg 26 – Persistent renderingsstatus och Gör nästa steg
+
+**Mål:** Göra visual-first-flödet återupptagningsbart trots att bildverktyget avslutar turen efter bildgenerering.
+
+**Leveranser**
+- obligatorisk `## Rendering status` i `presentation-plan.md`,
+- status per slide: pending, next, generated, approved, redo eller not-applicable,
+- deterministisk validator som tillåter högst en `next`,
+- före varje bildgenerering informeras användaren att skriva `Gör nästa steg` när bilden är klar,
+- efter sista slide går nästa steg till PPTX/PDF-paketering.
+
+### Steg 27 – Copilot nedgraderas och 0.3.1 readiness
+
+**Mål:** Göra visual-first till entydig standardväg.
+
+**Leveranser**
+- Copilot-handoff dokumenteras som kompletterande/experimentellt spår,
+- README/status/release notes uppdateras,
+- CI validerar nya regler och regressionstester.
+
+**Klart när**
+- CI passerar,
+- visual-first kan fortsätta deterministiskt slide för slide,
+- praktiskt nästa test kan fokusera på bildkvalitet i stället för batchbeteende.
