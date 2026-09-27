@@ -36,6 +36,12 @@ status: planned
 
 {{VISUAL_SYSTEM}}
 
+## Rendering status
+
+- Phase: anchors
+- Next slide: {{NEXT_SLIDE}}
+{{RENDERING_STATUS}}
+
 ## Slides
 
 {{SLIDES}}
