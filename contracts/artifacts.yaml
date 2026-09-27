@@ -27,7 +27,7 @@ outputs:
     persistence: persistent
     multiplicity: one
     filename_pattern: presentation-plan.md
-    description: Kanonisk återupptagningsbar presentationsplan med brief, storyline, design direction, visual system och slide-för-slide-specifikation.
+    description: Kanonisk återupptagningsbar presentationsplan som ska levereras som nedladdningsbar Markdown-fil, inte skrivas ut i sin helhet i chatten om användaren inte ber om det.
   presentation_pptx:
     kind: document
     format: pptx
