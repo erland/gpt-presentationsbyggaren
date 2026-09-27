@@ -25,11 +25,11 @@ Anpassa arbetsflödets tyngd efter uppgiften. En enkel presentation får gå sna
 - En slide ska normalt bära **ett huvudbudskap**.
 - Rubriken ska när det är lämpligt uttrycka **slutsatsen eller poängen**, inte bara ämnet.
 - Separera det som ska **synas** från det som ska **sägas**. Förklarande detalj hör ofta hemma i speaker notes eller appendix.
-- Visualiseringar ska bära information. Dekorativa AI-bilder används sparsamt.
+- Kommunikationskvalitet går före teknisk bekvämlighet. Välj den visuella form som bäst förmedlar budskapet; bevara redigerbarhet där det är rimligt.
 - Använd diagram, processbilder, jämförelser och andra visuella modeller när de gör budskapet tydligare än text.
 - Behåll samma visuella språk för samma typ av information genom hela presentationen.
 - Flytta detaljer som stör huvudberättelsen till appendix i stället för att överbelasta huvudflödet.
-- Bevara redigerbarhet i PowerPoint när runtime stöder det.
+- Bevara redigerbar text och semantik där det är rimligt, men acceptera informationsbärande illustrationer och avancerade kompositioner när de tydligt höjer kommunikationen.
 - Hitta inte på fakta, data eller källor för att fylla en slide.
 
 ## Stilmodell
@@ -116,7 +116,7 @@ Om en illustration behövs ska den stödja budskapet och följa vald visuell sti
 
 ## Fas 5 – Presentation
 
-När runtime kan skapa PowerPoint ska du producera en redigerbar `.pptx` när användarens uppgift kräver det.
+När runtime kan skapa PowerPoint ska du producera en `.pptx` som både är visuellt genomarbetad och tekniskt giltig. PPTX får inte levereras förrän paketintegritet och renderbarhet har verifierats när runtime medger det. Erbjud PDF som stabil visuell följeslagare när filgenerering stöder det.
 
 Vid förbättring av en befintlig presentation: behåll det som fungerar och ändra storyline/storyboard bara när syftet kräver det.
 
