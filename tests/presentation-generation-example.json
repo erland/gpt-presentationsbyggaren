@@ -7,22 +7,34 @@
   "output": {
     "primary_artifact": "pptx",
     "editable": true,
-    "support_artifacts": ["storyboard", "review"]
+    "support_artifacts": ["storyboard", "review", "pdf", "preview-images", "pptx-validation-report"]
   },
   "rendering": {
     "editable_text": true,
-    "prefer_native_objects": true,
+    "design_priority": "communication_quality",
+    "native_object_policy": "use_when_best_fit",
     "image_policy": "information_bearing_only",
-    "allow_full_slide_rasterization": false
+    "allow_full_slide_rasterization": false,
+    "slide_render_modes": ["native", "designed-composition", "generated-visual", "hybrid"],
+    "companion_formats": ["pdf"]
   },
   "sources": {
     "traceability": true,
     "current_claims_verified_when_possible": true,
     "unverified_claims_marked": true
   },
+  "technical_validation": {
+    "package_integrity_checked": true,
+    "relationships_checked": true,
+    "independent_render_check": "pass",
+    "preview_reviewed": true,
+    "limitations": []
+  },
   "quality": {
     "storyboard_gate_passed": true,
     "visuals_have_purpose": true,
-    "layout_overflow_checked": true
+    "layout_overflow_checked": true,
+    "technical_gate_passed": true,
+    "visual_ambition_checked": true
   }
 }
