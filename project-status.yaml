@@ -4,11 +4,11 @@ project:
   name: Presentationsbyggaren
 plan:
   path: docs/development-plan.md
-  total_steps: 13
+  total_steps: 18
 progress:
-  current_phase: release_candidate
-  current_step: 13
-  last_completed_step: 13
+  current_phase: improvement_candidate
+  current_step: 18
+  last_completed_step: 18
   completed_steps:
   - 1
   - 2
@@ -23,21 +23,28 @@ progress:
   - 11
   - 12
   - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
   skipped_steps: []
-  inserted_steps: []
+  inserted_steps:
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
 state:
   overall: warning
   blocking_issues: []
   warnings:
-  - Live cross-model-kvalificering mot minst en enklare och en starkare modell har
-    inte körts i denna miljö eftersom ingen separat modellrunner finns tillgänglig.
-    Detta blockerar inte RC1 men kvarstår före stabil 1.0-release.
+  - Live cross-model-kvalificering mot minst en enklare och en starkare modell är fortfarande inte körd.
+  - 0.2-förändringarna behöver praktiskt end-to-end-test med riktig PPTX-rendering i PowerPoint efter merge/RC-build.
 next_step:
-  recommended: stable-release-readiness
-  title: Kvalificera modeller och besluta om stabil release
-  reason: Alla 13 planerade utvecklingssteg är klara och RC1 är reproducerbart byggd.
-    Kvar före stabil release är främst live cross-model-kvalificering och eventuell
-    korrigering av fynd.
+  recommended: practical-rendering-qualification
+  title: Praktiskt kvalificera 0.2-rendering
+  reason: Rendering, visuell kvalitet, PPTX-validering och alternativa format är implementerade. Nästa steg är att skapa en verklig presentation och verifiera både designnivå och PowerPoint-kompatibilitet.
 resume:
   supported: true
   required_files:
@@ -46,6 +53,4 @@ resume:
   - docs/development-plan.md
   - STATUS.md
   - PROJECT.md
-  human_readable_status: Alla 13 planerade steg är implementerade. Version 0.1.0-rc.1
-    är första releasekandidaten. Nästa rekommenderade aktivitet är live cross-model-kvalificering
-    och därefter beslut om stabil release.
+  human_readable_status: Förbättringscykel 0.2 steg 14–18 är implementerad på förbättringsbranchen. Nästa aktivitet är praktisk renderingstestning och därefter eventuell 0.2 releasekandidat.

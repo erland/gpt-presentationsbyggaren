@@ -6,15 +6,16 @@ Visualisering ska minska mottagarens kognitiva arbete. Välj alltid den enklaste
 
 ## Beslutstrappa
 
-Välj i denna ordning:
+Välj efter **kommunikationsstyrka**, inte efter teknisk enkelhet:
 
-1. **Typografi och whitespace** – när ett påstående är hela poängen.
-2. **Former och relationer** – för struktur, hierarki, flöde och arkitektur.
-3. **Tabell** – när exakta värden behöver jämföras.
-4. **Diagram** – när mönster, skillnader eller utveckling i data är budskapet.
-5. **Ikoner** – som stöd för kategorier, aldrig som huvudsaklig evidens.
-6. **Illustration** – när en scen, metafor eller konceptuell modell kommunicerar bättre än ovanstående.
-7. **Foto** – endast när verklig miljö, person, produkt eller plats tillför relevant information.
+1. **Statement/typografi** – när ett enda påstående är hela poängen.
+2. **Diagram eller datavisualisering** – när relationer, mönster eller siffror bär slutsatsen.
+3. **Designad komposition** – större typografi, färgfält, former, lager och visuella metaforer som tillsammans skapar en tydlig scen.
+4. **Illustration** – när en scen, metafor eller konceptuell modell blir tydligare och mer minnesvärd än native former.
+5. **Foto** – när verklig miljö, person, produkt eller plats tillför relevant information.
+6. **Tabell/native former** – när precision, enkel redigering eller teknisk struktur är viktigare än visuellt genomslag.
+
+Native PowerPoint-objekt är alltså inte automatiskt förstahandsval. Välj det uttryck som bäst förmedlar budskapet.
 
 ## Diagramregler
 
@@ -52,7 +53,7 @@ Föredra inbyggda presentationsobjekt för:
 - tabeller,
 - enkla ikoner och symboler.
 
-En komplex illustration kan vara en bild, men presentationens semantiska struktur ska inte låsas in i en enda rasterbild om den kan byggas redigerbart.
+En komplex illustration får vara en bild när det ger tydligt högre kommunikativ kvalitet. Behåll rubriker, etiketter, källor och annan text som användaren rimligen behöver ändra som separata redigerbara element när det går. Undvik att rasterisera hela sliden som standard.
 
 ## Konsistens
 

@@ -1,18 +1,25 @@
 # Status – Presentationsbyggaren
 
-Alla 13 planerade utvecklingssteg är klara.
+Grundplanens steg 1–13 och förbättringscykelns steg 14–18 är implementerade.
 
-## Releasekandidat
+## 0.2-förbättring
 
-Första releasekandidaten är **0.1.0-rc.1**. Projekt-, ChatGPT Chat- och ChatGPT Custom-distributionerna byggs reproducerbart från samma canonical projekt och valideras med samma kontrakt.
+Praktisk testning av 0.1 RC1 visade att presentationsmetodiken var bättre än den faktiska renderingens kvalitet. Två problem styr 0.2:
 
-## Release readiness
+1. PPTX måste vara tekniskt giltig, inte bara skrivbar.
+2. presentationen ska se designad ut, inte som ett wireframe byggt av små boxar och linjer.
 
-- Projektvalidering, lint, deterministiska tester, hygiene, build och distributionsvalidering passerar.
-- Runtime parity visar ingen blockerande canonical drift.
-- ChatGPT Chat och ChatGPT Custom använder samma canonical instruktion.
-- Custom GPT håller sig inom instruktion- och Knowledge-gränserna.
+Projektet prioriterar nu kommunikationskvalitet före teknisk bekvämlighet, använder en explicit rendering/preview-gate och har en deterministisk Open XML-validator.
 
-## Kvar före stabil release
+## Leveransformat
 
-Live cross-model-kvalificering mot minst en enklare och en starkare modell kan inte köras i denna miljö. Evalpaketet finns och ska köras före stabil release. Eventuella fynd från den körningen ska korrigeras innan 1.0.
+- PPTX när PowerPoint och fortsatt redigering krävs.
+- PDF som rekommenderad visuellt stabil följeslagare.
+- HTML som alternativ när hög visuell frihet är viktigare än PowerPoint-redigering.
+
+## Kvar före 0.2 releasekandidat
+
+- Kör CI på ändringsbranchen.
+- Praktiskt end-to-end-test med en verklig presentation.
+- Öppna PPTX i PowerPoint och jämför med PDF/preview.
+- Live cross-model-kvalificering kvarstår från 0.1-planen.

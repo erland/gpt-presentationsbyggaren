@@ -403,3 +403,77 @@ Planen är persistent och vägledande. Vid varje körning ska faktisk projektsta
 ## Första genomförandesteg
 
 Nästa gång användaren säger **”Gör nästa steg”** ska faktisk projektstatus först kontrolleras. Eftersom projektet ännu inte är bootstrappat blir den förväntade rekommendationen **Steg 1 – Bootstrap projekt och canonical kontrakt**. I det steget skapas den första kompletta projekt-ZIP:en och denna plan läggs in som `docs/development-plan.md`.
+
+
+---
+
+## Förbättringscykel 0.2 – Rendering och visuell kvalitet
+
+Bakgrund: praktisk RC1-testning visade två blockerande problem: en genererad PPTX hade ogiltiga Open XML-referenser och presentationens visuella resultat blev wireframe-likt och repetitivt trots fungerande storyline.
+
+### Steg 14 – Kommunikationskvalitet före native-redigerbarhet
+
+**Mål:** Korrigera designpolicyn så att native PowerPoint-former inte automatiskt prioriteras framför bättre visuella lösningar.
+
+**Leveranser**
+- Uppdaterad canonical instruktion
+- Reviderad guide för visuell generering
+- Blockerande kvalitetskriterium för genomgående wireframe-lik design
+
+**Klart när**
+- Kommunikationskvalitet är uttrycklig förstaprincip
+- Native, designed-composition, generated-visual och hybrid är jämbördiga renderingsstrategier
+
+### Steg 15 – PPTX-integritet och kontrollerad rendering
+
+**Mål:** Förhindra att en syntaktiskt skrivbar men strukturellt trasig PPTX levereras.
+
+**Leveranser**
+- Rendering/quality guide
+- Deterministisk Open XML-validator
+- Tool-kontrakt för PPTX-validering
+- Regressionstest för saknade Content-Type-delar och relationship-targets
+
+**Klart när**
+- Fel motsvarande RC1-testets saknade slide masters upptäcks deterministiskt
+- Teknisk validering är en blockerande leveransgate
+
+### Steg 16 – Preview och visuell kvalitetsgate
+
+**Mål:** Bedöma den renderade sliden, inte bara storyboard eller objektmodell.
+
+**Leveranser**
+- Preview-gate
+- Kontroller för overflow, små objekt, repetitiv komposition och oavsiktligt tomrum
+- Presentation-generation-kontrakt med teknisk och visuell valideringsstatus
+
+**Klart när**
+- En presentation kan inte kallas färdig utan visuell kontroll när preview-rendering finns
+
+### Steg 17 – PDF och HTML som kompletterande format
+
+**Mål:** Ge robustare leverans och högre visuell frihet utan att överge PowerPoint.
+
+**Leveranser**
+- PDF som rekommenderad visuell följeslagare
+- HTML som valfritt alternativ för webbpresentation/hög visuell frihet
+- Artifact- och generation-kontrakt uppdaterade
+
+**Klart när**
+- PPTX är fortsatt huvudformat när PowerPoint/redigering krävs
+- PDF och HTML kan väljas utan att ändra canonical presentationsmetod
+
+### Steg 18 – Regression, parity och 0.2 readiness
+
+**Mål:** Säkerställa att förändringen inte bryter runtime-paritet eller Custom GPT-gränser.
+
+**Leveranser**
+- Deterministiska PPTX-validator-tester
+- Uppdaterad projektstatus och release notes
+- CI-validering av projekt, tester och distributioner
+
+**Klart när**
+- CI passerar
+- Canonical instruktion ryms inom 8 000 tecken
+- Chat och Custom bygger från samma canonical källa
+- Praktisk presentationstestning är nästa rekommenderade aktivitet
