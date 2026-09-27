@@ -62,28 +62,41 @@ Visualisera inte data bara för att det finns data. En siffra eller enkel tabell
 
 ## Bildgenerering
 
-Bildgenerering är rekommenderad men sekundär till redigerbara presentationsobjekt. Använd den när:
+Bildgenerering är en jämbördig designförmåga när en informationsbärande illustration eller metafor ger bättre kommunikation än native former. Använd den när:
 
 - en konkret illustration gör ett abstrakt samband lättare att förstå,
 - en metafor eller scen är central för berättelsen,
-- en visuell jämförelse inte kan uttryckas tydligt med former, diagram eller ikoner.
+- presentationen behöver ett starkt hero- eller aha-ögonblick,
+- native PowerPoint-former skulle ge ett märkbart mer primitivt resultat.
 
-Använd inte genererade bilder som tomrumsfyllnad eller generisk dekoration.
+Använd inte genererade bilder som tomrumsfyllnad eller generisk dekoration. Text i bilder undviks; lägg rubriker och etiketter som separata presentationsobjekt.
 
 ## Presentation/rendering
 
-När runtime kan skapa PowerPoint ska resultatet vara en redigerbar `.pptx`. Storyboardet är den normativa indataartefakten och ska kunna bevaras som stödartefakt.
+När runtime kan skapa PowerPoint ska resultatet vara en **tekniskt giltig och visuellt genomarbetad** `.pptx`. Storyboardet är den normativa indataartefakten och ska kunna bevaras som stödartefakt.
 
-Prioritetsordning för rendering:
+Välj rendering per slide utifrån budskapet:
 
-1. redigerbar text,
-2. redigerbara former och linjer,
-3. redigerbara tabeller,
-4. redigerbara diagram,
-5. infogade informationsbärande bilder/illustrationer,
-6. rasteriserad helslide endast som sista utväg.
+- **native** för text, enkla diagram, tabeller, processer och element som behöver fortsatt redigering,
+- **designed composition** för typografiska och grafiska kompositioner som kan byggas med presentationsobjekt,
+- **generated visual** för illustrationer, konceptbilder och visuella metaforer där det ger tydligt högre kvalitet,
+- **hybrid** när en illustration kombineras med redigerbar rubrik, etiketter eller data.
 
-All text som användaren rimligen kan behöva ändra ska vara redigerbar text, inte inbakad i en bild.
+Rasteriserad helslide används endast som sista utväg. All text som användaren rimligen kan behöva ändra ska normalt vara redigerbar.
+
+### Teknisk leveransgate
+
+En PPTX får inte levereras enbart för att filen kan skrivas. När runtime medger det ska den först:
+
+1. verifieras som ZIP/Open XML-paket,
+2. kontrolleras för saknade relationstargets och Content-Type-delar,
+3. öppnas eller renderas med en oberoende Office-kompatibel renderer,
+4. renderas till preview-bilder,
+5. granskas visuellt för klippning, tomma ytor, överlapp och primitiv/repetitiv layout.
+
+Om teknisk validering misslyckas ska PPTX betraktas som blockerad. Om preview inte kan skapas ska begränsningen redovisas i stället för att påstå full validering.
+
+När filgenerering stöder det bör PPTX kompletteras med **PDF** som stabil visuell representation. HTML-presentation kan erbjudas som alternativ när hög visuell frihet är viktigare än PowerPoint-redigerbarhet.
 
 ## Fallback
 
