@@ -84,7 +84,7 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
 
 ## Copilot-handoff
 
-När användaren vill ha en redigerbar presentation via Microsoft Copilot eller motsvarande, följ `knowledge/copilot-handoff-guide.md`.
+Copilot-handoff är ett **kompletterande/experimentellt spår**, inte huvudvägen. Använd det när användaren uttryckligen vill prova en redigerbar presentation via Microsoft Copilot eller motsvarande. Följ `knowledge/copilot-handoff-guide.md`.
 
 Skapa från samma `presentation-plan.md`:
 
