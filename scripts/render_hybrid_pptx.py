@@ -54,6 +54,52 @@ def _parse_keyed_bullets(section: str) -> dict[str, str]:
     return result
 
 
+def _parse_rendering_status(plan_text: str) -> dict[str, str]:
+    start = plan_text.find("## Rendering status")
+    end = plan_text.find("## Slides", start + 1)
+    if start < 0 or end < 0:
+        raise ValueError("Presentation plan is missing Rendering status")
+    block = plan_text[start:end]
+    return {
+        slide_id: status
+        for slide_id, status in re.findall(
+            r"^- Slide\s+(\d{2,3}):\s*([a-z-]+)\s*$", block, re.M
+        )
+    }
+
+
+def assert_packaging_ready(plan_path: str | Path) -> dict[str, str]:
+    """Require every image/hybrid slide to be explicitly approved before packaging."""
+    plan_path = Path(plan_path)
+    text = plan_path.read_text(encoding="utf-8")
+    statuses = _parse_rendering_status(text)
+
+    blockers: list[str] = []
+    for match in re.finditer(r"^### Slide\s+(\d{2,3})\s+—\s+.+$", text, re.M):
+        slide_id = match.group(1)
+        next_match = re.search(
+            r"^### Slide\s+\d{2,3}\s+—\s+.+$",
+            text[match.end():],
+            re.M,
+        )
+        end = match.end() + next_match.start() if next_match else len(text)
+        block = text[match.start():end]
+        mode_match = re.search(r"\*\*Render mode:\*\*\s*(\S+)", block)
+        if not mode_match or mode_match.group(1) not in {"image-slide", "hybrid-slide"}:
+            continue
+        status = statuses.get(slide_id)
+        if status != "approved":
+            blockers.append(f"Slide {slide_id}: {status or 'missing-status'}")
+
+    if blockers:
+        raise ValueError(
+            "Presentation is not ready for PPTX packaging; "
+            "image-slide and hybrid-slide must be approved: "
+            + ", ".join(blockers)
+        )
+    return statuses
+
+
 def _parse_layout_value(value: str) -> dict[str, Any]:
     parts = [part.strip() for part in value.split(",") if part.strip()]
     fields: dict[str, str] = {}
@@ -86,6 +132,7 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
     plan_path = Path(plan_path)
     assets_dir = Path(assets_dir)
     text = plan_path.read_text(encoding="utf-8")
+    statuses = _parse_rendering_status(text)
 
     matches = list(re.finditer(r"^### Slide\s+(\d{2,3})\s+—\s+(.+)$", text, re.M))
     slides: list[dict[str, Any]] = []
@@ -142,6 +189,7 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
                 "slide_id": slide_id,
                 "title": match.group(2).strip(),
                 "render_mode": render_mode,
+                "rendering_status": statuses.get(slide_id),
                 "background": background,
                 "text": text_items,
             }
@@ -161,7 +209,8 @@ def render_plan_hybrid_pptx(
 def render_plan_pptx(
     plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
 ) -> Path:
-    """Package a mixed visual-first deck containing image-slide and hybrid-slide."""
+    """Package a mixed visual-first deck after all image/hybrid slides are approved."""
+    assert_packaging_ready(plan_path)
     return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
 
 
