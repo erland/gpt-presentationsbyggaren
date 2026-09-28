@@ -2,17 +2,17 @@
 
 ## Mål
 
-Visual-first är standardspåret när användaren prioriterar visuell kvalitet framför objektredigerbarhet. Slutprodukten ska se ut som en färdig designerpresentation, inte som ett diagramverktyg eller wireframe.
+Visual-first är standardspåret när användaren prioriterar visuell kvalitet. Slutprodukten ska se ut som en färdig designerpresentation, inte som ett diagramverktyg eller wireframe. När endast texten behöver vara redigerbar används normalt `hybrid-slide`: grafiken ligger i en bildbaserad bakgrund och presentationscopy ligger som native PowerPoint-text ovanpå.
 
 ## Output
 
 Primära leveranser:
 
-- `presentation.pptx` – PowerPoint-skal där varje slide kan bestå av en färdigrenderad helslidebild,
+- `presentation.pptx` – PowerPoint där `image-slide` kan vara en färdigrenderad helslidebild och `hybrid-slide` använder bildbaserad grafik med redigerbar text ovanpå,
 - `presentation.pdf` – samma visuella resultat för stabil distribution,
 - `presentation-plan.md` – kanonisk plan som gör arbetet återupptagningsbart.
 
-PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-first.
+PPTX behöver inte ha redigerbar grafik i visual-first. När användaren vill kunna ändra text ska texten däremot bevaras som separata redigerbara textobjekt på `hybrid-slide`.
 
 ## Renderingspipeline
 
@@ -21,11 +21,11 @@ PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-fi
 3. Välj 1–2 anchor slides.
 4. Generera och kvalitetsgranska anchor-assets.
 5. Generera övriga slide-assets med anchor-resultaten som stilreferens när runtime stöder det.
-6. Komponera exakt presentationscopy separat från bildgenereringen när text måste vara korrekt.
-7. Rendera varje slide till högupplöst bild.
-8. Paketera slidebilderna i PPTX och PDF.
-9. Granska faktisk preview av alla slides.
-10. Leverera endast när teknisk och visuell gate passerar.
+6. För `hybrid-slide`: generera bildbaserad grafik utan presentationscopy och reservera de textytor som planen anger.
+7. Lägg exakt presentationscopy som native PowerPoint-textobjekt ovanpå bakgrunden. För `image-slide`: komponera och rendera hela sliden till högupplöst bild.
+8. Paketera hybrid- och bildslides i samma PPTX och skapa PDF från den visuella slutrenderingen.
+9. Granska faktisk preview av alla slides samt kontrollera textoverflow och kontrast på hybrid-slides.
+10. Leverera endast när teknisk, visuell och – när relevant – redigerbarhetsgate passerar.
 
 ## Anchor slides
 
@@ -117,7 +117,17 @@ Bildmodellen ska normalt **inte** skapa:
 - källhänvisningar,
 - text som måste vara helt korrekt.
 
-Exakt copy komponeras ovanpå eller tillsammans med asseten i ett kontrollerat renderingssteg före helslidebilden exporteras.
+På `hybrid-slide` komponeras exakt copy som separata native PowerPoint-textobjekt ovanpå asseten och får inte rasteriseras in i bakgrundsbilden. På `image-slide` får copy komponeras kontrollerat före helslidebilden exporteras.
+
+## Hybrid-slide
+
+Använd `hybrid-slide` när texten ska kunna ändras utan att den visuella grafiken behöver vara objektredigerbar.
+
+- Bildasseten får innehålla illustrationer, färgfält, boxar, linjer, pilar, diagram och dekorativa element.
+- Bildasseten ska inte innehålla rubriker, brödtext, etiketter, källor eller annan presentationscopy som ska vara redigerbar.
+- `presentation-plan.md` ska ange en `Text layout` och bildprompten ska reservera motsvarande text-safe area.
+- Textytan ska vara visuellt lugn och ha tillräcklig kontrast för den avsedda textstilen.
+- Preview ska bedöma den sammansatta sliden, inte bakgrundsbilden isolerat.
 
 ## Konsistens
 
@@ -143,6 +153,7 @@ Varje slide ska granskas som bild för:
 - frånvaro av wireframe-känsla,
 - konsekvent formspråk,
 - inga bildgenererade textfel,
-- inga oavsiktliga objekt eller visuella artefakter.
+- inga oavsiktliga objekt eller visuella artefakter,
+- på `hybrid-slide`: ingen presentationscopy inbakad i bakgrundsbilden och ingen textoverflow i overlay-lagret.
 
 En slide som ser ut som en skiss, ett flödesschema av standardboxar eller en generisk AI-mall ska göras om.
