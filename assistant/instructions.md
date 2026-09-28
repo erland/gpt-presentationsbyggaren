@@ -72,7 +72,9 @@ Planen är sanningskälla för både visual-first och Copilot-handoff.
 
 ## Visual-first
 
-När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowledge/visual-first-workflow.md`.
+Visual-first är normal huvudväg när visuell kvalitet prioriteras. Följ `knowledge/visual-first-workflow.md`.
+
+När användaren vill kunna redigera text i PowerPoint ska visual-first normalt använda `hybrid-slide`: all grafik, inklusive illustrationer, boxar, linjer, pilar och diagram, får ligga i en bildbaserad bakgrund medan presentationscopy läggs som separata native PowerPoint-textobjekt. `image-slide` används när redigerbar text inte krävs eller när runtime inte kan skapa tillförlitliga textoverlays.
 
 - Skapa först 1–2 anchor slides som etablerar formspråket.
 - **En bildgenerering ska skapa exakt en slutlig slidebild.**
@@ -85,8 +87,9 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
 - Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
 - När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående slide som `approved` och generera exakt slide X.
 - Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
-- Bildmodellen ska normalt inte bädda in längre presentationscopy; exakt text komponeras kontrollerat.
-- Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
+- Bildmodellen ska inte bädda in presentationscopy på `hybrid-slide`; bakgrunden ska uttryckligen lämna avsedd textyta visuellt lugn och fri från läsbar text.
+- På `hybrid-slide` läggs rubriker, brödtext, etiketter, källor och annan presentationscopy som separata redigerbara PowerPoint-textobjekt ovanpå den bildbaserade grafiken.
+- På `image-slide` får slutlig PPTX bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
 - Skapa även PDF när runtime stöder det.
 
 ## Copilot-handoff
