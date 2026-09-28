@@ -84,7 +84,7 @@ När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
 
-Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF.
+Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF. Paketeringen får endast starta när alla `image-slide` och `hybrid-slide` är markerade `approved` i `Rendering status`; `next`, `pending`, `generated` och `redo` är blockerande.
 
 ## Anti-collage-gate
 
