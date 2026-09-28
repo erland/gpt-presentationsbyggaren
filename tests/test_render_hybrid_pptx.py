@@ -119,7 +119,11 @@ def test_presentation_plan_projects_hybrid_slide_to_renderer_spec(tmp_path: Path
     assets.mkdir()
     _write_png(assets / "slide-02.png")
 
-    spec = parse_presentation_plan(root / "tests" / "presentation-plan-example.md", assets)
+    spec = parse_presentation_plan(
+        root / "tests" / "presentation-plan-example.md",
+        assets,
+        {"hybrid-slide"},
+    )
 
     assert len(spec["slides"]) == 1
     slide = spec["slides"][0]
@@ -165,7 +169,11 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
     for name in ("slide-01-v3.png", "slide-02-v2.png", "slide-03-v4.png"):
         _write_png(assets / name)
 
-    spec = parse_presentation_plan(root / "tests" / "presentation-plan-example.md", assets)
+    approved_plan = _approved_plan(
+        root / "tests" / "presentation-plan-example.md",
+        tmp_path / "approved-plan.md",
+    )
+    spec = parse_presentation_plan(approved_plan, assets)
     assert [slide["slide_id"] for slide in spec["slides"]] == ["01", "02", "03"]
     assert [slide["render_mode"] for slide in spec["slides"]] == [
         "image-slide",
@@ -176,10 +184,6 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
     assert spec["slides"][1]["text"][0]["text"] == "AI ger information. Du utför arbetet."
     assert spec["slides"][2]["text"] == []
 
-    approved_plan = _approved_plan(
-        root / "tests" / "presentation-plan-example.md",
-        tmp_path / "approved-plan.md",
-    )
     assert assert_packaging_ready(approved_plan, assets) == {
         "01": "approved",
         "02": "approved",
