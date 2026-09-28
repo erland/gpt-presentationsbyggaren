@@ -9,8 +9,10 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
+from approve_slide_asset import approve_slide
 from render_hybrid_pptx import assert_packaging_ready, parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx, render_plan_pptx
 from validate_pptx import validate_pptx
+from validate_presentation_plan import validate as validate_presentation_plan
 
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
 P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
@@ -302,3 +304,75 @@ def test_packaging_uses_exact_approved_asset_version(tmp_path: Path) -> None:
         "slide-02-v2.png",
         "slide-03-v4.png",
     ]
+
+
+def test_end_to_end_approval_sequence_builds_final_mixed_pptx(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_plan = root / "tests" / "presentation-plan-example.md"
+    plan = tmp_path / "presentation-plan.md"
+    plan.write_text(source_plan.read_text(encoding="utf-8"), encoding="utf-8")
+
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    for name in ("slide-01-v1.png", "slide-02-v2.png", "slide-03-v1.png"):
+        _write_png(assets / name)
+
+    # Simulate the actual user approval flow across all slides.
+    approve_slide(plan, "01", "slide-01-v1.png", "02")
+    approve_slide(plan, "02", "slide-02-v2.png", "03")
+    approve_slide(plan, "03", "slide-03-v1.png", None)
+
+    final_text = plan.read_text(encoding="utf-8")
+    assert "- Next slide: none" in final_text
+    assert "- Slide 01: approved" in final_text
+    assert "- Slide 02: approved" in final_text
+    assert "- Slide 03: approved" in final_text
+    assert "- Approved asset: slide-01-v1.png" in final_text
+    assert "- Approved asset: slide-02-v2.png" in final_text
+    assert "- Approved asset: slide-03-v1.png" in final_text
+    assert validate_presentation_plan(plan) == []
+
+    # Packaging readiness must now pass using the exact approved versions.
+    assert assert_packaging_ready(plan, assets) == {
+        "01": "approved",
+        "02": "approved",
+        "03": "approved",
+    }
+
+    spec = parse_presentation_plan(plan, assets)
+    assert [Path(slide["background"]).name for slide in spec["slides"]] == [
+        "slide-01-v1.png",
+        "slide-02-v2.png",
+        "slide-03-v1.png",
+    ]
+    assert [slide["render_mode"] for slide in spec["slides"]] == [
+        "image-slide",
+        "hybrid-slide",
+        "image-slide",
+    ]
+
+    output = tmp_path / "presentation.pptx"
+    render_plan_pptx(plan, assets, output)
+
+    result = validate_pptx(output)
+    assert result["valid"], result["errors"]
+
+    with zipfile.ZipFile(output) as zf:
+        slide_names = [
+            "ppt/slides/slide1.xml",
+            "ppt/slides/slide2.xml",
+            "ppt/slides/slide3.xml",
+        ]
+        roots = [ET.fromstring(zf.read(name)) for name in slide_names]
+
+        # Every slide is image-backed.
+        assert all(root.find(f".//{{{P_NS}}}pic") is not None for root in roots)
+
+        # Only the hybrid slide keeps editable presentation text.
+        texts_per_slide = [
+            [node.text for node in root.findall(f".//{{{A_NS}}}t") if node.text]
+            for root in roots
+        ]
+        assert texts_per_slide[0] == []
+        assert "AI ger information. Du utför arbetet." in texts_per_slide[1]
+        assert texts_per_slide[2] == []
