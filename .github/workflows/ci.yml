@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pyyaml jsonschema pytest
+          python -m pip install pyyaml jsonschema pytest python-pptx
       - name: Generate runtime parity report
         run: python scripts/generate_runtime_parity.py --project-root .
       - name: Validate project contracts and eval definitions
