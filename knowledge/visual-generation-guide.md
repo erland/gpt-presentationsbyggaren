@@ -39,21 +39,21 @@ En genererad illustration ska ha ett definierat `visual_intent` i storyboardet. 
 - vilka objekt och relationer som måste synas,
 - vad som uttryckligen ska undvikas.
 
-Illustrationen får inte introducera fakta som saknar stöd i materialet. Text i genererade bilder ska undvikas; lägg text som redigerbara PowerPoint-element ovanpå eller bredvid bilden.
+Illustrationen får inte introducera fakta som saknar stöd i materialet. På `hybrid-slide` är regeln hård: presentationscopy ska inte genereras in i bilden. Lägg rubriker, brödtext, etiketter, källor och annan copy som redigerbara PowerPoint-element ovanpå eller bredvid bilden. Bildprompten ska reservera avsedd text-safe area och be modellen hålla den visuellt lugn och fri från läsbar text.
 
 ## Redigerbarhet
 
-Föredra inbyggda presentationsobjekt för:
+När användaren endast behöver redigerbar text ska native presentationsobjekt användas för texten, inte för grafiken.
 
-- rubriker,
+Behåll som separata redigerbara textobjekt:
+
+- rubriker och underrubriker,
+- brödtext och punktlistor,
 - etiketter,
-- pilar och kopplingar,
-- boxar och grupperingar,
-- diagram,
-- tabeller,
-- enkla ikoner och symboler.
+- källor och fotnoter,
+- annan presentationscopy som användaren rimligen behöver ändra.
 
-En komplex illustration får vara en bild när det ger tydligt högre kommunikativ kvalitet. Behåll rubriker, etiketter, källor och annan text som användaren rimligen behöver ändra som separata redigerbara element när det går. Undvik att rasterisera hela sliden som standard.
+Illustrationer, boxar, linjer, pilar, diagram, tabeller och dekorativa former får ligga i den bildbaserade bakgrunden när det ger högre visuell kvalitet. Rasterisera inte textlagret på `hybrid-slide`.
 
 ## Konsistens
 
