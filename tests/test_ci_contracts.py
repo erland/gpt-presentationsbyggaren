@@ -22,3 +22,10 @@ def test_runtime_parity_report_validates():
     jsonschema.Draft202012Validator(schema).validate(report)
     assert report['runtimes']['chatgpt_chat']['release_recommendation']!='do_not_publish'
     assert report['runtimes']['chatgpt_custom']['release_recommendation']!='do_not_publish'
+
+
+def test_chat_runtime_requires_downloadable_presentation_plan():
+    policy=(ROOT/'assistant/runtime-policies/chatgpt-chat.md').read_text()
+    assert "Presentation Plan är obligatorisk som faktisk fil" in policy
+    assert "presentation-plan.md" in policy
+    assert "Gå inte vidare till första slidebilden" in policy
