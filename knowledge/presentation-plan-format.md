@@ -133,6 +133,7 @@ Regler:
 - om någon bildslide återstår ska normalt exakt en vara `next`,
 - `next` behöver inte automatiskt flyttas till numeriskt följande slide; användarens explicita kommando `Skapa slide X enligt planen` avgör vilken slide som blir nästa,
 - om användaren underkänner bilden sätts samma slide till `redo` och görs om innan flödet går vidare,
+- när en bild godkänns ska dess `Image asset` uppdateras med `Approved asset: <filnamn>`; detta binder godkännandet till exakt den genererade asset-versionen,
 - när alla relevanta slides är `approved` eller `not-applicable` går nästa steg till paketering.
 
 ## Slide-format
@@ -164,6 +165,7 @@ Tre tydliga scener med stigande abstraktionsnivå ...
 **Image asset**
 - Needed: yes
 - Generation group: anchor-2
+- Approved asset: slide-07-v2.png
 - Prompt intent: ...
 - Must show: ...
 - Text in image: no
@@ -205,7 +207,7 @@ Text layout ska minst ange en placeringsregel för den redigerbara copy som finn
 
 Text layout beskriver endast textlagret. Boxar, linjer, pilar, diagram och annan grafik får ingå i bakgrundsbilden.
 
-Referensrenderaren `scripts/render_hybrid_pptx.py` kan projicera hybrid-slides direkt från planen. Bakgrundsassets namnges deterministiskt som `slide-NN.png` eller `slide-NN.jpg` i angiven asset-katalog, medan `Visible text` kopplas till motsvarande poster i `Text layout` via etiketten före kolon, exempelvis `Title` eller `Label 1`.
+Referensrenderaren `scripts/render_hybrid_pptx.py` kan projicera visual-first-slides direkt från planen. Före godkännande kan en enkel deterministisk fil som `slide-NN.png` användas under arbetsflödet. När en slide godkänns måste planen däremot ange exakt `Approved asset`, exempelvis `slide-07-v2.png`. Paketeringen använder endast denna explicit godkända version och väljer inte automatiskt en annan fil. `Visible text` kopplas till motsvarande poster i `Text layout` via etiketten före kolon, exempelvis `Title` eller `Label 1`.
 
 ## Återupptagning
 
@@ -229,4 +231,5 @@ Planen är redo för rendering när:
 - visual system är definierat,
 - renderingsstatus finns och pekar ut högst en nästa slide,
 - varje bildgeneration avser exakt en slide,
+- varje slide med status `approved` har en explicit `Approved asset` som pekar ut den godkända bildversionen,
 - inga centrala fakta behöver hittas på under renderingen.
