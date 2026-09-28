@@ -29,3 +29,24 @@ def test_chat_runtime_requires_downloadable_presentation_plan():
     assert "Presentation Plan är obligatorisk som faktisk fil" in policy
     assert "presentation-plan.md" in policy
     assert "Gå inte vidare till första slidebilden" in policy
+
+
+def test_hybrid_image_prompt_contract_is_strictly_text_free():
+    instructions=(ROOT/'assistant/instructions.md').read_text()
+    chat_policy=(ROOT/'assistant/runtime-policies/chatgpt-chat.md').read_text()
+    workflow=(ROOT/'knowledge/visual-first-workflow.md').read_text()
+
+    required = [
+        "Visible text",
+        "får inte",
+        "pseudo-text",
+        "Approved asset",
+    ]
+    for marker in required:
+        assert marker in instructions
+        assert marker in chat_policy or marker in workflow
+
+    assert "inga bokstäver" in instructions
+    assert "inga ord" in instructions
+    assert "inga siffror" in instructions
+    assert "textliknande symboler" in instructions
