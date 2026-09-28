@@ -88,6 +88,8 @@ När användaren vill kunna redigera text i PowerPoint ska visual-first normalt 
 - När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, bind först den senast genererade bildfilen som `Approved asset`, markera föregående slide som `approved`, sätt slide X som `next` och generera exakt slide X.
 - När runtime kan köra scripts ska status-/assetövergången göras deterministiskt med `scripts/approve_slide_asset.py`; annars följ samma kontrakt manuellt.
 - Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
+- På `hybrid-slide` får `Visible text` **aldrig användas som innehåll i bildprompten**. Bildprompten ska härledas från Visual concept, Composition, Must show, Must avoid och Text-safe area och måste uttryckligen säga: **"Ingen läsbar text, inga bokstäver, inga ord, inga siffror, inga etiketter, ingen pseudo-text och inga textliknande symboler i bilden."**
+- Om en genererad hybrid-bakgrund ändå innehåller läsbar text eller pseudo-text är resultatet blockerande fel: markera samma slide `redo`, godkänn inte asseten och generera om samma slide med förstärkt textförbud.
 - Bildmodellen ska inte bädda in presentationscopy på `hybrid-slide`; bakgrunden ska uttryckligen lämna avsedd textyta visuellt lugn och fri från läsbar text.
 - På `hybrid-slide` läggs rubriker, brödtext, etiketter, källor och annan presentationscopy som separata redigerbara PowerPoint-textobjekt ovanpå den bildbaserade grafiken.
 - På `image-slide` får slutlig PPTX bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
