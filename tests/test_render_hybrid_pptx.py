@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from render_hybrid_pptx import parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx
+from render_hybrid_pptx import parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx, render_plan_pptx
 from validate_pptx import validate_pptx
 
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -134,3 +134,51 @@ def test_presentation_plan_renders_editable_text_pptx(tmp_path: Path) -> None:
         assert "AI ger information. Du utför arbetet." in texts
         assert root_xml.find(f".//{{{P_NS}}}pic") is not None
         assert root_xml.find(f".//{{{P_NS}}}sp") is not None
+
+
+def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    for slide_id in ("01", "02", "03"):
+        _write_png(assets / f"slide-{slide_id}.png")
+
+    spec = parse_presentation_plan(root / "tests" / "presentation-plan-example.md", assets)
+    assert [slide["slide_id"] for slide in spec["slides"]] == ["01", "02", "03"]
+    assert [slide["render_mode"] for slide in spec["slides"]] == [
+        "image-slide",
+        "hybrid-slide",
+        "image-slide",
+    ]
+    assert spec["slides"][0]["text"] == []
+    assert spec["slides"][1]["text"][0]["text"] == "AI ger information. Du utför arbetet."
+    assert spec["slides"][2]["text"] == []
+
+    output = tmp_path / "mixed.pptx"
+    render_plan_pptx(root / "tests" / "presentation-plan-example.md", assets, output)
+
+    result = validate_pptx(output)
+    assert result["valid"], result["errors"]
+
+    with zipfile.ZipFile(output) as zf:
+        slide_names = sorted(
+            name
+            for name in zf.namelist()
+            if name.startswith("ppt/slides/slide") and name.endswith(".xml")
+        )
+        assert slide_names == [
+            "ppt/slides/slide1.xml",
+            "ppt/slides/slide2.xml",
+            "ppt/slides/slide3.xml",
+        ]
+
+        roots = [ET.fromstring(zf.read(name)) for name in slide_names]
+        assert all(root.find(f".//{{{P_NS}}}pic") is not None for root in roots)
+
+        texts_per_slide = [
+            [node.text for node in root.findall(f".//{{{A_NS}}}t") if node.text]
+            for root in roots
+        ]
+        assert texts_per_slide[0] == []
+        assert "AI ger information. Du utför arbetet." in texts_per_slide[1]
+        assert texts_per_slide[2] == []
