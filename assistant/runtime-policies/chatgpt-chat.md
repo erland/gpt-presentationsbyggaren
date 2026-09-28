@@ -20,6 +20,8 @@ Följ samma fasordning som canonical instruktionen. Kommandot **Gör nästa steg
 - Om filskrivning verkligen saknas ska begränsningen anges uttryckligt och hela planen får då lämnas inline som fallback; påstå inte att en nedladdningsbar fil har skapats.
 - Skapa en faktisk `.pptx` när full presentationsleverans efterfrågas och runtimeverktyget kan göra det.
 - När användaren vill kunna redigera text ska `hybrid-slide` bevara presentationscopy som native PowerPoint-text; grafik får ligga i bildbakgrunden.
+- Före varje bildgenerering ska Chat-runtime läsa slidens `Render mode`. Om den är `hybrid-slide` får `Visible text` inte skickas som bildinnehåll. Bildprompten måste explicit förbjuda läsbar text, bokstäver, ord, siffror, etiketter, pseudo-text och textliknande symboler.
+- En hybrid-bild som innehåller sådan text får inte godkännas eller bindas som `Approved asset`; samma slide ska göras om.
 - Leverera övriga stödartefakter endast när de hjälper användaren eller behövs för återupptagning/validering.
 - Om PPTX-rendering inte är tillgänglig ska storyboard och renderingsspecifikation levereras och begränsningen anges tydligt; presentationen får inte påstås vara skapad.
 
