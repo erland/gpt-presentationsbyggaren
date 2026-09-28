@@ -154,7 +154,11 @@ def _parse_layout_value(value: str) -> dict[str, Any]:
     }
 
 
-def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> dict[str, Any]:
+def parse_presentation_plan(
+    plan_path: str | Path,
+    assets_dir: str | Path,
+    render_modes: set[str] | None = None,
+) -> dict[str, Any]:
     """Project image-slide and hybrid-slide entries from presentation-plan.md."""
     plan_path = Path(plan_path)
     assets_dir = Path(assets_dir)
@@ -173,7 +177,8 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
         if not mode_match:
             continue
         render_mode = mode_match.group(1)
-        if render_mode not in {"image-slide", "hybrid-slide"}:
+        allowed_modes = render_modes or {"image-slide", "hybrid-slide"}
+        if render_mode not in allowed_modes:
             continue
 
         slide_id = match.group(1)
@@ -235,7 +240,9 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
 def render_plan_hybrid_pptx(
     plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
 ) -> Path:
-    return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
+    return render_hybrid_pptx(
+        parse_presentation_plan(plan_path, assets_dir, {"hybrid-slide"}), output_path
+    )
 
 
 def render_plan_pptx(
