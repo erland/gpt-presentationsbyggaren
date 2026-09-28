@@ -2,19 +2,18 @@
 
 ## Syfte
 
-Rendering ska ge en professionell presentation och en tekniskt giltig leverans. När användaren inte kräver objektredigerbarhet är **visual-first** standard: visuellt resultat prioriteras framför PowerPoints interna objektmodell.
+Rendering ska ge en professionell presentation och en tekniskt giltig leverans. **Visual-first** prioriterar visuellt resultat framför full objektredigerbarhet, men kan samtidigt bevara texten som redigerbara PowerPoint-objekt när användaren behöver det.
 
 ## Två huvudspår
 
 ### Visual-first
 
-Använd när visuell kvalitet är viktigare än objektredigering.
+Använd när visuell kvalitet är viktigast. Två render modes stöds:
 
-- varje slide får renderas till en färdig helslidebild,
-- PowerPoint används som presentationsskal,
-- PDF ska när möjligt motsvara samma visuella rendering,
-- exakt copy ska kontrolleras separat från bildgenereringen,
-- speaker notes bevaras när presentationsformatet stöder det.
+- `hybrid-slide` – bildbaserad grafik med native, redigerbar PowerPoint-text ovanpå; normalval när texten ska kunna ändras,
+- `image-slide` – färdigrenderad helslidebild; används när redigerbar text inte krävs eller som runtime-fallback.
+
+I båda fallen ska PDF när möjligt motsvara samma visuella slutrendering, exakt copy kontrolleras separat från bildgenereringen och speaker notes bevaras när presentationsformatet stöder det.
 
 ### Copilot-handoff
 
@@ -32,11 +31,11 @@ Använd när användaren vill ha en redigerbar presentation från ett presentati
 3. Välj 1–2 anchor slides.
 4. Generera och godkänn anchor-assets.
 5. Generera återstående assets normalt en slide i taget; använd högst små batcher när det är lämpligt.
-6. Komponera korrekt rubrik, etiketter och övrig presentationscopy.
-7. Rendera högupplösta slides.
+6. För hybrid-slides: lägg korrekt rubrik, etiketter och övrig presentationscopy som native text ovanpå textfri grafik. För image-slides: komponera copy före helslide-rendering.
+7. Rendera faktisk preview av den sammansatta sliden.
 8. Paketera till PPTX och PDF.
-9. Granska faktisk preview av alla slides.
-10. Leverera först efter teknisk och visuell gate.
+9. Granska alla previews samt textoverflow, kontrast och textplacering på hybrid-slides.
+10. Leverera först efter teknisk, visuell och relevant redigerbarhetsgate.
 
 ## Visuell ambitionsnivå
 
@@ -63,7 +62,7 @@ Blockerande varningssignaler:
 
 Följ `knowledge/visual-first-workflow.md`.
 
-Bildmodellen ska normalt skapa scen, illustration, bakgrund eller metafor. Presentationscopy läggs separat när exakthet krävs.
+Bildmodellen ska normalt skapa scen, illustration, bakgrund eller metafor. På `hybrid-slide` läggs presentationscopy alltid separat som native PowerPoint-text och bildasseten ska reservera text-safe area.
 
 Anchor-resultat ska styra senare generationer när runtime kan använda referensbilder.
 
@@ -71,7 +70,7 @@ Anchor-resultat ska styra senare generationer när runtime kan använda referens
 
 Canonical metoden ska inte handskriva rå Open XML.
 
-Vid programmatisk PPTX-generering ska en etablerad presentationsrenderer eller bibliotek användas. För visual-first kan varje slide bestå av en helslidebild; detta minskar behovet av komplex PowerPoint-layout.
+Vid programmatisk PPTX-generering ska en etablerad presentationsrenderer eller bibliotek användas. En `image-slide` kan bestå av en helslidebild. En `hybrid-slide` ska bestå av en bildbaserad bakgrund plus separata textshapes; grafiska objekt behöver inte rekonstrueras som PowerPoint-former.
 
 ## Teknisk PPTX-validering
 
@@ -83,6 +82,7 @@ Före leverans ska PPTX när runtime medger det passera:
 4. Interna relationship-targets kan resolvas.
 5. Filen kan öppnas/renderas med en oberoende Office-kompatibel motor när sådan finns.
 6. Preview kan skapas.
+7. När hybrid-slides levereras: presentationscopy finns som textshapes i slide-XML och inte enbart i rasterbilden.
 
 Fel i 1–4 är alltid blockerande. Fel i 5 blockerar påstådd PowerPoint-kompatibilitet.
 
@@ -99,7 +99,8 @@ Granska det användaren faktiskt kommer att se:
 - visuella artefakter,
 - collage/kontaktkarta/thumbnail-grid i stället för en enda slidekomposition,
 - wireframe- eller mallkänsla,
-- inkonsekvent visual system.
+- inkonsekvent visual system,
+- på hybrid-slides: text som ser påklistrad ut, overflow, otillräcklig kontrast eller presentationscopy som råkat hamna i bakgrundsbilden.
 
 I visual-first granskas normalt **alla slides**, eftersom previewn är den slutliga visuella sanningen.
 
@@ -108,7 +109,7 @@ I visual-first granskas normalt **alla slides**, eftersom previewn är den slutl
 När visual-first valts:
 
 1. `presentation-plan.md` – återupptagningsbar masterplan,
-2. `presentation.pptx` – bildbaserad PowerPoint för framförande,
+2. `presentation.pptx` – visual-first PowerPoint; normalt hybrid med redigerbar text när det efterfrågas, annars bildbaserad,
 3. `presentation.pdf` – visuellt stabil representation.
 
 När redigerbarhet via Copilot önskas:
@@ -129,5 +130,6 @@ Leveransen är klar när:
 - alla visual-first-slides har granskats som preview,
 - inga blockerande visuella problem återstår,
 - PPTX-integritet är godkänd om PPTX levereras,
+- redigerbar text verifieras på hybrid-slides när sådan utlovas,
 - PDF motsvarar avsedd rendering när PDF levereras,
 - Copilot-handoff bevarar samma kärnbudskap och slide-specifikation när det spåret används.
