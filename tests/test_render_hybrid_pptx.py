@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from render_hybrid_pptx import parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx, render_plan_pptx
+from render_hybrid_pptx import assert_packaging_ready, parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx, render_plan_pptx
 from validate_pptx import validate_pptx
 
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -39,6 +39,16 @@ def _write_png(path: Path, width: int = 16, height: int = 9) -> None:
     )
     path.write_bytes(png)
 
+
+
+def _approved_plan(source: Path, target: Path) -> Path:
+    text = source.read_text(encoding="utf-8")
+    text = text.replace("- Next slide: 01", "- Next slide: none")
+    text = text.replace("- Slide 01: next", "- Slide 01: approved")
+    text = text.replace("- Slide 02: pending", "- Slide 02: approved")
+    text = text.replace("- Slide 03: pending", "- Slide 03: approved")
+    target.write_text(text, encoding="utf-8")
+    return target
 
 def test_hybrid_renderer_creates_background_image_and_editable_text(tmp_path: Path) -> None:
     background = tmp_path / "background.png"
@@ -154,8 +164,18 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
     assert spec["slides"][1]["text"][0]["text"] == "AI ger information. Du utför arbetet."
     assert spec["slides"][2]["text"] == []
 
+    approved_plan = _approved_plan(
+        root / "tests" / "presentation-plan-example.md",
+        tmp_path / "approved-plan.md",
+    )
+    assert assert_packaging_ready(approved_plan) == {
+        "01": "approved",
+        "02": "approved",
+        "03": "approved",
+    }
+
     output = tmp_path / "mixed.pptx"
-    render_plan_pptx(root / "tests" / "presentation-plan-example.md", assets, output)
+    render_plan_pptx(approved_plan, assets, output)
 
     result = validate_pptx(output)
     assert result["valid"], result["errors"]
@@ -182,3 +202,36 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
         assert texts_per_slide[0] == []
         assert "AI ger information. Du utför arbetet." in texts_per_slide[1]
         assert texts_per_slide[2] == []
+
+
+def test_packaging_is_blocked_until_all_visual_slides_are_approved(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    plan = root / "tests" / "presentation-plan-example.md"
+
+    try:
+        assert_packaging_ready(plan)
+    except ValueError as exc:
+        message = str(exc)
+        assert "Slide 01: next" in message
+        assert "Slide 02: pending" in message
+        assert "Slide 03: pending" in message
+    else:
+        raise AssertionError("Packaging should be blocked for unapproved slides")
+
+
+def test_render_plan_pptx_does_not_consume_assets_before_approval(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    for slide_id in ("01", "02", "03"):
+        _write_png(assets / f"slide-{slide_id}.png")
+
+    output = tmp_path / "should-not-exist.pptx"
+    try:
+        render_plan_pptx(root / "tests" / "presentation-plan-example.md", assets, output)
+    except ValueError as exc:
+        assert "not ready for PPTX packaging" in str(exc)
+    else:
+        raise AssertionError("Packaging should fail before reading approved assets")
+
+    assert not output.exists()
