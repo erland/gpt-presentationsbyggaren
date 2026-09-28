@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from render_hybrid_pptx import render_hybrid_pptx
+from render_hybrid_pptx import parse_presentation_plan, render_hybrid_pptx, render_plan_hybrid_pptx
 from validate_pptx import validate_pptx
 
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -89,3 +89,48 @@ def test_hybrid_renderer_creates_background_image_and_editable_text(tmp_path: Pa
         # The slide must contain a picture plus at least one ordinary shape/textbox.
         assert root.find(f".//{{{P_NS}}}pic") is not None
         assert root.find(f".//{{{P_NS}}}sp") is not None
+
+
+def test_presentation_plan_projects_hybrid_slide_to_renderer_spec(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    _write_png(assets / "slide-02.png")
+
+    spec = parse_presentation_plan(root / "tests" / "presentation-plan-example.md", assets)
+
+    assert len(spec["slides"]) == 1
+    slide = spec["slides"][0]
+    assert slide["slide_id"] == "02"
+    assert slide["text"][0]["text"] == "AI ger information. Du utför arbetet."
+    assert slide["text"][0]["box"] == {
+        "x_pct": 58.0,
+        "y_pct": 24.0,
+        "w_pct": 34.0,
+        "h_pct": 24.0,
+    }
+    assert slide["text"][0]["bold"] is True
+
+
+def test_presentation_plan_renders_editable_text_pptx(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    _write_png(assets / "slide-02.png")
+    output = tmp_path / "from-plan.pptx"
+
+    render_plan_hybrid_pptx(root / "tests" / "presentation-plan-example.md", assets, output)
+
+    result = validate_pptx(output)
+    assert result["valid"], result["errors"]
+
+    with zipfile.ZipFile(output) as zf:
+        root_xml = ET.fromstring(zf.read("ppt/slides/slide1.xml"))
+        texts = [
+            node.text
+            for node in root_xml.findall(f".//{{{A_NS}}}t")
+            if node.text
+        ]
+        assert "AI ger information. Du utför arbetet." in texts
+        assert root_xml.find(f".//{{{P_NS}}}pic") is not None
+        assert root_xml.find(f".//{{{P_NS}}}sp") is not None
