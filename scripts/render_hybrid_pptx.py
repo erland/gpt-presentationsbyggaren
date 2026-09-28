@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,14 @@ from pptx.util import Inches, Pt
 
 SLIDE_WIDTH_IN = 13.333333
 SLIDE_HEIGHT_IN = 7.5
+
+STYLE_PRESETS: dict[str, dict[str, Any]] = {
+    "title-large": {"font_name": "Aptos Display", "font_size_pt": 28, "bold": True, "color": "#1F2937"},
+    "subtitle-medium": {"font_name": "Aptos", "font_size_pt": 18, "bold": False, "color": "#374151"},
+    "body": {"font_name": "Aptos", "font_size_pt": 18, "bold": False, "color": "#1F2937"},
+    "label-large": {"font_name": "Aptos", "font_size_pt": 20, "bold": True, "color": "#1F2937"},
+    "footnote": {"font_name": "Aptos", "font_size_pt": 10, "bold": False, "color": "#4B5563"},
+}
 
 
 def _pct(value: float, total_inches: float):
@@ -23,6 +32,125 @@ def _rgb(hex_value: str) -> RGBColor:
     if len(value) != 6:
         raise ValueError(f"Expected 6-digit RGB hex color, got: {hex_value}")
     return RGBColor.from_string(value.upper())
+
+
+
+def _section(block: str, heading: str) -> str:
+    start = block.find(heading)
+    if start < 0:
+        return ""
+    start += len(heading)
+    next_heading = re.search(r"^\*\*[^\n]+\*\*\s*$", block[start:], re.M)
+    end = start + next_heading.start() if next_heading else len(block)
+    return block[start:end].strip()
+
+
+def _parse_keyed_bullets(section: str) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for line in section.splitlines():
+        match = re.match(r"^-\s*([^:]+):\s*(.+?)\s*$", line)
+        if match:
+            result[match.group(1).strip()] = match.group(2).strip()
+    return result
+
+
+def _parse_layout_value(value: str) -> dict[str, Any]:
+    parts = [part.strip() for part in value.split(",") if part.strip()]
+    fields: dict[str, str] = {}
+    for part in parts:
+        if "=" not in part:
+            continue
+        key, raw = part.split("=", 1)
+        fields[key.strip()] = raw.strip()
+
+    def percent(name: str) -> float:
+        raw = fields.get(name)
+        if raw is None or not raw.endswith("%"):
+            raise ValueError(f"Text layout requires {name}=NN%: {value}")
+        return float(raw[:-1])
+
+    return {
+        "box": {
+            "x_pct": percent("x"),
+            "y_pct": percent("y"),
+            "w_pct": percent("width"),
+            "h_pct": percent("height"),
+        },
+        "style": fields.get("style", "body"),
+        "align": fields.get("align", "left"),
+    }
+
+
+def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> dict[str, Any]:
+    """Project hybrid slides from canonical presentation-plan.md into renderer input."""
+    plan_path = Path(plan_path)
+    assets_dir = Path(assets_dir)
+    text = plan_path.read_text(encoding="utf-8")
+
+    matches = list(re.finditer(r"^### Slide\s+(\d{2,3})\s+—\s+(.+)$", text, re.M))
+    slides: list[dict[str, Any]] = []
+
+    for idx, match in enumerate(matches):
+        start = match.start()
+        end = matches[idx + 1].start() if idx + 1 < len(matches) else len(text)
+        block = text[start:end]
+
+        mode_match = re.search(r"\*\*Render mode:\*\*\s*(\S+)", block)
+        if not mode_match or mode_match.group(1) != "hybrid-slide":
+            continue
+
+        slide_id = match.group(1)
+        visible = _parse_keyed_bullets(_section(block, "**Visible text**"))
+        layout = _parse_keyed_bullets(_section(block, "**Text layout**"))
+
+        missing_layout = sorted(set(visible) - set(layout))
+        if missing_layout:
+            raise ValueError(
+                f"Slide {slide_id}: missing Text layout entries for: {', '.join(missing_layout)}"
+            )
+
+        text_items: list[dict[str, Any]] = []
+        for key, copy in visible.items():
+            parsed = _parse_layout_value(layout[key])
+            preset = dict(STYLE_PRESETS.get(parsed.pop("style"), STYLE_PRESETS["body"]))
+            preset.update(parsed)
+            preset["text"] = copy
+            text_items.append(preset)
+
+        background = None
+        for candidate in (
+            assets_dir / f"slide-{slide_id}.png",
+            assets_dir / f"slide-{int(slide_id)}.png",
+            assets_dir / f"slide-{slide_id}.jpg",
+            assets_dir / f"slide-{int(slide_id)}.jpg",
+        ):
+            if candidate.is_file():
+                background = str(candidate)
+                break
+        if background is None:
+            raise FileNotFoundError(
+                f"Slide {slide_id}: expected background asset in {assets_dir} "
+                f"(for example slide-{slide_id}.png)"
+            )
+
+        slides.append(
+            {
+                "slide_id": slide_id,
+                "title": match.group(2).strip(),
+                "background": background,
+                "text": text_items,
+            }
+        )
+
+    if not slides:
+        raise ValueError("Presentation plan contains no hybrid-slide entries")
+    return {"slides": slides}
+
+
+def render_plan_hybrid_pptx(
+    plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
+) -> Path:
+    return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
 
 
 def render_hybrid_pptx(spec: dict[str, Any], output_path: str | Path) -> Path:
@@ -92,22 +220,28 @@ def render_hybrid_pptx(spec: dict[str, Any], output_path: str | Path) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Render a reference hybrid PPTX with image backgrounds and editable text overlays."
+        description="Render hybrid PPTX slides with image backgrounds and editable text overlays."
     )
-    parser.add_argument("spec", help="JSON spec containing slides, backgrounds and text boxes")
-    parser.add_argument("output", help="Output .pptx path")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--spec", help="JSON spec containing slides, backgrounds and text boxes")
+    source.add_argument("--plan", help="Canonical presentation-plan.md")
+    parser.add_argument("--assets-dir", help="Directory containing slide-NN.png/jpg background assets")
+    parser.add_argument("--output", required=True, help="Output .pptx path")
     args = parser.parse_args()
 
-    spec_path = Path(args.spec)
-    spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    if args.plan:
+        if not args.assets_dir:
+            parser.error("--assets-dir is required with --plan")
+        render_plan_hybrid_pptx(args.plan, args.assets_dir, args.output)
+    else:
+        spec_path = Path(args.spec)
+        spec = json.loads(spec_path.read_text(encoding="utf-8"))
+        for slide in spec.get("slides", []):
+            background = slide.get("background")
+            if background and not Path(background).is_absolute():
+                slide["background"] = str((spec_path.parent / background).resolve())
+        render_hybrid_pptx(spec, args.output)
 
-    # Resolve relative backgrounds from the spec file directory.
-    for slide in spec.get("slides", []):
-        background = slide.get("background")
-        if background and not Path(background).is_absolute():
-            slide["background"] = str((spec_path.parent / background).resolve())
-
-    render_hybrid_pptx(spec, args.output)
     print(f"HYBRID PPTX: {args.output}")
     return 0
 
