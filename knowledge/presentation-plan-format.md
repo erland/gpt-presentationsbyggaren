@@ -133,6 +133,7 @@ Regler:
 - om någon bildslide återstår ska normalt exakt en vara `next`,
 - `next` behöver inte automatiskt flyttas till numeriskt följande slide; användarens explicita kommando `Skapa slide X enligt planen` avgör vilken slide som blir nästa,
 - om användaren underkänner bilden sätts samma slide till `redo` och görs om innan flödet går vidare,
+- när en bild godkänns ska dess `Image asset` uppdateras med `Approved asset: <filnamn>`; detta binder godkännandet till exakt den genererade asset-versionen,
 - när alla relevanta slides är `approved` eller `not-applicable` går nästa steg till paketering.
 
 ## Slide-format
@@ -145,13 +146,18 @@ Varje slide dokumenteras så här:
 **Purpose:** explain
 **Message:** Förflyttningen sker i tre nivåer.
 **Pattern:** three-pillars
-**Render mode:** image-slide
+**Render mode:** hybrid-slide
 **Visual priority:** hero
 
 **Visible text**
-- 1. Bygg själv
-- 2. Bygg assistenter
-- 3. Bygg med en assistent
+- Label 1: Bygg själv
+- Label 2: Bygg assistenter
+- Label 3: Bygg med en assistent
+
+**Text layout**
+- Label 1: x=7%, y=12%, width=24%, height=10%, style=label-large
+- Label 2: x=38%, y=12%, width=24%, height=10%, style=label-large
+- Label 3: x=69%, y=12%, width=24%, height=10%, style=label-large
 
 **Visual concept**
 Tre tydliga scener med stigande abstraktionsnivå ...
@@ -159,9 +165,12 @@ Tre tydliga scener med stigande abstraktionsnivå ...
 **Image asset**
 - Needed: yes
 - Generation group: anchor-2
+- Approved asset: slide-07-v2.png
 - Prompt intent: ...
 - Must show: ...
-- Must avoid: ...
+- Text in image: no
+- Text-safe area: three calm label zones across the upper part of the slide
+- Must avoid: readable text, pseudo-text, ...
 
 **Composition**
 Rubrik överst, tre stora scener över hela canvasen ...
@@ -177,12 +186,28 @@ Rubrik överst, tre stora scener över hela canvasen ...
 
 Planen använder i första hand:
 
-- `image-slide` – färdig visuell slide där raster/SVG/PDF-komposition är huvudytan,
-- `hybrid-slide` – bild/illustration plus separat exakt text eller data,
+- `image-slide` – färdig visuell slide där raster/SVG/PDF-komposition är huvudytan och text kan vara rasteriserad,
+- `hybrid-slide` – bildbaserad grafik plus separat native PowerPoint-text; normalval när texten ska vara redigerbar men grafik, boxar, linjer, pilar och diagram inte behöver vara det,
 - `native-slide` – endast när native diagram/tabell/teknisk struktur faktiskt är bättre,
 - `copilot-only` – renderas inte lokalt; används bara i Copilot-handoff.
 
-När redigerbarhet inte är krav är `image-slide` normalfallet för visuellt drivna presentationer.
+När redigerbar text efterfrågas är `hybrid-slide` normalfallet för visuellt drivna presentationer. När redigerbarhet inte är krav kan `image-slide` användas.
+
+## Text layout för hybrid-slide
+
+Varje `hybrid-slide` som har synlig text ska innehålla sektionen `**Text layout**`.
+
+Text layout ska minst ange en placeringsregel för den redigerbara copy som finns under `**Visible text**`. Positioner kan uttryckas som procent av slideytan eller som semantiska zoner när runtime kan lösa dem deterministiskt. Föredra gemensamma stilreferenser, exempelvis `title-large`, framför duplicerade fontvärden på varje slide.
+
+`**Image asset**` på hybrid-slides ska dessutom ange:
+
+- `Text in image: no`,
+- en `Text-safe area` som motsvarar textlayouten,
+- `Must avoid` som förbjuder läsbar text eller pseudo-text i bakgrundsasseten.
+
+Text layout beskriver endast textlagret. Boxar, linjer, pilar, diagram och annan grafik får ingå i bakgrundsbilden.
+
+Referensrenderaren `scripts/render_hybrid_pptx.py` kan projicera visual-first-slides direkt från planen. Före godkännande kan en enkel deterministisk fil som `slide-NN.png` användas under arbetsflödet. När en slide godkänns måste planen däremot ange exakt `Approved asset`, exempelvis `slide-07-v2.png`. Paketeringen använder endast denna explicit godkända version och väljer inte automatiskt en annan fil. `Visible text` kopplas till motsvarande poster i `Text layout` via etiketten före kolon, exempelvis `Title` eller `Label 1`.
 
 ## Återupptagning
 
@@ -202,7 +227,9 @@ Planen är redo för rendering när:
 - varje slide har ett huvudbudskap,
 - synlig text är separat från speaker notes,
 - varje slide har render mode och visual concept,
+- varje hybrid-slide med synlig text har `Text layout` och en textfri `Image asset` med `Text-safe area`,
 - visual system är definierat,
 - renderingsstatus finns och pekar ut högst en nästa slide,
 - varje bildgeneration avser exakt en slide,
+- varje slide med status `approved` har en explicit `Approved asset` som pekar ut den godkända bildversionen,
 - inga centrala fakta behöver hittas på under renderingen.

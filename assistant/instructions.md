@@ -72,7 +72,9 @@ Planen är sanningskälla för både visual-first och Copilot-handoff.
 
 ## Visual-first
 
-När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowledge/visual-first-workflow.md`.
+Visual-first är normal huvudväg när visuell kvalitet prioriteras. Följ `knowledge/visual-first-workflow.md`.
+
+När användaren vill kunna redigera text i PowerPoint ska visual-first normalt använda `hybrid-slide`: all grafik, inklusive illustrationer, boxar, linjer, pilar och diagram, får ligga i en bildbaserad bakgrund medan presentationscopy läggs som separata native PowerPoint-textobjekt. `image-slide` används när redigerbar text inte krävs eller när runtime inte kan skapa tillförlitliga textoverlays.
 
 - Skapa först 1–2 anchor slides som etablerar formspråket.
 - **En bildgenerering ska skapa exakt en slutlig slidebild.**
@@ -83,11 +85,10 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
   - om bilden behöver ändras: skriv t.ex. `Ändra slide 1: ...`
   - om bilden ska göras om: skriv t.ex. `Gör om slide 1 enligt planen, men ...`
 - Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
-- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående slide som `approved` och generera exakt slide X.
-- Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
-- Bildmodellen ska normalt inte bädda in längre presentationscopy; exakt text komponeras kontrollerat.
-- Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
-- Skapa även PDF när runtime stöder det.
+- Vid `Det ser bra ut. Skapa slide X enligt planen.`: bind senaste bildfilen som `Approved asset`, markera föregående slide `approved`, sätt X till `next` och generera slide X. Använd `scripts/approve_slide_asset.py` när möjligt.
+- För `hybrid-slide` får `Visible text` aldrig skickas som bildinnehåll. Bygg bildprompten från Visual concept, Composition, Must show, Must avoid och Text-safe area och inkludera: **"Ingen läsbar text, inga bokstäver, inga ord, inga siffror, inga etiketter, ingen pseudo-text och inga textliknande symboler i bilden."**
+- Om hybrid-bilden ändå innehåller text/pseudo-text: sätt samma slide `redo`, godkänn inte asseten och generera om. Presentationscopy läggs endast som native PowerPoint-text ovanpå bakgrunden.
+- `image-slide` får vara en färdigrenderad helslidebild. Skapa PDF när runtime stöder det.
 
 ## Copilot-handoff
 

@@ -1,0 +1,23 @@
+{
+  "slides": [
+    {
+      "background": "hybrid-background.png",
+      "text": [
+        {
+          "text": "AI ger information. Du utför arbetet.",
+          "box": {
+            "x_pct": 58,
+            "y_pct": 24,
+            "w_pct": 34,
+            "h_pct": 24
+          },
+          "font_name": "Aptos Display",
+          "font_size_pt": 28,
+          "bold": true,
+          "color": "#1F2937",
+          "align": "left"
+        }
+      ]
+    }
+  ]
+}

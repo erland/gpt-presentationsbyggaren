@@ -4,11 +4,11 @@ project:
   name: Presentationsbyggaren
 plan:
   path: docs/development-plan.md
-  total_steps: 30
+  total_steps: 35
 progress:
   current_phase: improvement_candidate
-  current_step: 30
-  last_completed_step: 30
+  current_step: 35
+  last_completed_step: 35
   completed_steps:
   - 1
   - 2
@@ -40,6 +40,11 @@ progress:
   - 28
   - 29
   - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
   skipped_steps: []
   inserted_steps:
   - 14
@@ -59,16 +64,21 @@ progress:
   - 28
   - 29
   - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
 state:
   overall: warning
   blocking_issues: []
   warnings:
   - Live cross-model-kvalificering mot minst en enklare och en starkare modell är fortfarande inte körd.
-  - 0.3.2 behöver praktiskt test av explicit slidekommando efter varje bild.
+  - Praktiskt live-test av hybrid visual-first med verkligt genererade slide-assets återstår trots grön deterministisk end-to-end-regression.
 next_step:
-  recommended: practical-explicit-slide-flow-test
-  title: Praktiskt testa explicit slidekommando
-  reason: Informationssteget, vänteläget och nedladdningsbar Presentation Plan är implementerade. Nästa test ska verifiera att användaren kan godkänna en bild och explicit välja nästa slide.
+  recommended: merge-editable-text-pr
+  title: Merge editable-text PR
+  reason: Steg 31–35 är implementerade, end-to-end-regressionen passerar och både push-CI och PR-CI är gröna. PR:n är redo att mergas före nästa praktiska live-test.
 resume:
   supported: true
   required_files:
@@ -77,4 +87,4 @@ resume:
   - docs/development-plan.md
   - STATUS.md
   - PROJECT.md
-  human_readable_status: 0.3.2 steg 28–30 är implementerade. Bildflödet använder explicit godkännande + slide-nummer och presentation-plan.md levereras som fil.
+  human_readable_status: Steg 31–35 för visual-first med redigerbar text är implementerade. Hybrid-slides använder bildbaserad grafik + native PowerPoint-text, godkända assets binds explicit och hela approval-to-PPTX-kedjan täcks av grön end-to-end-regression.

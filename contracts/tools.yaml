@@ -56,6 +56,22 @@ tools:
     deterministic: true
     mutates_workspace: false
     runtime_fallback: manual
+  - id: slide_approval_update
+    type: script
+    requirement: recommended
+    purpose: Godkänn en genererad slide deterministiskt, bind exakt asset-version och flytta rendering status till nästa slide.
+    script: scripts/approve_slide_asset.py
+    deterministic: true
+    mutates_workspace: true
+    runtime_fallback: manual
+  - id: hybrid_pptx_reference_render
+    type: script
+    requirement: recommended
+    purpose: Referensrendera bildbaserade hybrid-slides med native redigerbar PowerPoint-text och verifiera den tekniska overlay-modellen.
+    script: scripts/render_hybrid_pptx.py
+    deterministic: true
+    mutates_workspace: true
+    runtime_fallback: manual
   - id: presentation_generate
     type: api_action
     requirement: required

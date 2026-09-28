@@ -25,3 +25,20 @@ Den kanoniska planen ska när runtime stöder filskrivning levereras som `presen
 - CI på förbättringsbranchen.
 - Praktiskt test av explicit slide-för-slide-dialog.
 - Live cross-model-kvalificering kvarstår.
+
+
+## 0.4 candidate – redigerbar text i visual-first
+
+Steg 31–35 är implementerade på förbättringsbranchen.
+
+- `hybrid-slide` använder bildbaserad grafik med native redigerbar PowerPoint-text.
+- `presentation-plan.md` bär `Text layout`, text-safe area och explicit `Approved asset`.
+- Godkännande uppdateras deterministiskt med `scripts/approve_slide_asset.py`.
+- Mixed-mode PPTX kan innehålla både `image-slide` och `hybrid-slide`.
+- Slutpaketering blockeras tills alla visuella slides är godkända och bundna till exakt asset-version.
+- End-to-end-regression verifierar approval → plan → assetbindning → PPTX → native text.
+- Senaste push-CI och PR-CI är gröna.
+
+## Nästa steg
+
+Merge PR #6. Därefter är nästa produktvalidering ett praktiskt live-test med verkligt bildgenererade hybrid-slides i ChatGPT-flödet.

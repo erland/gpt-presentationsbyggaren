@@ -48,3 +48,36 @@ def test_generated_slide_can_wait_without_next(tmp_path: Path) -> None:
     path = tmp_path / "waiting-review.md"
     path.write_text(text, encoding="utf-8")
     assert validate(path) == []
+
+
+def test_hybrid_slide_requires_text_layout(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "tests" / "presentation-plan-example.md").read_text(encoding="utf-8")
+    text = text.replace(
+        "**Text layout**\n- Title: x=58%, y=24%, width=34%, height=24%, style=title-large\n\n",
+        "",
+    )
+    path = tmp_path / "missing-text-layout.md"
+    path.write_text(text, encoding="utf-8")
+    errors = validate(path)
+    assert any("hybrid-slide requires **Text layout**" in error for error in errors)
+
+
+def test_hybrid_slide_requires_text_free_image_asset(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "tests" / "presentation-plan-example.md").read_text(encoding="utf-8")
+    text = text.replace("- Text in image: no\n", "")
+    path = tmp_path / "text-in-image.md"
+    path.write_text(text, encoding="utf-8")
+    errors = validate(path)
+    assert any("Text in image: no" in error for error in errors)
+
+
+def test_hybrid_slide_requires_text_safe_area(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "tests" / "presentation-plan-example.md").read_text(encoding="utf-8")
+    text = text.replace("- Text-safe area: right 42% kept visually calm for title overlay\n", "")
+    path = tmp_path / "missing-safe-area.md"
+    path.write_text(text, encoding="utf-8")
+    errors = validate(path)
+    assert any("Text-safe area" in error for error in errors)

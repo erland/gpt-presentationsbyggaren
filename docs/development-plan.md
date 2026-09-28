@@ -658,3 +658,82 @@ Bakgrund: praktisk testning visade att `Gör nästa steg` inte var en tillräckl
 **Klart när**
 - canonical instruktion, artifact contract och Knowledge beskriver samma beteende,
 - CI passerar.
+
+
+---
+
+## Förbättringscykel 0.4 – Visual-first med redigerbar text
+
+Bakgrund: praktisk användning visade att den bildbaserade visual-first-metoden gav önskad visuell kvalitet, men att presentationscopy behövde kunna ändras i PowerPoint utan att grafik, boxar, pilar eller diagram behövde göras objektredigerbara.
+
+### Steg 31 – Hybrid-slide som kontrakt för redigerbar text
+
+**Mål:** Definiera ett entydigt läge där grafiken är bildbaserad men all presentationscopy är native PowerPoint-text.
+
+**Leveranser**
+- canonical instruktion och Knowledge för `hybrid-slide`,
+- `Text layout`, `Text-safe area` och `Text in image: no`,
+- presentation-generation-exempel med `editable: true` och `native_text`,
+- deterministisk planvalidering.
+
+**Klart när**
+- hybrid-slides kräver separat textlayout och textfri bildasset,
+- image-slide fortsätter fungera som rasteriserad fallback.
+
+### Steg 32 – Referensrenderer för bildbakgrund + native text
+
+**Mål:** Bevisa tekniskt att visual-first-kvalitet kan kombineras med redigerbar text.
+
+**Leveranser**
+- `scripts/render_hybrid_pptx.py`,
+- python-pptx-baserad bakgrund + textoverlay,
+- Open XML-regressionstest som verifierar bild + `a:t`-text.
+
+**Klart när**
+- genererad PPTX passerar teknisk validator,
+- texten finns som native textshape och inte enbart i rasterbilden.
+
+### Steg 33 – Presentation Plan till mixed-mode PPTX
+
+**Mål:** Paketera en hel presentation från `presentation-plan.md` med både image-slide och hybrid-slide.
+
+**Leveranser**
+- parser för `Visible text` + `Text layout`,
+- deterministic asset projection,
+- mixed-mode-paketering med bibehållen slideordning.
+
+**Klart när**
+- image-slides förblir helslidebilder,
+- hybrid-slides får native textoverlay,
+- båda kan samexistera i samma PPTX.
+
+### Steg 34 – Godkännandestatus och exakt assetbindning
+
+**Mål:** Säkerställa att slutpaketeringen använder exakt den bildversion användaren godkänt.
+
+**Leveranser**
+- `Approved asset` per godkänd slide,
+- blockerande paketeringsgate för icke-godkända slides eller saknad assetbindning,
+- `scripts/approve_slide_asset.py` för atomisk status-/assetövergång.
+
+**Klart när**
+- godkännande binder exakt asset-version,
+- statusövergång valideras innan planen skrivs,
+- paketering kan inte välja en annan asset implicit.
+
+### Steg 35 – End-to-end regression och merge readiness
+
+**Mål:** Verifiera hela kedjan från explicit slidegodkännande till slutlig mixed-mode-PPTX.
+
+**Testflöde**
+- godkänn slide 1 och välj slide 2,
+- godkänn slide 2 och välj slide 3,
+- godkänn slide 3 och avsluta,
+- validera slutplan,
+- paketera PPTX,
+- verifiera bakgrundsbild på alla slides och native text endast på hybrid-slide.
+
+**Klart när**
+- push-CI och PR-CI passerar,
+- artifact/tool-kontrakt är synkroniserade,
+- projektstatus pekar på merge som nästa steg.

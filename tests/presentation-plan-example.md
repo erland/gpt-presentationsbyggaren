@@ -88,7 +88,10 @@ Introducera presentationen som en förändring i arbetssätt.
 **Visual priority:** standard
 
 **Visible text**
-- AI ger information. Du utför arbetet.
+- Title: AI ger information. Du utför arbetet.
+
+**Text layout**
+- Title: x=58%, y=24%, width=34%, height=24%, style=title-large
 
 **Visual concept**
 IT-arkitekt i förgrunden och AI som en mindre informationskälla, tydligt underordnad människans arbetsprocess.
@@ -97,8 +100,10 @@ IT-arkitekt i förgrunden och AI som en mindre informationskälla, tydligt under
 - Needed: yes
 - Generation group: slide-02
 - Prompt intent: konkretisera informationsverktyg
+- Text in image: no
+- Text-safe area: right 42% kept visually calm for title overlay
 - Must show: människa som aktiv utförare
-- Must avoid: robot som gör arbetet åt människan
+- Must avoid: robot som gör arbetet åt människan, readable text, pseudo-text
 
 **Composition**
 Stor scen till vänster, kort slutsats till höger.

@@ -2,17 +2,17 @@
 
 ## Mål
 
-Visual-first är standardspåret när användaren prioriterar visuell kvalitet framför objektredigerbarhet. Slutprodukten ska se ut som en färdig designerpresentation, inte som ett diagramverktyg eller wireframe.
+Visual-first är standardspåret när användaren prioriterar visuell kvalitet. Slutprodukten ska se ut som en färdig designerpresentation, inte som ett diagramverktyg eller wireframe. När endast texten behöver vara redigerbar används normalt `hybrid-slide`: grafiken ligger i en bildbaserad bakgrund och presentationscopy ligger som native PowerPoint-text ovanpå.
 
 ## Output
 
 Primära leveranser:
 
-- `presentation.pptx` – PowerPoint-skal där varje slide kan bestå av en färdigrenderad helslidebild,
+- `presentation.pptx` – PowerPoint där `image-slide` kan vara en färdigrenderad helslidebild och `hybrid-slide` använder bildbaserad grafik med redigerbar text ovanpå,
 - `presentation.pdf` – samma visuella resultat för stabil distribution,
 - `presentation-plan.md` – kanonisk plan som gör arbetet återupptagningsbart.
 
-PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-first.
+PPTX behöver inte ha redigerbar grafik i visual-first. När användaren vill kunna ändra text ska texten däremot bevaras som separata redigerbara textobjekt på `hybrid-slide`.
 
 ## Renderingspipeline
 
@@ -21,11 +21,11 @@ PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-fi
 3. Välj 1–2 anchor slides.
 4. Generera och kvalitetsgranska anchor-assets.
 5. Generera övriga slide-assets med anchor-resultaten som stilreferens när runtime stöder det.
-6. Komponera exakt presentationscopy separat från bildgenereringen när text måste vara korrekt.
-7. Rendera varje slide till högupplöst bild.
-8. Paketera slidebilderna i PPTX och PDF.
-9. Granska faktisk preview av alla slides.
-10. Leverera endast när teknisk och visuell gate passerar.
+6. För `hybrid-slide`: generera bildbaserad grafik utan presentationscopy och reservera de textytor som planen anger.
+7. Lägg exakt presentationscopy som native PowerPoint-textobjekt ovanpå bakgrunden. För `image-slide`: komponera och rendera hela sliden till högupplöst bild.
+8. Paketera hybrid- och bildslides i samma PPTX och skapa PDF från den visuella slutrenderingen.
+9. Granska faktisk preview av alla slides samt kontrollera textoverflow och kontrast på hybrid-slides.
+10. Leverera endast när teknisk, visuell och – när relevant – redigerbarhetsgate passerar.
 
 ## Anchor slides
 
@@ -76,15 +76,16 @@ Mellan bildgenerationer ska `Gör nästa steg` **inte** vara den rekommenderade 
 
 När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 
-1. markera den senast genererade sliden som `approved`,
-2. läs specifikationen för slide X ur `presentation-plan.md`,
-3. markera slide X som `next`,
-4. generera exakt en slutlig bild för slide X,
-5. lämna övriga slides oförändrade.
+1. bind den senast genererade bildfilen till sliden som `Approved asset`,
+2. markera den senast genererade sliden som `approved`,
+3. läs specifikationen för slide X ur `presentation-plan.md`,
+4. markera slide X som `next`,
+5. generera exakt en slutlig bild för slide X,
+6. lämna övriga slides oförändrade.
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
 
-Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF.
+Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF. Paketeringen får endast starta när alla `image-slide` och `hybrid-slide` är markerade `approved` i `Rendering status` och varje godkänd slide har en explicit `Approved asset`. `next`, `pending`, `generated`, `redo` eller saknad assetbindning är blockerande.
 
 ## Anti-collage-gate
 
@@ -117,7 +118,27 @@ Bildmodellen ska normalt **inte** skapa:
 - källhänvisningar,
 - text som måste vara helt korrekt.
 
-Exakt copy komponeras ovanpå eller tillsammans med asseten i ett kontrollerat renderingssteg före helslidebilden exporteras.
+På `hybrid-slide` komponeras exakt copy som separata native PowerPoint-textobjekt ovanpå asseten och får inte rasteriseras in i bakgrundsbilden. På `image-slide` får copy komponeras kontrollerat före helslidebilden exporteras.
+
+## Hybrid-slide
+
+Använd `hybrid-slide` när texten ska kunna ändras utan att den visuella grafiken behöver vara objektredigerbar.
+
+### Obligatoriskt promptkontrakt
+
+För `hybrid-slide` ska bildprompten **inte innehålla presentationscopy från `Visible text`**. Copy används först senare när native PowerPoint-textlagret skapas.
+
+Bildprompten ska byggas från slide-specifikationens visuella delar: `Visual concept`, `Composition`, `Must show`, `Must avoid` och `Text-safe area`. Följande regel ska alltid ingå ordagrant eller semantiskt lika starkt:
+
+> Ingen läsbar text, inga bokstäver, inga ord, inga siffror, inga etiketter, ingen pseudo-text och inga textliknande symboler i bilden.
+
+Om bakgrundsbilden trots detta innehåller läsbar text, teckenrader eller pseudo-text ska bilden underkännas, sliden sättas till `redo` och samma slide genereras om. Den får inte bindas som `Approved asset`.
+
+- Bildasseten får innehålla illustrationer, färgfält, boxar, linjer, pilar, diagram och dekorativa element.
+- Bildasseten ska inte innehålla rubriker, brödtext, etiketter, källor eller annan presentationscopy som ska vara redigerbar.
+- `presentation-plan.md` ska ange en `Text layout` och bildprompten ska reservera motsvarande text-safe area.
+- Textytan ska vara visuellt lugn och ha tillräcklig kontrast för den avsedda textstilen.
+- Preview ska bedöma den sammansatta sliden, inte bakgrundsbilden isolerat.
 
 ## Konsistens
 
@@ -143,6 +164,7 @@ Varje slide ska granskas som bild för:
 - frånvaro av wireframe-känsla,
 - konsekvent formspråk,
 - inga bildgenererade textfel,
-- inga oavsiktliga objekt eller visuella artefakter.
+- inga oavsiktliga objekt eller visuella artefakter,
+- på `hybrid-slide`: ingen läsbar text, inga bokstäver/ord/siffror/etiketter eller pseudo-text i bakgrundsbilden; presentationscopy får endast finnas i overlay-lagret och ingen textoverflow får finnas där.
 
 En slide som ser ut som en skiss, ett flödesschema av standardboxar eller en generisk AI-mall ska göras om.

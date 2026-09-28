@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pyyaml jsonschema pytest
+          python -m pip install pyyaml jsonschema pytest python-pptx
       - name: Generate runtime parity report
         run: python scripts/generate_runtime_parity.py --project-root .
       - name: Validate project contracts and eval definitions
@@ -45,3 +45,9 @@ jobs:
           test -f dist/presentationsbyggaren-custom-gpt-0.0.0-ci.zip
           test -f dist/SHA256SUMS.txt
           test -f dist/DELIVERY-MANIFEST.json
+      - name: Upload Chat test distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentationsbyggaren-chat-test
+          path: dist/presentationsbyggaren-chat-0.0.0-ci.zip
+          if-no-files-found: error
