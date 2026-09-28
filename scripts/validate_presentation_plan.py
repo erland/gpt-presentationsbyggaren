@@ -139,6 +139,13 @@ def validate(path: Path) -> list[str]:
         mode_match = re.search(r"\*\*Render mode:\*\*\s*(\S+)", block)
         if mode_match and mode_match.group(1) not in {"image-slide", "hybrid-slide", "native-slide", "copilot-only"}:
             errors.append(f"{title}: invalid Render mode")
+        if mode_match and mode_match.group(1) == "hybrid-slide":
+            if "**Text layout**" not in block:
+                errors.append(f"{title}: hybrid-slide requires **Text layout**")
+            if not re.search(r"^- Text in image:\s*no\s*$", block, re.M | re.I):
+                errors.append(f"{title}: hybrid-slide requires '- Text in image: no'")
+            if not re.search(r"^- Text-safe area:\s*\S.+$", block, re.M):
+                errors.append(f"{title}: hybrid-slide requires '- Text-safe area: ...'")
 
     return errors
 
