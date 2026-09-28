@@ -8,7 +8,7 @@
   "output": {
     "generation_mode": "visual-first",
     "primary_artifact": "pptx",
-    "editable": false,
+    "editable": true,
     "support_artifacts": [
       "presentation-plan",
       "pdf",
@@ -18,7 +18,7 @@
   },
   "rendering": {
     "design_priority": "communication_quality",
-    "text_strategy": "compose_after_image_generation",
+    "text_strategy": "native_text",
     "allow_full_slide_rasterization": true,
     "slide_render_modes": [
       "image-slide",
