@@ -47,6 +47,18 @@ def _approved_plan(source: Path, target: Path) -> Path:
     text = text.replace("- Slide 01: next", "- Slide 01: approved")
     text = text.replace("- Slide 02: pending", "- Slide 02: approved")
     text = text.replace("- Slide 03: pending", "- Slide 03: approved")
+    text = text.replace(
+        "- Generation group: anchor-1",
+        "- Generation group: anchor-1\n- Approved asset: slide-01-v3.png",
+    )
+    text = text.replace(
+        "- Generation group: slide-02",
+        "- Generation group: slide-02\n- Approved asset: slide-02-v2.png",
+    )
+    text = text.replace(
+        "- Generation group: anchor-2",
+        "- Generation group: anchor-2\n- Approved asset: slide-03-v4.png",
+    )
     target.write_text(text, encoding="utf-8")
     return target
 
@@ -150,8 +162,8 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
     root = Path(__file__).resolve().parents[1]
     assets = tmp_path / "assets"
     assets.mkdir()
-    for slide_id in ("01", "02", "03"):
-        _write_png(assets / f"slide-{slide_id}.png")
+    for name in ("slide-01-v3.png", "slide-02-v2.png", "slide-03-v4.png"):
+        _write_png(assets / name)
 
     spec = parse_presentation_plan(root / "tests" / "presentation-plan-example.md", assets)
     assert [slide["slide_id"] for slide in spec["slides"]] == ["01", "02", "03"]
@@ -168,7 +180,7 @@ def test_mixed_plan_packages_image_and_hybrid_slides_in_order(tmp_path: Path) ->
         root / "tests" / "presentation-plan-example.md",
         tmp_path / "approved-plan.md",
     )
-    assert assert_packaging_ready(approved_plan) == {
+    assert assert_packaging_ready(approved_plan, assets) == {
         "01": "approved",
         "02": "approved",
         "03": "approved",
@@ -235,3 +247,54 @@ def test_render_plan_pptx_does_not_consume_assets_before_approval(tmp_path: Path
         raise AssertionError("Packaging should fail before reading approved assets")
 
     assert not output.exists()
+
+
+def test_packaging_requires_explicit_approved_asset_binding(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = root / "tests" / "presentation-plan-example.md"
+    plan = tmp_path / "approved-without-assets.md"
+    text = source.read_text(encoding="utf-8")
+    text = text.replace("- Next slide: 01", "- Next slide: none")
+    text = text.replace("- Slide 01: next", "- Slide 01: approved")
+    text = text.replace("- Slide 02: pending", "- Slide 02: approved")
+    text = text.replace("- Slide 03: pending", "- Slide 03: approved")
+    plan.write_text(text, encoding="utf-8")
+
+    try:
+        assert_packaging_ready(plan)
+    except ValueError as exc:
+        message = str(exc)
+        assert "Slide 01: missing-approved-asset" in message
+        assert "Slide 02: missing-approved-asset" in message
+        assert "Slide 03: missing-approved-asset" in message
+    else:
+        raise AssertionError("Approved slides must bind to explicit approved assets")
+
+
+def test_packaging_uses_exact_approved_asset_version(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    for name in ("slide-01-v3.png", "slide-02-v2.png", "slide-03-v4.png"):
+        _write_png(assets / name)
+
+    # Distractor files must not be picked once Approved asset is present.
+    for name in ("slide-01.png", "slide-02.png", "slide-03.png"):
+        _write_png(assets / name, width=8, height=8)
+
+    approved_plan = _approved_plan(
+        root / "tests" / "presentation-plan-example.md",
+        tmp_path / "approved-versioned-plan.md",
+    )
+    spec = parse_presentation_plan(approved_plan, assets)
+
+    assert [Path(slide["background"]).name for slide in spec["slides"]] == [
+        "slide-01-v3.png",
+        "slide-02-v2.png",
+        "slide-03-v4.png",
+    ]
+    assert [slide["approved_asset"] for slide in spec["slides"]] == [
+        "slide-01-v3.png",
+        "slide-02-v2.png",
+        "slide-03-v4.png",
+    ]
