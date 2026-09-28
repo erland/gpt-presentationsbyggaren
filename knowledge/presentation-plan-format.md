@@ -205,6 +205,8 @@ Text layout ska minst ange en placeringsregel för den redigerbara copy som finn
 
 Text layout beskriver endast textlagret. Boxar, linjer, pilar, diagram och annan grafik får ingå i bakgrundsbilden.
 
+Referensrenderaren `scripts/render_hybrid_pptx.py` kan projicera hybrid-slides direkt från planen. Bakgrundsassets namnges deterministiskt som `slide-NN.png` eller `slide-NN.jpg` i angiven asset-katalog, medan `Visible text` kopplas till motsvarande poster i `Text layout` via etiketten före kolon, exempelvis `Title` eller `Label 1`.
+
 ## Återupptagning
 
 När användaren lämnar in en befintlig `presentation-plan.md`:
