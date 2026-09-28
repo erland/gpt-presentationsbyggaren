@@ -68,7 +68,27 @@ def _parse_rendering_status(plan_text: str) -> dict[str, str]:
     }
 
 
-def assert_packaging_ready(plan_path: str | Path) -> dict[str, str]:
+def _approved_asset_from_block(block: str) -> str | None:
+    match = re.search(r"^- Approved asset:\s*(\S.+?)\s*$", block, re.M)
+    return match.group(1).strip() if match else None
+
+
+def _resolve_approved_asset(assets_dir: Path, asset_name: str, slide_id: str) -> Path:
+    candidate = Path(asset_name)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError(f"Slide {slide_id}: Approved asset must be a safe relative path")
+    resolved = (assets_dir / candidate).resolve()
+    root = assets_dir.resolve()
+    if root not in resolved.parents and resolved != root:
+        raise ValueError(f"Slide {slide_id}: Approved asset escapes assets directory")
+    if not resolved.is_file():
+        raise FileNotFoundError(f"Slide {slide_id}: approved asset not found: {asset_name}")
+    return resolved
+
+
+def assert_packaging_ready(
+    plan_path: str | Path, assets_dir: str | Path | None = None
+) -> dict[str, str]:
     """Require every image/hybrid slide to be explicitly approved before packaging."""
     plan_path = Path(plan_path)
     text = plan_path.read_text(encoding="utf-8")
@@ -90,6 +110,13 @@ def assert_packaging_ready(plan_path: str | Path) -> dict[str, str]:
         status = statuses.get(slide_id)
         if status != "approved":
             blockers.append(f"Slide {slide_id}: {status or 'missing-status'}")
+            continue
+        approved_asset = _approved_asset_from_block(block)
+        if not approved_asset:
+            blockers.append(f"Slide {slide_id}: missing-approved-asset")
+            continue
+        if assets_dir is not None:
+            _resolve_approved_asset(Path(assets_dir), approved_asset, slide_id)
 
     if blockers:
         raise ValueError(
@@ -168,21 +195,25 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
                 preset.update(parsed)
                 preset["text"] = copy
                 text_items.append(preset)
+        approved_asset = _approved_asset_from_block(block)
         background = None
-        for candidate in (
-            assets_dir / f"slide-{slide_id}.png",
-            assets_dir / f"slide-{int(slide_id)}.png",
-            assets_dir / f"slide-{slide_id}.jpg",
-            assets_dir / f"slide-{int(slide_id)}.jpg",
-        ):
-            if candidate.is_file():
-                background = str(candidate)
-                break
-        if background is None:
-            raise FileNotFoundError(
-                f"Slide {slide_id}: expected background asset in {assets_dir} "
-                f"(for example slide-{slide_id}.png)"
-            )
+        if approved_asset:
+            background = str(_resolve_approved_asset(assets_dir, approved_asset, slide_id))
+        else:
+            for candidate in (
+                assets_dir / f"slide-{slide_id}.png",
+                assets_dir / f"slide-{int(slide_id)}.png",
+                assets_dir / f"slide-{slide_id}.jpg",
+                assets_dir / f"slide-{int(slide_id)}.jpg",
+            ):
+                if candidate.is_file():
+                    background = str(candidate)
+                    break
+            if background is None:
+                raise FileNotFoundError(
+                    f"Slide {slide_id}: expected background asset in {assets_dir} "
+                    f"(for example slide-{slide_id}.png)"
+                )
 
         slides.append(
             {
@@ -190,6 +221,7 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
                 "title": match.group(2).strip(),
                 "render_mode": render_mode,
                 "rendering_status": statuses.get(slide_id),
+                "approved_asset": approved_asset,
                 "background": background,
                 "text": text_items,
             }
@@ -210,7 +242,7 @@ def render_plan_pptx(
     plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
 ) -> Path:
     """Package a mixed visual-first deck after all image/hybrid slides are approved."""
-    assert_packaging_ready(plan_path)
+    assert_packaging_ready(plan_path, assets_dir)
     return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
 
 
