@@ -76,15 +76,16 @@ Mellan bildgenerationer ska `Gör nästa steg` **inte** vara den rekommenderade 
 
 När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 
-1. markera den senast genererade sliden som `approved`,
-2. läs specifikationen för slide X ur `presentation-plan.md`,
-3. markera slide X som `next`,
-4. generera exakt en slutlig bild för slide X,
-5. lämna övriga slides oförändrade.
+1. bind den senast genererade bildfilen till sliden som `Approved asset`,
+2. markera den senast genererade sliden som `approved`,
+3. läs specifikationen för slide X ur `presentation-plan.md`,
+4. markera slide X som `next`,
+5. generera exakt en slutlig bild för slide X,
+6. lämna övriga slides oförändrade.
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
 
-Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF. Paketeringen får endast starta när alla `image-slide` och `hybrid-slide` är markerade `approved` i `Rendering status`; `next`, `pending`, `generated` och `redo` är blockerande.
+Efter sista godkända slide ska nästa arbetssteg vara paketering till PPTX/PDF. Paketeringen får endast starta när alla `image-slide` och `hybrid-slide` är markerade `approved` i `Rendering status` och varje godkänd slide har en explicit `Approved asset`. `next`, `pending`, `generated`, `redo` eller saknad assetbindning är blockerande.
 
 ## Anti-collage-gate
 
