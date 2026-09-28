@@ -129,7 +129,7 @@ artifacts:
       requirement: required
       persistence: persistent
       multiplicity: one
-      description: PowerPoint-leverans. I visual-first används hybrid-slide när text ska vara redigerbar: grafik kan ligga i bildbakgrunden medan presentationscopy bevaras som native PowerPoint-text. image-slide får vara helt rasteriserad när redigerbar text inte krävs.
+      description: "PowerPoint-leverans. I visual-first används hybrid-slide när text ska vara redigerbar; grafik kan ligga i bildbakgrunden medan presentationscopy bevaras som native PowerPoint-text. image-slide får vara helt rasteriserad när redigerbar text inte krävs."
     presentation_pdf:
       kind: document
       format: pdf
