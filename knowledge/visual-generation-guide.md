@@ -39,7 +39,7 @@ En genererad illustration ska ha ett definierat `visual_intent` i storyboardet. 
 - vilka objekt och relationer som måste synas,
 - vad som uttryckligen ska undvikas.
 
-Illustrationen får inte introducera fakta som saknar stöd i materialet. På `hybrid-slide` är regeln hård: presentationscopy ska inte genereras in i bilden. Lägg rubriker, brödtext, etiketter, källor och annan copy som redigerbara PowerPoint-element ovanpå eller bredvid bilden. Bildprompten ska reservera avsedd text-safe area och be modellen hålla den visuellt lugn och fri från läsbar text.
+Illustrationen får inte introducera fakta som saknar stöd i materialet. På `hybrid-slide` är regeln hård: presentationscopy ska inte genereras in i bilden. `Visible text` får inte kopieras, parafraseras eller användas som visuell textinstruktion i bildprompten. Lägg rubriker, brödtext, etiketter, källor och annan copy som redigerbara PowerPoint-element ovanpå eller bredvid bilden. Bildprompten ska reservera avsedd text-safe area och uttryckligen förbjuda läsbar text, bokstäver, ord, siffror, etiketter, pseudo-text och textliknande symboler.
 
 ## Redigerbarhet
 
