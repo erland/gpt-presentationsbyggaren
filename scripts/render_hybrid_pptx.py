@@ -82,7 +82,7 @@ def _parse_layout_value(value: str) -> dict[str, Any]:
 
 
 def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> dict[str, Any]:
-    """Project hybrid slides from canonical presentation-plan.md into renderer input."""
+    """Project image-slide and hybrid-slide entries from presentation-plan.md."""
     plan_path = Path(plan_path)
     assets_dir = Path(assets_dir)
     text = plan_path.read_text(encoding="utf-8")
@@ -96,27 +96,31 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
         block = text[start:end]
 
         mode_match = re.search(r"\*\*Render mode:\*\*\s*(\S+)", block)
-        if not mode_match or mode_match.group(1) != "hybrid-slide":
+        if not mode_match:
+            continue
+        render_mode = mode_match.group(1)
+        if render_mode not in {"image-slide", "hybrid-slide"}:
             continue
 
         slide_id = match.group(1)
-        visible = _parse_keyed_bullets(_section(block, "**Visible text**"))
-        layout = _parse_keyed_bullets(_section(block, "**Text layout**"))
-
-        missing_layout = sorted(set(visible) - set(layout))
-        if missing_layout:
-            raise ValueError(
-                f"Slide {slide_id}: missing Text layout entries for: {', '.join(missing_layout)}"
-            )
-
         text_items: list[dict[str, Any]] = []
-        for key, copy in visible.items():
-            parsed = _parse_layout_value(layout[key])
-            preset = dict(STYLE_PRESETS.get(parsed.pop("style"), STYLE_PRESETS["body"]))
-            preset.update(parsed)
-            preset["text"] = copy
-            text_items.append(preset)
 
+        if render_mode == "hybrid-slide":
+            visible = _parse_keyed_bullets(_section(block, "**Visible text**"))
+            layout = _parse_keyed_bullets(_section(block, "**Text layout**"))
+
+            missing_layout = sorted(set(visible) - set(layout))
+            if missing_layout:
+                raise ValueError(
+                    f"Slide {slide_id}: missing Text layout entries for: {', '.join(missing_layout)}"
+                )
+
+            for key, copy in visible.items():
+                parsed = _parse_layout_value(layout[key])
+                preset = dict(STYLE_PRESETS.get(parsed.pop("style"), STYLE_PRESETS["body"]))
+                preset.update(parsed)
+                preset["text"] = copy
+                text_items.append(preset)
         background = None
         for candidate in (
             assets_dir / f"slide-{slide_id}.png",
@@ -137,19 +141,27 @@ def parse_presentation_plan(plan_path: str | Path, assets_dir: str | Path) -> di
             {
                 "slide_id": slide_id,
                 "title": match.group(2).strip(),
+                "render_mode": render_mode,
                 "background": background,
                 "text": text_items,
             }
         )
 
     if not slides:
-        raise ValueError("Presentation plan contains no hybrid-slide entries")
+        raise ValueError("Presentation plan contains no renderable image-slide or hybrid-slide entries")
     return {"slides": slides}
 
 
 def render_plan_hybrid_pptx(
     plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
 ) -> Path:
+    return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
+
+
+def render_plan_pptx(
+    plan_path: str | Path, assets_dir: str | Path, output_path: str | Path
+) -> Path:
+    """Package a mixed visual-first deck containing image-slide and hybrid-slide."""
     return render_hybrid_pptx(parse_presentation_plan(plan_path, assets_dir), output_path)
 
 
@@ -220,7 +232,7 @@ def render_hybrid_pptx(spec: dict[str, Any], output_path: str | Path) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Render hybrid PPTX slides with image backgrounds and editable text overlays."
+        description="Package visual-first PPTX slides from image assets, with editable text overlays on hybrid slides."
     )
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--spec", help="JSON spec containing slides, backgrounds and text boxes")
@@ -232,7 +244,7 @@ def main() -> int:
     if args.plan:
         if not args.assets_dir:
             parser.error("--assets-dir is required with --plan")
-        render_plan_hybrid_pptx(args.plan, args.assets_dir, args.output)
+        render_plan_pptx(args.plan, args.assets_dir, args.output)
     else:
         spec_path = Path(args.spec)
         spec = json.loads(spec_path.read_text(encoding="utf-8"))
