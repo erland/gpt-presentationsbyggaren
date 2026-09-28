@@ -38,7 +38,6 @@ def test_hybrid_image_prompt_contract_is_strictly_text_free():
 
     required = [
         "Visible text",
-        "får inte",
         "pseudo-text",
         "Approved asset",
     ]
@@ -46,6 +45,7 @@ def test_hybrid_image_prompt_contract_is_strictly_text_free():
         assert marker in instructions
         assert marker in chat_policy or marker in workflow
 
+    assert "aldrig skickas som bildinnehåll" in instructions
     assert "inga bokstäver" in instructions
     assert "inga ord" in instructions
     assert "inga siffror" in instructions
