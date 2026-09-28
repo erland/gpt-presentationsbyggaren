@@ -124,6 +124,16 @@ På `hybrid-slide` komponeras exakt copy som separata native PowerPoint-textobje
 
 Använd `hybrid-slide` när texten ska kunna ändras utan att den visuella grafiken behöver vara objektredigerbar.
 
+### Obligatoriskt promptkontrakt
+
+För `hybrid-slide` ska bildprompten **inte innehålla presentationscopy från `Visible text`**. Copy används först senare när native PowerPoint-textlagret skapas.
+
+Bildprompten ska byggas från slide-specifikationens visuella delar: `Visual concept`, `Composition`, `Must show`, `Must avoid` och `Text-safe area`. Följande regel ska alltid ingå ordagrant eller semantiskt lika starkt:
+
+> Ingen läsbar text, inga bokstäver, inga ord, inga siffror, inga etiketter, ingen pseudo-text och inga textliknande symboler i bilden.
+
+Om bakgrundsbilden trots detta innehåller läsbar text, teckenrader eller pseudo-text ska bilden underkännas, sliden sättas till `redo` och samma slide genereras om. Den får inte bindas som `Approved asset`.
+
 - Bildasseten får innehålla illustrationer, färgfält, boxar, linjer, pilar, diagram och dekorativa element.
 - Bildasseten ska inte innehålla rubriker, brödtext, etiketter, källor eller annan presentationscopy som ska vara redigerbar.
 - `presentation-plan.md` ska ange en `Text layout` och bildprompten ska reservera motsvarande text-safe area.
@@ -155,6 +165,6 @@ Varje slide ska granskas som bild för:
 - konsekvent formspråk,
 - inga bildgenererade textfel,
 - inga oavsiktliga objekt eller visuella artefakter,
-- på `hybrid-slide`: ingen presentationscopy inbakad i bakgrundsbilden och ingen textoverflow i overlay-lagret.
+- på `hybrid-slide`: ingen läsbar text, inga bokstäver/ord/siffror/etiketter eller pseudo-text i bakgrundsbilden; presentationscopy får endast finnas i overlay-lagret och ingen textoverflow får finnas där.
 
 En slide som ser ut som en skiss, ett flödesschema av standardboxar eller en generisk AI-mall ska göras om.
