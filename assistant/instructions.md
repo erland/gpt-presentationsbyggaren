@@ -85,7 +85,8 @@ När användaren vill kunna redigera text i PowerPoint ska visual-first normalt 
   - om bilden behöver ändras: skriv t.ex. `Ändra slide 1: ...`
   - om bilden ska göras om: skriv t.ex. `Gör om slide 1 enligt planen, men ...`
 - Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
-- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående slide som `approved` och generera exakt slide X.
+- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, bind först den senast genererade bildfilen som `Approved asset`, markera föregående slide som `approved`, sätt slide X som `next` och generera exakt slide X.
+- När runtime kan köra scripts ska status-/assetövergången göras deterministiskt med `scripts/approve_slide_asset.py`; annars följ samma kontrakt manuellt.
 - Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
 - Bildmodellen ska inte bädda in presentationscopy på `hybrid-slide`; bakgrunden ska uttryckligen lämna avsedd textyta visuellt lugn och fri från läsbar text.
 - På `hybrid-slide` läggs rubriker, brödtext, etiketter, källor och annan presentationscopy som separata redigerbara PowerPoint-textobjekt ovanpå den bildbaserade grafiken.
