@@ -4,11 +4,11 @@ project:
   name: Presentationsbyggaren
 plan:
   path: docs/development-plan.md
-  total_steps: 30
+  total_steps: 31
 progress:
   current_phase: improvement_candidate
-  current_step: 30
-  last_completed_step: 30
+  current_step: 31
+  last_completed_step: 31
   completed_steps:
   - 1
   - 2
@@ -40,6 +40,7 @@ progress:
   - 28
   - 29
   - 30
+  - 31
   skipped_steps: []
   inserted_steps:
   - 14
@@ -59,6 +60,7 @@ progress:
   - 28
   - 29
   - 30
+  - 31
 state:
   overall: warning
   blocking_issues: []
@@ -77,4 +79,4 @@ resume:
   - docs/development-plan.md
   - STATUS.md
   - PROJECT.md
-  human_readable_status: 0.3.2 steg 28–30 är implementerade. Bildflödet använder explicit godkännande + slide-nummer och presentation-plan.md levereras som fil.
+  human_readable_status: 0.3.2 steg 28–30 samt OpenAI Plugin-steg 31 är implementerade. Bildflödet använder explicit godkännande + slide-nummer, presentation-plan.md levereras som fil och Plugin är aktiv som equivalent_runtime_dependent peer runtime.
