@@ -44,6 +44,7 @@ Copilot-handoff finns kvar som kompletterande/experimentellt spår.
 
 - ChatGPT Chat
 - ChatGPT Custom
+- OpenAI Plugin – `equivalent_runtime_dependent`; full leverans kräver host-förmåga för filskrivning och faktisk presentationsgenerering.
 
 ## Fortsättning
 
