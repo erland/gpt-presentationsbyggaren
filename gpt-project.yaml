@@ -262,6 +262,7 @@ workspace_state:
   runtime_preferences:
     chat: conversation_or_file
     agent: workspace_file
+    openai_plugin: workspace_file
   schema: schemas/workspace-state-contract.schema.json
 tools:
   contract_version: 1
