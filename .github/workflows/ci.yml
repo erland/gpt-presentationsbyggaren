@@ -43,5 +43,6 @@ jobs:
           test -f dist/presentationsbyggaren-project-0.0.0-ci.zip
           test -f dist/presentationsbyggaren-chat-0.0.0-ci.zip
           test -f dist/presentationsbyggaren-custom-gpt-0.0.0-ci.zip
+          test -f dist/presentationsbyggaren-plugin-0.0.0-ci.zip
           test -f dist/SHA256SUMS.txt
           test -f dist/DELIVERY-MANIFEST.json
