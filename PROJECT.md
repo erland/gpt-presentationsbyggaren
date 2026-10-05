@@ -15,8 +15,13 @@ Personer som återkommande skapar professionella presentationer för exempelvis 
 - Strukturerad brief, storyline och storyboard.
 - Redigerbar PPTX som huvudartefakt.
 - Systematisk kvalitetsgranskning och transformationsflöden.
-- Distribution för ChatGPT Chat och ChatGPT Custom från samma canonical projekt.
+- Distribution för ChatGPT Chat, ChatGPT Custom och OpenAI Plugin från samma canonical projekt.
 
 ## Arkitekturprincip
 
 Projektets kärna är presentationsmetodik och designbeslut, inte en egen generell PowerPoint-renderingsmotor. Runtime-specifika verktyg används för faktisk artefaktgenerering.
+
+
+## OpenAI Plugin
+
+OpenAI Plugin är en skills-first `equivalent_runtime_dependent` peer runtime. Canonical presentationsmetodik, Knowledge, schemas, mallar och de två deterministiska validatorerna följer med i paketet. Filskrivning, bildgenerering, faktisk presentationsgenerering och preview kommer från hosten; Pluginen får inte markera presentationen som färdig om en faktisk PPTX inte kan genereras.
