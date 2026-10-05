@@ -658,3 +658,30 @@ Bakgrund: praktisk testning visade att `Gör nästa steg` inte var en tillräckl
 **Klart när**
 - canonical instruktion, artifact contract och Knowledge beskriver samma beteende,
 - CI passerar.
+
+
+---
+
+## Steg 31 – OpenAI Plugin peer-distribution
+
+**Mål:** Aktivera OpenAI Plugin som skills-first `equivalent_runtime_dependent` peer runtime utan att försvaga visual-first-, state- eller leveransreglerna på `main`.
+
+**Leveranser**
+- explicit canonical skill-kontrakt,
+- `plugin.json`, `runtime-contract.json`, README, VERSION och manifest,
+- canonical presentationsinstruktion i `SKILL.md`,
+- presentation Knowledge och centrala schemas som references,
+- presentationsmallar som assets,
+- `validate_presentation_plan.py` och `validate_pptx.py` som script-resurser utan MCP-wrapper,
+- Plugin i runtime parity, CI, checksums och delivery manifest.
+
+**Klart när**
+- ChatGPT Chat, Custom GPT och OpenAI Plugin byggs från samma canonical beteende,
+- Plugin klassas `equivalent_runtime_dependent`,
+- `presentation-plan.md` är canonical presentationsstate,
+- avsaknad av `presentation.generate` blockerar påstådd färdig presentation/PPTX,
+- avsaknad av image generation, preview eller Python-validering redovisas utan falsk PASS,
+- one-slide-per-generation och anti-collage-reglerna finns kvar,
+- CI passerar från ren checkout.
+
+**Beroenden:** steg 30

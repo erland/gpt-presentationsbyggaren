@@ -22,3 +22,4 @@ def test_runtime_parity_report_validates():
     jsonschema.Draft202012Validator(schema).validate(report)
     assert report['runtimes']['chatgpt_chat']['release_recommendation']!='do_not_publish'
     assert report['runtimes']['chatgpt_custom']['release_recommendation']!='do_not_publish'
+    assert report['runtimes']['openai_plugin']['release_recommendation']!='do_not_publish'

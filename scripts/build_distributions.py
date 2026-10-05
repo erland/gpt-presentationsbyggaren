@@ -750,9 +750,17 @@ def build_opencode_skills(root: Path, cfg: dict, out: Path) -> list[str]:
 def plugin_runtime_contract(cfg: dict, built_skills: list[str] | None = None) -> dict:
     """Compile canonical assistant contracts into an OpenAI Plugin snapshot."""
     built_skills = list(built_skills or [])
+    runtime_cfg = cfg.get("runtime", {}).get("plugin", {})
+    skill_defs = canonical_skill_definitions(cfg)
+    packaged_scripts = sorted({
+        Path(ref).name
+        for skill in skill_defs
+        for ref in (skill.get("scripts") or [])
+    })
     return {
         "schema_version": 1,
         "runtime_id": "openai_plugin",
+        "compatibility": "equivalent_runtime_dependent",
         "capabilities": normalize_capability_contract(cfg),
         "artifacts": normalize_artifact_contract(cfg),
         "workspace_state": normalize_workspace_state_contract(cfg),
@@ -764,12 +772,42 @@ def plugin_runtime_contract(cfg: dict, built_skills: list[str] | None = None) ->
             "mcp_generated": False,
             "ui_generated": False,
             "hooks_generated": False,
+            "presentation_state": {
+                "authority": "presentation-plan.md",
+                "conversation_history_authoritative": False,
+            },
+            "script_resources": {
+                "packaged": packaged_scripts,
+                "execution": "host_code_execution_when_available",
+                "mcp_required_for_resource_use": False,
+            },
+            "host_requirements": {
+                "document_read": "required_when_source_material_is_used",
+                "file_write": "required_for_full_workflow",
+                "presentation_generate": "required_for_completion",
+                "image_generate": "recommended_for_visual_first",
+                "presentation_validate": "recommended",
+                "presentation_preview": "recommended_for_visual_quality_gate",
+                "code_execution": "recommended_for_deterministic_validation",
+            },
+            "fallback_policy": {
+                "without_file_write": "do_not_claim_downloadable_plan_or_final_artifacts",
+                "without_presentation_generate": "do_not_mark_presentation_complete_or_claim_pptx",
+                "without_image_generation": "degrade_visual_strategy_and_do_not_claim_generated_slide_assets",
+                "without_presentation_preview": "disclose_visual_preview_gate_not_run",
+                "without_code_execution": "do_not_claim_deterministic_plan_or_pptx_validation",
+            },
+            "visual_first_constraints": {
+                "one_slide_per_image_generation": True,
+                "anti_collage": True,
+                "explicit_user_approval_between_generated_slides": True,
+            },
             "parity_notes": {
-                "behavior": "Canonical behavior is projected through skills.",
-                "artifact": "Plugin package is generated as a runtime distribution.",
-                "workspace_state": "Persistent workspace/state depends on the host runtime and is not created by Plugin v1.",
-                "tool": "Canonical local script tools are packaged only as skill resources; Plugin v1 does not generate MCP execution.",
-                "capability": "External tool execution and advanced integrations depend on the host runtime in Plugin v1.",
+                "behavior": "Canonical behavior is projected through the skill.",
+                "artifact": "PPTX completion depends on an actual host presentation-generation capability.",
+                "workspace_state": "presentation-plan.md is canonical presentation state; project workspace/state remains host-dependent.",
+                "tool": "Canonical API actions remain host capabilities; packaged validation scripts do not require MCP.",
+                "capability": "File writing and presentation generation are required for full workflow parity.",
             },
         },
     }

@@ -31,10 +31,9 @@ analysis:
       rationale: Kärnuppgiften är presentationsdesign snarare än kodutveckling.
       activate_by_default: false
     - runtime_id: openai_plugin
-      suitability: reduced
-      rationale: Skills kan senare återanvända presentationsmetodik men v1 behöver
-        en komplett artefaktorienterad assistent.
-      activate_by_default: false
+      suitability: equivalent_runtime_dependent
+      rationale: Skills-first runtime kan bära hela presentationsmetodiken och den återupptagningsbara planen när hosten erbjuder filskrivning och presentationsgenerering.
+      activate_by_default: true
   capabilities:
     web: recommended
     data_analysis: recommended
@@ -68,6 +67,33 @@ instructions:
     - Rubriken ska när det är lämpligt uttrycka **slutsatsen eller poängen**
     - Separera det som ska **synas** från det som ska **sägas**.
     - '## "Gör nästa steg"'
+skills:
+  contract_version: 1
+  schema: schemas/skill-contract.schema.json
+  definitions:
+  - id: presentationsbyggaren
+    name: presentationsbyggaren
+    description: Skapa professionella presentationer från brief och storyline till presentation-plan.md, visual-first rendering, kvalitetsgranskning och PPTX/PDF-leverans.
+    references:
+    - knowledge/presentation-method.md
+    - knowledge/presentation-plan-format.md
+    - knowledge/visual-first-workflow.md
+    - knowledge/visual-generation-guide.md
+    - knowledge/rendering-quality-guide.md
+    - knowledge/quality-guide.md
+    - knowledge/slide-design-guide.md
+    - knowledge/slide-patterns.md
+    - knowledge/storytelling-patterns.md
+    - knowledge/source-and-tool-guide.md
+    - schemas/storyboard.schema.json
+    - schemas/presentation-generation.schema.json
+    - schemas/presentation-review.schema.json
+    assets:
+    - templates/presentation-plan.md.tpl
+    - templates/copilot-prompt.md.tpl
+    scripts:
+    - scripts/validate_presentation_plan.py
+    - scripts/validate_pptx.py
 capabilities:
   contract_version: 1
   recommendation_mode: inferred_from_use_case
@@ -236,6 +262,7 @@ workspace_state:
   runtime_preferences:
     chat: conversation_or_file
     agent: workspace_file
+    openai_plugin: workspace_file
   schema: schemas/workspace-state-contract.schema.json
 tools:
   contract_version: 1
@@ -360,6 +387,28 @@ runtime:
       block_on_instruction_limit: true
       block_on_knowledge_limit: true
       block_on_misleading_core_functionality: true
+  plugin:
+    enabled: true
+    role: peer_distribution
+    mode: skills_first
+    skill_id: presentationsbyggaren
+    templates:
+      readme: templates/README.plugin.md.tpl
+    layout:
+      manifest_file: plugin.json
+      skills: skills
+    validation:
+      require_skill: true
+      require_skill_frontmatter: true
+    compatibility:
+      parity: equivalent_runtime_dependent
+      presentation_plan_state: canonical
+      file_write: required_for_full_workflow
+      presentation_generate: required_for_completion
+      image_generation: host_capability_dependent
+      presentation_preview: host_capability_dependent
+      code_execution: recommended_for_deterministic_validation
+      mcp_required_for_script_resources: false
   chat_zip:
     enabled: true
     start_here_template: templates/START-HERE.chat.md.tpl
@@ -409,6 +458,7 @@ build_system:
   - project
   - chat_zip
   - custom_gpt
+  - plugin
   runtime_targets:
     chat_zip:
       runtime_id: chatgpt_chat
@@ -428,6 +478,10 @@ build_system:
       runtime_id: opencode
     plugin:
       runtime_id: openai_plugin
+      runtime_key: plugin
+      builder: plugin
+      filename_pattern: <project-id>-plugin-<version>.zip
+      artifact_type: plugin_zip
   project_filename_pattern: <project-id>-project-<version>.zip
 knowledge_architecture:
   canonical_root: knowledge
