@@ -198,6 +198,41 @@ def validate_plugin(root: Path, cfg: dict) -> list[str]:
         except Exception as exc:
             errors.append(f"Invalid plugin.json: {exc}")
 
+    contract_path = build / "runtime-contract.json"
+    if contract_path.exists():
+        try:
+            contract = json.loads(contract_path.read_text(encoding="utf-8"))
+            if contract.get("runtime_id") != "openai_plugin":
+                errors.append("Plugin runtime_id mismatch")
+            if contract.get("compatibility") != "equivalent_runtime_dependent":
+                errors.append("Plugin compatibility must be equivalent_runtime_dependent")
+            adapter = contract.get("adapter", {})
+            if adapter.get("skills_first") is not True:
+                errors.append("Plugin must be skills-first")
+            if adapter.get("mcp_generated") is not False:
+                errors.append("Plugin must not generate MCP")
+            state = adapter.get("presentation_state", {})
+            if state.get("authority") != "presentation-plan.md":
+                errors.append("presentation-plan.md must be Plugin presentation state authority")
+            resources = adapter.get("script_resources", {})
+            if set(resources.get("packaged", [])) != {"validate_presentation_plan.py", "validate_pptx.py"}:
+                errors.append("Plugin validation script resources differ")
+            if resources.get("mcp_required_for_resource_use") is not False:
+                errors.append("Plugin script resources must not require MCP")
+            host = adapter.get("host_requirements", {})
+            if host.get("presentation_generate") != "required_for_completion":
+                errors.append("Plugin must require presentation generation for completion")
+            fallback = adapter.get("fallback_policy", {})
+            if fallback.get("without_presentation_generate") != "do_not_mark_presentation_complete_or_claim_pptx":
+                errors.append("Plugin presentation completion fallback weakened")
+            if fallback.get("without_file_write") != "do_not_claim_downloadable_plan_or_final_artifacts":
+                errors.append("Plugin file-write fallback weakened")
+            visual = adapter.get("visual_first_constraints", {})
+            if visual.get("one_slide_per_image_generation") is not True or visual.get("anti_collage") is not True:
+                errors.append("Plugin visual-first one-slide/anti-collage contract missing")
+        except Exception as exc:
+            errors.append(f"Invalid Plugin runtime-contract.json: {exc}")
+
     manifest_path = build / "MANIFEST.json"
     if manifest_path.exists():
         try:
