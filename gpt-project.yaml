@@ -55,45 +55,79 @@ analysis:
     deterministic_gates: true
     model_compatibility_evals: true
 instructions:
-  canonical: assistant/instructions.md
+  mode: modular_skills
+  canonical: canonical/core.md
+  core: canonical/core.md
   core_contract:
     enabled: true
-    required_runtime_dependencies: []
     max_required_file_hops: 1
     knowledge_may_not_be_required_for_core_behavior: true
     required_markers:
     - '## Operativ kärna'
     - En slide ska normalt bära **ett huvudbudskap**.
-    - Rubriken ska när det är lämpligt uttrycka **slutsatsen eller poängen**
-    - Separera det som ska **synas** från det som ska **sägas**.
     - '## "Gör nästa steg"'
+
 skills:
   contract_version: 1
   schema: schemas/skill-contract.schema.json
+  mode: modular
+  resource_policy: explicit
   definitions:
-  - id: presentationsbyggaren
-    name: presentationsbyggaren
-    description: Skapa professionella presentationer från brief och storyline till presentation-plan.md, visual-first rendering, kvalitetsgranskning och PPTX/PDF-leverans.
+  - id: presentationsplanering
+    name: presentationsplanering
+    description: Brief, storyline, storyboard och återupptagningsbar presentationsplan
+    source: canonical/skills/presentationsplanering/behavior.md
     references:
     - knowledge/presentation-method.md
     - knowledge/presentation-plan-format.md
-    - knowledge/visual-first-workflow.md
-    - knowledge/visual-generation-guide.md
-    - knowledge/rendering-quality-guide.md
-    - knowledge/quality-guide.md
+    - knowledge/storytelling-patterns.md
+    - knowledge/content-styles.md
     - knowledge/slide-design-guide.md
     - knowledge/slide-patterns.md
-    - knowledge/storytelling-patterns.md
-    - knowledge/source-and-tool-guide.md
+    - schemas/presentation-brief.schema.json
+    - schemas/storyline.schema.json
     - schemas/storyboard.schema.json
-    - schemas/presentation-generation.schema.json
-    - schemas/presentation-review.schema.json
     assets:
     - templates/presentation-plan.md.tpl
-    - templates/copilot-prompt.md.tpl
     scripts:
     - scripts/validate_presentation_plan.py
+  - id: bildproduktion
+    name: bildproduktion
+    description: Visual-first med en slidebild per generation och explicit godkännande
+    source: canonical/skills/bildproduktion/behavior.md
+    references:
+    - knowledge/visual-first-workflow.md
+    - knowledge/visual-generation-guide.md
+    - knowledge/visual-styles.md
+    - knowledge/rendering-quality-guide.md
+    assets:
+    []
+    scripts:
+    []
+  - id: presentationsexport
+    name: presentationsexport
+    description: PPTX/PDF och experimentell Copilot-handoff
+    source: canonical/skills/presentationsexport/behavior.md
+    references:
+    - knowledge/copilot-handoff-guide.md
+    - schemas/presentation-generation.schema.json
+    assets:
+    - templates/copilot-prompt.md.tpl
+    scripts:
     - scripts/validate_pptx.py
+  - id: kvalitetsgranskning
+    name: kvalitetsgranskning
+    description: Kvalitetsgranskning av budskap, rendering och teknisk leverans
+    source: canonical/skills/kvalitetsgranskning/behavior.md
+    references:
+    - knowledge/quality-guide.md
+    - knowledge/rendering-quality-guide.md
+    - schemas/presentation-review.schema.json
+    assets:
+    []
+    scripts:
+    []
+
 capabilities:
   contract_version: 1
   recommendation_mode: inferred_from_use_case
@@ -358,35 +392,17 @@ model_robustness:
   prefer_deterministic_validation: true
   max_core_policy_hops: 1
 runtime:
-  custom_gpt:
+  claude:
     enabled: true
     role: peer_distribution
-    instruction:
-      mode: identical
-      max_characters: 8000
-    knowledge:
-      strategy: identical
-      max_files: 20
-    builder:
-      instructions: builder/instructions.md
-      conversation_starters: builder/conversation-starters.md
-      capabilities: builder/capabilities.md
-      knowledge_package: builder/knowledge-package
-      runtime_contract: builder/runtime-contract.json
-    templates:
-      readme: templates/README.custom-gpt.md.tpl
-      capabilities: templates/capabilities.md.tpl
-      compatibility: templates/COMPATIBILITY.md.tpl
-    compatibility:
-      report_required: true
-      parity_symbols:
-        equivalent: equivalent
-        reduced: reduced
-        missing: missing
-    validation:
-      block_on_instruction_limit: true
-      block_on_knowledge_limit: true
-      block_on_misleading_core_functionality: true
+    mode: claude_project
+  claude_skills:
+    enabled: true
+    role: peer_distribution
+  opencode:
+    enabled: true
+    role: peer_distribution
+
   plugin:
     enabled: true
     role: peer_distribution
@@ -449,40 +465,20 @@ runtime:
 runtime_parity:
   registered_runtimes:
   - chatgpt_chat
-  - chatgpt_custom
   - claude_project
+  - claude_skills
   - opencode
   - openai_plugin
 build_system:
   targets:
   - project
-  - chat_zip
-  - custom_gpt
+  - chat
   - plugin
-  runtime_targets:
-    chat_zip:
-      runtime_id: chatgpt_chat
-      runtime_key: chat_zip
-      builder: chat
-      filename_pattern: <project-id>-chat-<version>.zip
-      artifact_type: runtime_package
-    custom_gpt:
-      runtime_id: chatgpt_custom
-      runtime_key: custom_gpt
-      builder: custom_gpt
-      filename_pattern: <project-id>-custom-gpt-<version>.zip
-      artifact_type: runtime_package
-    claude:
-      runtime_id: claude_project
-    opencode:
-      runtime_id: opencode
-    plugin:
-      runtime_id: openai_plugin
-      runtime_key: plugin
-      builder: plugin
-      filename_pattern: <project-id>-plugin-<version>.zip
-      artifact_type: plugin_zip
+  - claude_project
+  - claude_skills
+  - opencode
   project_filename_pattern: <project-id>-project-<version>.zip
+
 knowledge_architecture:
   canonical_root: knowledge
 workflow:
