@@ -100,10 +100,8 @@ skills:
     - knowledge/visual-generation-guide.md
     - knowledge/visual-styles.md
     - knowledge/rendering-quality-guide.md
-    assets:
-    []
-    scripts:
-    []
+    assets: []
+    scripts: []
   - id: presentationsexport
     name: presentationsexport
     description: PPTX/PDF och experimentell Copilot-handoff
@@ -123,10 +121,8 @@ skills:
     - knowledge/quality-guide.md
     - knowledge/rendering-quality-guide.md
     - schemas/presentation-review.schema.json
-    assets:
-    []
-    scripts:
-    []
+    assets: []
+    scripts: []
 
 capabilities:
   contract_version: 1
@@ -407,7 +403,6 @@ runtime:
     enabled: true
     role: peer_distribution
     mode: skills_first
-    skill_id: presentationsbyggaren
     templates:
       readme: templates/README.plugin.md.tpl
     layout:
