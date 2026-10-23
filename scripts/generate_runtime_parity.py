@@ -1,51 +1,50 @@
 #!/usr/bin/env python3
+"""Conservative declared-runtime parity inventory; NOT a host acceptance result."""
 from __future__ import annotations
-import argparse, json
+import argparse
+import json
 from pathlib import Path
 import yaml
 
-CRITICAL_TOOLS={"document_read","file_write","presentation_generate"}
+def generate(root: Path):
+    cfg=yaml.safe_load((root/"gpt-project.yaml").read_text(encoding="utf-8"))
+    candidates=cfg["analysis"]["runtime"]["candidates"]
+    enabled={x["runtime_id"]:x for x in candidates if x.get("activate_by_default")}
+    actual=set(cfg["runtime_parity"]["registered_runtimes"])
+    assert set(enabled)==actual, f"Candidates differ from registered runtimes: {set(enabled) ^ actual}"
+    targets={v["runtime_id"] for k,v in cfg["build_system"]["runtime_targets"].items() if k in cfg["build_system"]["targets"]}
+    assert targets==actual, f"Build targets differ from registered runtimes: {targets ^ actual}"
+    runtimes={rid:{"level":"moderate","release_recommendation":"publish_with_warning",
+      "notes":["Declared build target; functionality in this host is not verified."]} for rid in sorted(actual)}
+    requirements=[]
+    def add(category, key, title, criticality, states):
+        requirements.append(dict(category=category,id=key,title=title,criticality=criticality,runtime_states=states))
+    def states(kind):
+        return {rid:{"state":"reduced","reason":f"{kind} requires functional host-specific verification; packaging alone is insufficient."} for rid in runtimes}
+    for ix, marker in enumerate(cfg["instructions"]["core_contract"]["required_markers"],1):
+        add("behavior",f"behavior_{ix}",marker,"critical",states("Canonical behavior"))
+    for key in cfg["capabilities"]["requirements"]:
+        add("capability",key,key,"critical" if key=="filesystem" else "important",states("Capability"))
+    for item in cfg["tools"]["tools"]:
+        add("tool",item["id"],item["purpose"],"critical" if item["id"] in {"document_read","file_write","presentation_generate"} else "important",states("Tool"))
+    for key,item in cfg["artifacts"]["outputs"].items():
+        add("artifact",key,item.get("description",key),"critical" if item.get("requirement")=="required" else "important",states("Artifact"))
+    report={"schema_version":2,"reference":{"type":"canonical_contract","description":"gpt-project.yaml canonical/core.md and modular Skills"},
+       "runtimes":runtimes,"requirements":requirements,
+       "notes":["This is a conservative declaration audit, NOT empirical runtime parity or release readiness.",
+                "Release requires actual host acceptance tests, slide-level behavior and PPTX/PDF delivery."]}
+    out=root/"reports";out.mkdir(exist_ok=True)
+    (out/"runtime-parity.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    md=["# Runtime-paritet (deklarativ kontroll)","","**Ingen runtime är funktionellt accepterad enbart genom denna rapport.**","","| Runtime | Status |","|---|---|"]
+    for rid in runtimes: md.append(f"| {rid} | Hosttest återstår |")
+    md.extend(["","Kör praktiska, värdspecifika tester för plan, bildgodkännande och PPTX/PDF innan release."])
+    (out/"runtime-parity.md").write_text("\n".join(md)+"\n",encoding="utf-8")
+    return report
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--project-root',default='.')
-    args=ap.parse_args(); root=Path(args.project_root).resolve()
-    cfg=yaml.safe_load((root/'gpt-project.yaml').read_text())
-    runtimes={
-      'chatgpt_chat': {'level':'high','release_recommendation':'publish','notes':['Canonical instruction and Knowledge are packaged directly. Tool availability depends on the active ChatGPT environment.']},
-      'chatgpt_custom': {'level':'high','release_recommendation':'publish_with_warning','notes':['Canonical instruction is identical. Knowledge is packaged within configured limits. Presentation/file tools depend on enabled Custom GPT capabilities.']},
-      'openai_plugin': {'level':'high','release_recommendation':'publish_with_warning','notes':['Canonical behavior is embedded in a skills-first Plugin. Full completion depends on host file writing and presentation generation capabilities.']},
-    }
-    req=[]
-    for marker in cfg['instructions']['core_contract']['required_markers']:
-        req.append({'category':'behavior','id':'behavior_'+str(len(req)+1),'title':marker,'criticality':'critical','runtime_states':{
-          'chatgpt_chat':{'state':'equivalent'},'chatgpt_custom':{'state':'equivalent'},'openai_plugin':{'state':'equivalent'}}})
-    for name,cap in cfg['capabilities']['requirements'].items():
-        critical='critical' if name=='filesystem' else 'important'
-        req.append({'category':'capability','id':name,'title':name,'criticality':critical,'runtime_states':{
-          'chatgpt_chat':{'state':'reduced','reason':'Availability depends on the active ChatGPT tool configuration.'},
-          'chatgpt_custom':{'state':'reduced','reason':'Availability depends on capabilities enabled for the Custom GPT.'},
-          'openai_plugin':{'state':'reduced','reason':'Capability is supplied by the Plugin host; full parity requires file writing and presentation generation.'}}})
-    for tool in cfg['tools']['tools']:
-        critical='critical' if tool['id'] in CRITICAL_TOOLS else ('important' if tool.get('requirement')=='recommended' else 'optional')
-        req.append({'category':'tool','id':tool['id'],'title':tool['purpose'],'criticality':critical,'runtime_states':{
-          'chatgpt_chat':{'state':'reduced','reason':'Tool is runtime-provided rather than embedded in the package.'},
-          'chatgpt_custom':{'state':'reduced','reason':'Tool is runtime-provided and must be enabled/available in the GPT.'},
-          'openai_plugin':{'state':'reduced','reason':'API actions are host-provided; deterministic validation scripts are packaged but require compatible execution.'}}})
-    for aid,a in cfg['artifacts']['outputs'].items():
-        crit='critical' if a.get('requirement')=='required' else 'important'
-        state_chat={'state':'equivalent'}
-        state_custom={'state':'equivalent'}
-        state_plugin={'state':'equivalent'}
-        if aid=='presentation_pptx':
-            state_chat={'state':'reduced','reason':'PPTX creation depends on presentation/file-generation support in the active ChatGPT runtime.'}
-            state_custom={'state':'reduced','reason':'PPTX creation depends on capabilities available to the configured Custom GPT.'}
-            state_plugin={'state':'reduced','reason':'PPTX completion requires an actual host presentation-generation capability.'}
-        req.append({'category':'artifact','id':aid,'title':a.get('description',aid),'criticality':crit,'runtime_states':{'chatgpt_chat':state_chat,'chatgpt_custom':state_custom,'openai_plugin':state_plugin}})
-    report={'schema_version':2,'reference':{'type':'canonical_contract','description':'gpt-project.yaml and assistant/instructions.md'},'runtimes':runtimes,'requirements':req,'notes':['No canonical behavior drift detected by source/build parity checks.','Reduced tool states reflect runtime capability availability, not divergent assistant policy.','OpenAI Plugin is equivalent_runtime_dependent: presentation completion requires host file writing and presentation generation.']}
-    out=root/'reports'/'runtime-parity.json'; out.parent.mkdir(exist_ok=True); out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-    md=['# Runtime parity report','','Reference: canonical contracts in `gpt-project.yaml` and `assistant/instructions.md`.','','| Runtime | Level | Release |','|---|---|---|']
-    for rid,r in runtimes.items(): md.append(f"| {rid} | {r['level']} | {r['release_recommendation']} |")
-    md += ['','## Result','','No blockerande canonical drift detected. ChatGPT Chat, ChatGPT Custom and OpenAI Plugin use the same canonical behavior. Tool-dependent functions remain capability-dependent and are explicitly marked as reduced where appropriate.']
-    (root/'reports'/'runtime-parity.md').write_text('\n'.join(md)+'\n')
-    print(out)
-if __name__=='__main__': main()
+    p=argparse.ArgumentParser();p.add_argument("--project-root",default=".")
+    root=Path(p.parse_args().project_root).resolve()
+    generate(root)
+    print(root/"reports/runtime-parity.json")
+if __name__=="__main__":
+    main()
