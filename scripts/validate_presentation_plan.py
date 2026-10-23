@@ -82,6 +82,11 @@ def _validate_rendering_status(body: str, slide_ids: list[str]) -> list[str]:
         if next_ids != [declared_next]:
             errors.append("Rendering status: '- Next slide' must match the single slide marked next")
 
+    active_ids = [slide_id for slide_id, status in entries if status in {"generated", "redo"}]
+    if len(active_ids) > 1:
+        errors.append("Rendering status: at most one slide may await review")
+    if active_ids and next_ids:
+        errors.append("Rendering status: a slide awaiting review cannot coexist with a next slide")
     active_review = [status for status in statuses.values() if status in {"generated", "redo"}]
     pending = [status for status in statuses.values() if status == "pending"]
     if pending and not active_review and not next_ids:
