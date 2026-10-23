@@ -36,16 +36,34 @@ jobs:
         run: python scripts/generate_runtime_parity.py --project-root .
       - name: Validate project
         run: python scripts/validate_project.py --project-root .
-      - name: Lint
-        run: python scripts/lint_gpt_project.py --project-root .
       - name: Deterministic tests
         run: python -m pytest -q -p no:cacheprovider
-      - name: Project hygiene
-        run: python scripts/project_hygiene.py --project-root . --mode final --fix
-      - name: Build tagged distributions
+      - name: Download pinned GPT Byggaren Engine 1.6.28
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --silent --show-error \
+            https://github.com/erland/gpt-byggaren/releases/download/v1.6.28/gpt-byggaren-engine-1.6.28.zip \
+            -o /tmp/gpt-byggaren-engine.zip
+          mkdir -p /tmp/gpt-byggaren-engine
+          python -m zipfile -e /tmp/gpt-byggaren-engine.zip /tmp/gpt-byggaren-engine
+      - name: Self-test canonical engine
+        run: python /tmp/gpt-byggaren-engine/scripts/selftest_distribution_engine.py --source /tmp/gpt-byggaren-engine
+      - name: Install canonical engine
+        run: python /tmp/gpt-byggaren-engine/scripts/install_distribution_engine.py --source /tmp/gpt-byggaren-engine --project-root .
+      - name: Canonical lint
+        run: python scripts/lint_gpt_project.py --project-root .
+      - name: Build tagged distributions with canonical engine
         run: python scripts/build_distributions.py --project-root . --version "${{ steps.version.outputs.version }}"
-      - name: Validate distributions
+      - name: Validate canonical distributions
         run: python scripts/validate_distributions.py --project-root .
+      - name: Verify all six ZIP archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          for target in project chat plugin claude-project claude-skills opencode; do
+            test -s "dist/presentationsbyggaren-${target}-${{ steps.version.outputs.version }}.zip"
+          done
       - name: Upload release artifacts
         env:
           GH_TOKEN: ${{ github.token }}
