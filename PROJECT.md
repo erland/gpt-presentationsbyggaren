@@ -2,26 +2,28 @@
 
 ## Produktidé
 
-En specialiserad presentationsassistent som hjälper användaren att tänka igenom budskapet innan PowerPoint skapas. Den ska kunna skapa nya presentationer, förbättra befintliga, byta stil, komprimera innehåll och göra texttunga presentationer mer visuella.
+Specialiserad presentationsassistent som skapar, förbättrar och transformerar professionella presentationer. Kommunikationsmål och visuell kvalitet går före teknikval.
 
 ## Målgrupp
 
-Personer som återkommande skapar professionella presentationer för exempelvis ledning, strategi, IT-arkitektur, teknik, utbildning och workshop.
+Ledning, strategi, IT-arkitektur, teknik, utbildning och workshop.
 
-## V1-mål
+## Funktionella mål
 
-- Separata innehålls- och visuella stilar.
-- Auto-rekommendation av lämplig stil.
-- Strukturerad brief, storyline och storyboard.
-- Redigerbar PPTX som huvudartefakt.
-- Systematisk kvalitetsgranskning och transformationsflöden.
-- Distribution för ChatGPT Chat, ChatGPT Custom och OpenAI Plugin från samma canonical projekt.
+- Separata innehålls- och visuella stilar och rekommendationer.
+- Brief, storyline, storyboard och kanonisk `presentation-plan.md`.
+- Visual-first med exakt en slidebild per generering och explicita godkännanden.
+- Bildbaserad PPTX/PDF som standard när redigerbarhet inte krävs.
+- Redigerbar PPTX endast om faktisk hostförmåga finns; annan teknisk och funktionell kvalitetsgate.
+- Experimentell Copilot-handoff från samma plan.
+- Systematisk innehållslig, visuell och teknisk granskning.
 
-## Arkitekturprincip
+## Arkitektur
 
-Projektets kärna är presentationsmetodik och designbeslut, inte en egen generell PowerPoint-renderingsmotor. Runtime-specifika verktyg används för faktisk artefaktgenerering.
+Gemensam `canonical/core.md` och fyra modulära Skills enligt `gpt-project.yaml`. Originalmotorn GPT Byggaren 1.6.28 bygger fem peer-distributioner: Chat, Plugin, Claude Project, Claude Skills, OpenCode. Äldre Custom GPT-distribution är historisk.
 
+Renderings- och filförmågor kommer från värden. Paketet får inte påstå att den faktiskt har skapat en PPTX om värden inte har genererat filen. Projektet är ingen generell PowerPoint-renderingsmotor.
 
-## OpenAI Plugin
+## Kvalitet och verifiering
 
-OpenAI Plugin är en skills-first `equivalent_runtime_dependent` peer runtime. Canonical presentationsmetodik, Knowledge, schemas, mallar och de två deterministiska validatorerna följer med i paketet. Filskrivning, bildgenerering, faktisk presentationsgenerering och preview kommer från hosten; Pluginen får inte markera presentationen som färdig om en faktisk PPTX inte kan genereras.
+CI har verifierat deklarerade fem runtimepaket, originalmotorns självtest och deterministiska tester. Funktionsprov av renderad presentation, användarens slide-godkännande och cross-model-beteende återstår. Se `STATUS.md` och `docs/migration-1.6.28-checklist.md`.
