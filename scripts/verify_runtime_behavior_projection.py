@@ -37,6 +37,13 @@ def verify(root: Path, version: str, dist: Path) -> list[str]:
             continue
         with zipfile.ZipFile(archive) as z:
             names = set(z.namelist())
+            forbidden = [name for name in names if (
+                "chatgpt-custom" in name.lower()
+                or "custom-gpt" in name.lower()
+                or name == "templates/COMPATIBILITY.md.tpl"
+            )]
+            for item in forbidden:
+                errors.append(f"{target}: retired Custom GPT resource included: {item}")
             for skill in SKILLS:
                 if target in ARCHIVES:
                     entry = ARCHIVES[target]
