@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "engine_version",
+    "tested_runtime",
+    "tested_at",
+    "cases"
+  ],
+  "properties": {
+    "engine_version": {
+      "const": "1.6.28"
+    },
+    "tested_runtime": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tested_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "observed",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "VF-01",
+              "VF-02",
+              "VF-03",
+              "VF-04",
+              "VF-05",
+              "VF-06",
+              "VF-07",
+              "EXP-01",
+              "EXP-02",
+              "EXP-03"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "PARTIAL",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "observed": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "observed": {
+                  "minLength": 1
+                },
+                "evidence": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      },
+      "uniqueItems": false
+    }
+  },
+  "additionalProperties": false
+}
