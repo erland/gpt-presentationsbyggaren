@@ -14,13 +14,13 @@ def validate_pair(pptx_path: Path, pdf_path: Path, expected_slides: int) -> list
         return [f"Missing export validation dependency: {exc}"]
     root = Path(__file__).resolve().parent
     sys.path.insert(0, str(root))
-    from validate_pptx import validate as validate_pptx
+    from validate_pptx import validate_pptx
 
     if not pptx_path.is_file() or not pdf_path.is_file():
         return ["Both PPTX and PDF must exist"]
     try:
-        pptx_errors = validate_pptx(pptx_path)
-        errors.extend(str(e) for e in pptx_errors)
+        pptx_result = validate_pptx(str(pptx_path))
+        errors.extend(str(e) for e in pptx_result['errors'])
     except Exception as exc:
         errors.append(f"PPTX integrity check failed: {exc}")
     try:
