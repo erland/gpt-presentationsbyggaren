@@ -1,0 +1,67 @@
+{
+  "engine_version": "1.6.28",
+  "tested_runtime": "installed-presentationsbyggaren",
+  "tested_at": null,
+  "cases": [
+    {
+      "id": "VF-01",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-02",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-03",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-04",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-05",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-06",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "VF-07",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "EXP-01",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "EXP-02",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    },
+    {
+      "id": "EXP-03",
+      "status": "NOT_RUN",
+      "observed": "",
+      "evidence": []
+    }
+  ]
+}
