@@ -16,20 +16,19 @@ analysis:
       suitability: equivalent
       rationale: Stödjer iterativt arbete med filer, källmaterial och presentationsartefakter.
       activate_by_default: true
-    - runtime_id: chatgpt_custom
-      suitability: equivalent
-      rationale: Passar som återanvändbar specialiserad presentationsassistent med
-        samma canonical metodik.
-      activate_by_default: true
     - runtime_id: claude_project
       suitability: reduced
       rationale: Kan stödja analys och storyboard men full presentationsgenerering
         och paritet är inte säkerställd i v1.
-      activate_by_default: false
+      activate_by_default: true
+    - runtime_id: claude_skills
+      suitability: reduced
+      rationale: Kraver kontroll av vardmiljons stod for bildgenerering och filer.
+      activate_by_default: true
     - runtime_id: opencode
-      suitability: not_recommended
-      rationale: Kärnuppgiften är presentationsdesign snarare än kodutveckling.
-      activate_by_default: false
+      suitability: reduced
+      rationale: Kan hantera portabel plan och validering, faktisk presentationsexport ar vardberoende.
+      activate_by_default: true
     - runtime_id: openai_plugin
       suitability: equivalent_runtime_dependent
       rationale: Skills-first runtime kan bära hela presentationsmetodiken och den återupptagningsbara planen när hosten erbjuder filskrivning och presentationsgenerering.
@@ -472,6 +471,17 @@ build_system:
   - claude_project
   - claude_skills
   - opencode
+  runtime_targets:
+    chat:
+      runtime_id: chatgpt_chat
+    plugin:
+      runtime_id: openai_plugin
+    claude_project:
+      runtime_id: claude_project
+    claude_skills:
+      runtime_id: claude_skills
+    opencode:
+      runtime_id: opencode
   project_filename_pattern: <project-id>-project-<version>.zip
 
 knowledge_architecture:
