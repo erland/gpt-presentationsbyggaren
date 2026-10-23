@@ -16,16 +16,16 @@ Migrering till GPT Byggaren **1.6.28**. Checka bara av efter faktisk kontroll. D
 
 ## 3. Motor
 - [x] Kontrollera bifogad Engine ZIP och kör originalmotorns självtest
-- [ ] Installera/pinna exakt 1.6.28 i projektets CI, dokumentera integritetskontroller
+- [x] Installera/pinna exakt 1.6.28 i projektets CI och kör originalmotorns självtest
 - [ ] Jämför ersättning med gamla generella skript före eventuell städning
 
 ## 4. Fem distributioner
-- [ ] Bygg projektpaket och Chat, Plugin, Claude Project, Claude Skills, OpenCode med originalmotor
-- [ ] Kontrollera samtliga skillresurser, parity och distributionernas interna struktur
-- [ ] Ta bort Custom GPT från aktiv build först efter beslutad migration
+- [x] Bygg projektpaket och Chat, Plugin, Claude Project, Claude Skills, OpenCode med originalmotor (CI main 40023315106)
+- [x] Kör kanonisk distributionsvalidering i CI (verifierar struktur; hostfunktioner återstår)
+- [x] Ta bort Custom GPT från aktiv build (historiskt material kvar tills städning är säker)
 
 ## 5. Dokumentation och filhygien
-- [ ] Synkronisera README, PROJECT, STATUS, utvecklingsplan, CI och migrationschecklista
+- [ ] Synkronisera README, PROJECT, STATUS, utvecklingsplan, CI och migrationschecklista (README/PROJECT/STATUS uppdaterade i PR #11; övrigt återstår)
 - [ ] Gå igenom gamla scripts, genererade filer och brutna hänvisningar
 - [ ] Bevara historik och fastställ projektets versions-/releasepolicy
 
@@ -36,9 +36,8 @@ Migrering till GPT Byggaren **1.6.28**. Checka bara av efter faktisk kontroll. D
 - [ ] Kvalificera host-skillnader och enklare/starkare modell
 - [ ] Verifiera CI och release-readiness innan merge/release
 
-## Nästa rekommenderade PR
-**Projektmodell + moduleringsbeslut:** inventera samtliga resurser och fastställ exakt Skill-ansvar, därefter uppdatera `gpt-project.yaml` och inför canonical-källor. Behåll gamla builds tills faktisk ersättningsparitet uppmätts.
+## Verifierad status och nästa steg
 
-## PR för aktivering – verifieringsgräns
+CI på main efter PR #10: GitHub Actions run 40023315106 PASS. Sex ZIP-arkiv byggda från GPT Byggaren 1.6.28 och distributionsvalidering genomförd. Detta verifierar inte verklig PPTX/PDF-produktion eller beteende i alla värdar.
 
-Modulära källor har aktiverats deklarativt i `gpt-project.yaml`, men befintlig CI och gamla byggskript har inte bytts ut. Motorns tidigare självtest är **inte** bevis för att den omställda projektmodellen går att bygga. Denna PR hålls därför som draft och får inte mergas innan 1.6.28 canonical lint, source-validation, fem byggda distributioner, samtliga distributionsvalidators, gamla projektets deterministiska tester samt CI passerar. Vid kompatibilitetsfel: korrigera projektmodell/schema/byggkedja på samma PR; gör inte ändringen på `main`.
+Nästa steg: färdigställ migrationshygien (gamla scripts/templates, dokumentation och referenser) samt praktiskt visual-first-test. Behåll projektspecifika validatorer tills ekvivalens och anrop är bevisade.
