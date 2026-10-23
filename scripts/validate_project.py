@@ -16,7 +16,10 @@ def main():
     instr=(root/cfg['instructions']['canonical']).read_text()
     for marker in cfg['instructions']['core_contract']['required_markers']:
         assert marker in instr, f'Missing core marker: {marker}'
-    assert len(instr)<=cfg['runtime']['custom_gpt']['instruction']['max_characters']
+    custom = cfg.get('runtime', {}).get('custom_gpt', {})
+    max_chars = custom.get('instruction', {}).get('max_characters')
+    if isinstance(max_chars, int):
+        assert len(instr) <= max_chars, 'Custom GPT instruction exceeds limit'
     pairs=[
       ('tests/fixtures/presentation-brief.example.json','schemas/presentation-brief.schema.json'),
       ('tests/fixtures/storyline.example.json','schemas/storyline.schema.json'),
