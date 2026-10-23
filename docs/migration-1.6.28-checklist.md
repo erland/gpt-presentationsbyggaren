@@ -9,10 +9,10 @@ Migrering till GPT Byggaren **1.6.28**. Checka bara av efter faktisk kontroll. D
 - [ ] Fastställ Skill-indelning och resursisolering
 
 ## 2. Projektmodell
-- [ ] Uppdatera `gpt-project.yaml` enligt 1.6.28 och aktivera fem runtime-mål
+- [x] Förbered `gpt-project.yaml` för 1.6.28 med fem runtime-mål (deklarerat; ännu ej distributionsverifierat)
 - [ ] Definiera skilda artefaktlägen: visual-first, redigerbar PPTX, Copilot-handoff
 - [ ] Inventera verkliga host-förmågor och deklarera fallback för alla tools
-- [ ] Uppdatera kanoniska skill-källor och beroende-listor utan beteendeförlust
+- [x] Koppla in fyra kanoniska Skill-källor med explicita resurslistor (kräver byggverifiering)
 
 ## 3. Motor
 - [x] Kontrollera bifogad Engine ZIP och kör originalmotorns självtest
@@ -38,3 +38,7 @@ Migrering till GPT Byggaren **1.6.28**. Checka bara av efter faktisk kontroll. D
 
 ## Nästa rekommenderade PR
 **Projektmodell + moduleringsbeslut:** inventera samtliga resurser och fastställ exakt Skill-ansvar, därefter uppdatera `gpt-project.yaml` och inför canonical-källor. Behåll gamla builds tills faktisk ersättningsparitet uppmätts.
+
+## PR för aktivering – verifieringsgräns
+
+Modulära källor har aktiverats deklarativt i `gpt-project.yaml`, men befintlig CI och gamla byggskript har inte bytts ut. Motorns tidigare självtest är **inte** bevis för att den omställda projektmodellen går att bygga. Denna PR hålls därför som draft och får inte mergas innan 1.6.28 canonical lint, source-validation, fem byggda distributioner, samtliga distributionsvalidators, gamla projektets deterministiska tester samt CI passerar. Vid kompatibilitetsfel: korrigera projektmodell/schema/byggkedja på samma PR; gör inte ändringen på `main`.
