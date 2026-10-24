@@ -20,11 +20,11 @@ PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-fi
 2. Fastställ visual system och välj 1–2 anchor slides.
 3. **Bakgrund:** generera en bild som fungerar som självständig, textfri visuell komposition. Inga textrutor, etiketter, förberedda plattor, ramar eller textplatshållare. Låt negativt utrymme uppstå naturligt.
 4. Spara `slides/slide-NN-background.png`. Markera `background_ready`.
-5. **Final:** skapa en NY bild från bakgrunden som **faktisk bildreferens** och ange exakt text. Låt modellen integrera typografi och eventuella skuggor, toner och grafiska textstöd i detta steg. Generera inte en ny orelaterad bakgrund från enbart prompt.
+5. **Final:** **redigera den existerande rena bakgrunden** i bildverktygets redigeringsläge och ange exakt text. Låt modellen integrera typografi och eventuella skuggor, toner och grafiska textstöd i detta steg. Generera inte en ny orelaterad bakgrund från enbart prompt.
 6. Kontrollera bakgrundens visuella kontinuitet och slutbildens ordalydelse, kontrast och komposition. Spara `slides/slide-NN-final.png`; markera `final_ready`.
 7. Visa finalbilden för godkännande. Ändra status till `approved` först efter användarens explicita godkännande.
 8. Upprepa för nästa slide. Exportera **finalbilderna** i PPTX och PDF, inspektera preview, och skapa projekt-ZIP inklusive båda bildversionerna.
-9. Vid textändring: bevara bakgrunden, regenerera enbart finalbilden, återställ status till `final_ready` och begär nytt godkännande. Versionsspara ersatt finalbild där stöd finns.
+9. Vid textändring: bevara bakgrunden, redigera samma rena originalbakgrund till en ny finalbild, återställ status till `final_ready` och begär nytt godkännande. Versionsspara ersatt finalbild där stöd finns.
 
 När bildreferenser inte stöds: beskriv begränsningen; gör inte anspråk på referensbaserad bildgenerering. Exakt text och grafisk överensstämmelse behöver kontrolleras visuellt.
 
@@ -80,7 +80,7 @@ När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 1. markera den senast genererade sliden som `approved`,
 2. läs specifikationen för slide X ur `presentation-plan.md`,
 3. markera slide X som `next`,
-4. generera bakgrundsbild för slide X och därefter en separat AI-finalbild med bakgrunden som bildreferens,
+4. generera en ren bakgrund för slide X och redigera **den exakta originalbakgrunden** till finalbild med text,
 5. lämna övriga slides oförändrade.
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
@@ -101,7 +101,7 @@ Vid sådant resultat: gör om **samma slide**, inte nästa slide.
 
 ## Bakgrund kontra text i final
 
-Bakgrundsbilden innehåller motiv, ljus och bildspråk men **ingen text och inga förberedda textrutor eller tonplattor**. Finalbilden får däremot text, textrelaterade effekter och grafisk typografi via AI-generering med bakgrundsbilden som referens. Förlita dig inte på deterministisk textoverlay som normalväg. Exakta siffror, längre text och källor kräver särskild kontroll; be användaren godkänna slutresultatet innan export.
+Bakgrundsbilden innehåller motiv, ljus och bildspråk men **ingen text och inga förberedda textrutor eller tonplattor**. Finalbilden får text, textrelaterade effekter och grafisk typografi via **AI-redigering av den ursprungliga sparade bakgrunden**. Förlita dig inte på deterministisk textoverlay som normalväg. Exakta siffror, längre text och källor kräver särskild kontroll; be användaren godkänna slutresultatet innan export.
 
 ## Konsistens
 
@@ -134,3 +134,7 @@ En slide som ser ut som en skiss, ett flödesschema av standardboxar eller en ge
 ## Bakgrundsgate
 
 Innan `final_ready` måste `background_gate` ha `checked`, `text_free`, `no_text_containers` och `single_scene` satta till true samt `sha256` för bakgrundsfilens bytes. Valideraren kontrollerar metadata och hash, men inte bildens semantiska innehåll. Rapportera faktisk visuell granskning separat.
+
+## Faktiskt redigeringsunderlag
+
+Skilj mellan att generera en ny bild inspirerad av bakgrunden och att faktiskt redigera **den sparade originalbakgrunden**. Endast den senare uppfyller steg 2 i standardflödet. Först efter verifierad redigering får `generation.edit_confirmed` sättas till true. Vid textändring ska inte den föregående finalbilden väljas som källa; välj åter ursprungsbilden och bevara tidigare final som historik. Om värdmiljön inte kan välja rätt original eller metadata saknas ska begränsningen redovisas, aldrig döljas bakom en lyckad bildgenerering.
