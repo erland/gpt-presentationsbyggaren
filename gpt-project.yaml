@@ -45,7 +45,23 @@ analysis:
     templates: true
     deterministic_tests: true
     evals: recommended
-  model_robustness:
+  # Optional deterministic validators for hosts with compatible Python execution.
+# Rendering and ordinary presentation work must never depend on this ZIP.
+engine:
+  enabled: true
+  release_repository: erland/gpt-presentationsbyggaren
+  resources:
+    - scripts/validate_presentation_plan.py
+    - scripts/validate_pptx.py
+    - scripts/selftest_presentation_engine.py
+  selftest: scripts/selftest_presentation_engine.py
+  required_files:
+    - scripts/validate_presentation_plan.py
+    - scripts/validate_pptx.py
+  python_dependencies:
+    - pyyaml
+
+model_robustness:
     level: guided
     rationale: Flerstegsflödet behöver en kort operativ kärna och gates, men ingen
       tung persistent workflowmotor för presentationsuppdrag.
