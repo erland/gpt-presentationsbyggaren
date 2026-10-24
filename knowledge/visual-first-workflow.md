@@ -50,7 +50,7 @@ Om anchor-resultatet är svagt ska visual system justeras **innan** resten gener
 
 ## En slide per bildgenerering
 
-**Hård regel: en bildgenerering = exakt en bild av en slide. Två bildgenereringar ingår normalt per slide: bakgrund + final.**
+**Hård regel: ett anrop = exakt en bild. Använd först bildgenerering för bakgrund, därefter i en ny användartur bildredigering av samma original för final.**
 
 Det gäller även enkla slides.
 
@@ -68,7 +68,7 @@ Bildverktyget kan avsluta turen direkt efter genereringen. Därför ska Presenta
 
 Visa kort:
 
-> Jag skapar presentationen en slide i taget. Efter varje bild:
+> Jag skapar presentationen en slide i taget. Efter en färdig finalbild:
 > - om du är nöjd, skriv t.ex. **"Det ser bra ut. Skapa slide 2 enligt planen."**
 > - om du vill justera bilden, skriv t.ex. **"Ändra slide 1: gör illustrationen större."**
 > - om den ska göras om, skriv t.ex. **"Gör om slide 1 enligt planen, men utan ikoner."**
