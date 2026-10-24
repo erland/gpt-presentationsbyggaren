@@ -23,6 +23,7 @@ def main():
     pptx = load("validate_pptx")
     project = load("presentation_project")
     renderer = load("render_slide_layers")
+    two_stage = load("validate_two_stage_project")
     with tempfile.TemporaryDirectory() as temp:
         base = Path(temp)
         (base / "invalid-plan.md").write_text("not a presentation plan", encoding="utf-8")
@@ -60,6 +61,27 @@ def main():
         second = renderer.render(source,"02").read_bytes()
         assert first != second, "Text update must change composite"
         assert hashlib.sha256((source / "slides/slide-02-background.png").read_bytes()).hexdigest() == digest
+        project_state = {"slides":{"03":{
+            "render_mode":"ai_two_stage", "status":"approved",
+            "background":"slides/slide-03-background.png",
+            "final":"slides/slide-03-final.png",
+            "text":{"headline":"Testbudskap"},
+            "generation":{"background_prompt":"A standalone text-free scene",
+                          "final_prompt":"Use exact copy integrated into reference scene",
+                          "reference_background":"slides/slide-03-background.png"},
+            "approval_recorded":True}}}
+        import json
+        (source / "project/project-state.json").write_text(json.dumps(project_state), encoding="utf-8")
+        (source / "slides/slide-03-background.png").write_bytes(b"background original")
+        (source / "slides/slide-03-final.png").write_bytes(b"composited final")
+        assert two_stage.validate(source)["validated_two_stage_slides"] == 1
+        (source / "slides/slide-03-final.png").unlink()
+        try:
+            two_stage.validate(source)
+        except ValueError as exc:
+            assert "final asset missing" in str(exc)
+        else:
+            raise AssertionError("Missing final must fail validation")
     print("PRESENTATION ENGINE SELFTEST: PASS")
     return 0
 
