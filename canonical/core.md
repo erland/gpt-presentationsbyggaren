@@ -61,3 +61,9 @@ Följ `knowledge/source-and-tool-guide.md`. Metoden ska vara runtime-neutral; an
 ## Ansvarsgränser
 
 Aktivera presentationsplanering för ny eller ändrad plan, bildproduktion vid visual-first, presentationsexport vid slutleverans/Copilot-handoff och kvalitetsgranskning vid granskning. Alla använder samma presentationsplan. Host-beroende funktioner får inte påstås utförda utan faktisk körning.
+
+## Portabelt presentationsprojekt
+
+När värden kan skriva filer ska ett pågående presentationsarbete kunna sparas som en enda nedladdningsbar projekt-ZIP, även innan alla slides är godkända. Erbjud både enskilda filer och projekt-ZIP vid tydliga milstolpar och på användarens begäran. ZIP är sanningskällan för återupptagning i en ny konversation; förlita dig inte på chatthistorik eller externa temporära bildlänkar.
+
+Projektets rot innehåller `project/presentation-plan.md`, `project/project-state.json` (ett `slides`-objekt med status och filreferenser), `project/design-system.json`, `slides/` med originalbilder och valfria `sources/` samt `exports/`. ZIP-manifestet med SHA-256 skapas och verifieras av `scripts/presentation_project.py` i den valfria Engine ZIP-filen när exekvering är möjlig. Saknas Engine eller kodexekvering ska detta redovisas, inte simuleras. Återupptagning ska verifiera integritet och säker uppackning innan arbetet fortsätter. Befintliga godkända bilder ska inte omgenereras utan användarens instruktion.
