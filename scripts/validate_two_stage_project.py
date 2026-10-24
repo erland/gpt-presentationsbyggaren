@@ -5,6 +5,7 @@ Checks file/state consistency, not whether a particular image model truly used a
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 from pathlib import Path, PurePosixPath
 
@@ -48,6 +49,18 @@ def validate(root: Path) -> dict:
             raise ValueError(f"{slide_id}: background asset missing")
         if stage in {"final_ready", "approved"} and not final.is_file():
             raise ValueError(f"{slide_id}: final asset missing")
+        if stage in {"final_ready", "approved"}:
+            gate = slide.get("background_gate")
+            if not isinstance(gate, dict):
+                raise ValueError(f"{slide_id}: missing background quality gate")
+            for key in ("checked", "text_free", "no_text_containers", "single_scene"):
+                if gate.get(key) is not True:
+                    raise ValueError(f"{slide_id}: background quality gate failed: {key}")
+            digest = gate.get("sha256")
+            if not isinstance(digest, str) or len(digest) != 64:
+                raise ValueError(f"{slide_id}: background checksum missing")
+            if hashlib.sha256(bg.read_bytes()).hexdigest() != digest:
+                raise ValueError(f"{slide_id}: background checksum mismatch")
         metadata = slide.get("generation")
         if not isinstance(metadata, dict):
             raise ValueError(f"{slide_id}: generation metadata missing")
