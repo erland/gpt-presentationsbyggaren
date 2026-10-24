@@ -19,8 +19,8 @@ PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-fi
 1. Läs `presentation-plan.md` och aktuellt projekttillstånd.
 2. Fastställ visual system och välj 1–2 anchor slides.
 3. **Bakgrund:** generera en bild som fungerar som självständig, textfri visuell komposition. Inga textrutor, etiketter, förberedda plattor, ramar eller textplatshållare. Låt negativt utrymme uppstå naturligt.
-4. Spara `slides/slide-NN-background.png`. Markera `background_ready`.
-5. **Final:** **redigera den existerande rena bakgrunden** i bildverktygets redigeringsläge och ange exakt text. Låt modellen integrera typografi och eventuella skuggor, toner och grafiska textstöd i detta steg. Generera inte en ny orelaterad bakgrund från enbart prompt.
+4. Spara `slides/slide-NN-background.png` efter visuell kontroll och beräkna SHA-256. Markera `background_ready`. **Avsluta assistentturen.** Begär ett nytt användarmeddelande: ”Lägg på texten enligt planen”. Skapa inte finalbilden i detta svar.
+5. **Efter ett nytt användarmeddelande:** **redigera den existerande rena bakgrunden** i bildverktygets redigeringsläge och ange exakt text. Låt modellen integrera typografi och eventuella skuggor, toner och grafiska textstöd i detta steg. Generera inte en ny orelaterad bakgrund från enbart prompt.
 6. Kontrollera bakgrundens visuella kontinuitet och slutbildens ordalydelse, kontrast och komposition. Spara `slides/slide-NN-final.png`; markera `final_ready`.
 7. Visa finalbilden för godkännande. Ändra status till `approved` först efter användarens explicita godkännande.
 8. Upprepa för nästa slide. Exportera **finalbilderna** i PPTX och PDF, inspektera preview, och skapa projekt-ZIP inklusive båda bildversionerna.
@@ -50,7 +50,7 @@ Om anchor-resultatet är svagt ska visual system justeras **innan** resten gener
 
 ## En slide per bildgenerering
 
-**Hård regel: en bildgenerering = exakt en bild av en slide. Två bildgenereringar ingår normalt per slide: bakgrund + final.**
+**Hård regel: ett anrop = exakt en bild. Använd först bildgenerering för bakgrund, därefter i en ny användartur bildredigering av samma original för final.**
 
 Det gäller även enkla slides.
 
@@ -68,7 +68,7 @@ Bildverktyget kan avsluta turen direkt efter genereringen. Därför ska Presenta
 
 Visa kort:
 
-> Jag skapar presentationen en slide i taget. Efter varje bild:
+> Jag skapar presentationen en slide i taget. Efter en färdig finalbild:
 > - om du är nöjd, skriv t.ex. **"Det ser bra ut. Skapa slide 2 enligt planen."**
 > - om du vill justera bilden, skriv t.ex. **"Ändra slide 1: gör illustrationen större."**
 > - om den ska göras om, skriv t.ex. **"Gör om slide 1 enligt planen, men utan ikoner."**
@@ -80,7 +80,7 @@ När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 1. markera den senast genererade sliden som `approved`,
 2. läs specifikationen för slide X ur `presentation-plan.md`,
 3. markera slide X som `next`,
-4. generera en ren bakgrund för slide X och redigera **den exakta originalbakgrunden** till finalbild med text,
+4. generera en ren bakgrund för slide X, spara den, markera `background_ready` och **avsluta assistentturen**; redigera bilden först efter nästa uttryckliga användarmeddelande,
 5. lämna övriga slides oförändrade.
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
@@ -138,3 +138,9 @@ Innan `final_ready` måste `background_gate` ha `checked`, `text_free`, `no_text
 ## Faktiskt redigeringsunderlag
 
 Skilj mellan att generera en ny bild inspirerad av bakgrunden och att faktiskt redigera **den sparade originalbakgrunden**. Endast den senare uppfyller steg 2 i standardflödet. Först efter verifierad redigering får `generation.edit_confirmed` sättas till true. Vid textändring ska inte den föregående finalbilden väljas som källa; välj åter ursprungsbilden och bevara tidigare final som historik. Om värdmiljön inte kan välja rätt original eller metadata saknas ska begränsningen redovisas, aldrig döljas bakom en lyckad bildgenerering.
+
+## Mallar och turgräns
+
+Moment A använder `templates/background-generation.md.tpl` med enbart motiv och stil; innehåller inte slutlig rubrik. Efter godkänd bakgrund och hash: **stanna vid `background_ready`**, visa bilden och be användaren skriva ”Lägg på texten enligt planen”. Moment B i ett **nytt användarmeddelande** använder `templates/text-overlay-edit.md.tpl`, med endast den exakta texten och den sparade bilden som **faktisk bildindata**. Upprepa inte motivet i redigeringsprompten. Om verktyget inte kan använda bilden som faktiskt redigeringsunderlag: PARTIAL, inte ett nytt genereringsförsök.
+
+Bildgenereringens svar kan vara turavslutande. Denna protokollgräns ska respekteras även om värden erbjuder flera bildanrop i samma svar. För en textrevision används åter originalbakgrunden som indata i samma redigeringsmoment.

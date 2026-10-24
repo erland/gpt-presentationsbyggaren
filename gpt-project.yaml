@@ -122,7 +122,9 @@ skills:
     - knowledge/visual-generation-guide.md
     - knowledge/visual-styles.md
     - knowledge/rendering-quality-guide.md
-    assets: []
+    assets:
+    - templates/background-generation.md.tpl
+    - templates/text-overlay-edit.md.tpl
     scripts: []
   - id: presentationsexport
     name: presentationsexport
