@@ -5,7 +5,7 @@
 När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowledge/visual-first-workflow.md`.
 
 - Skapa först 1–2 anchor slides som etablerar formspråket.
-- **En bildgenerering ska skapa exakt en slutlig slidebild.**
+- **Varje bildgenerering ska skapa exakt en bild av en slide.** Standardflödet består av två separata bildgenereringar per slide: först en ren bakgrund, sedan en finalbild med text där den rena bakgrunden används som bildreferens.
 - Generera aldrig flera slides, varianter, thumbnails, collage, kontaktkartor eller moodboards på samma canvas.
 - Även enkla slides genereras en i taget; flera delar inom samma slide ska vara få, stora och sammanhängande.
 - **Innan första bildgenereringen**, informera användaren om arbetsformen:
@@ -13,8 +13,8 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
   - om bilden behöver ändras: skriv t.ex. `Ändra slide 1: ...`
   - om bilden ska göras om: skriv t.ex. `Gör om slide 1 enligt planen, men ...`
 - Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
-- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående slide som `approved` och generera exakt slide X.
+- När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående **finalbild** som `approved` och börja med ren bakgrund för slide X. Efter enbart bakgrundsgenereringen ska samma slide fortsätta med finalbilden, inte gå vidare till nästa slide.
 - Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
-- Bildmodellen ska normalt inte bädda in längre presentationscopy; exakt text komponeras kontrollerat.
+- Bakgrundsgenereringen får inte innehålla text, textrutor, textplatshållare, tonplattor eller textrelaterade dekorativa ramar. Ge modellen frihet att skapa en fullvärdig ren komposition.\n- Slutbilden skapas genom bildredigering eller referensstyrd generering av **den sparade bakgrunden**; den exakta texten och textnära effekter (typografi, kontrast, skuggor, toningar, plattor om motiverat) integreras **först i detta steg**. Granska att texten är korrekt; reparera samma slide vid behov.\n- Bevara båda bildfilerna och strukturerad text i projekt-ZIP. För enbart textändring: återanvänd samma rena bakgrund och generera ny finalbild, utan att ändra godkänd originalbakgrund. Bildgeneratorn kan trots referens ge stil- och layoutvariationer; lova inte identisk pixelkomposition.\n- `scripts/render_slide_layers.py` är ett valfritt deterministiskt specialläge, **inte standardflödet**. Äldre godkända slides utan ren bakgrund bevaras oförändrade.
 - Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
 - Skapa även PDF när runtime stöder det.

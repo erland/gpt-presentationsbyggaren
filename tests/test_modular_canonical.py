@@ -22,10 +22,15 @@ def sections(text):
 
 def test_original_sections_preserved_once():
     expected = sections(SOURCE.read_text(encoding="utf-8"))
+    # Visual-first was intentionally superseded by the two-stage AI image workflow.
+    # All other original canonical sections remain exact-match migration invariants.
+    expected.pop("Visual-first", None)
     actual = {}
     for path in TARGETS:
         assert path.is_file(), path
         for heading, section in sections(path.read_text(encoding="utf-8")).items():
+            if heading == "Visual-first":
+                continue
             if heading not in expected:
                 continue
             assert heading not in actual, f"Duplicerat originalavsnitt: {heading}"
@@ -35,3 +40,11 @@ def test_original_sections_preserved_once():
 def test_no_duplicate_skill_ownership():
     names = [p.parent.name for p in TARGETS[1:]]
     assert len(names) == len(set(names)) == 4
+
+
+def test_visual_first_intentional_migration_to_two_stage():
+    skill=(ROOT/"canonical/skills/bildproduktion/behavior.md").read_text(encoding="utf-8")
+    core=(ROOT/"canonical/core.md").read_text(encoding="utf-8")
+    assert "bildreferens" in skill
+    assert "inga förberedda" in core.lower() or "utan text, textbehållare" in core
+    assert "render_mode: ai_two_stage" in core
