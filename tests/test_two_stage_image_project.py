@@ -106,3 +106,57 @@ def test_final_without_gate_is_rejected(tmp_path):
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError,match="missing background quality gate"):
         mod.validate(tmp_path)
+
+def enable_explicit_edit(tmp_path):
+    data,path=project(tmp_path)
+    slide=data["slides"]["01"]
+    background=slide["background"]
+    slide["workflow_version"]=2
+    slide["final_from_background"]=background
+    slide["generation"].update({
+        "final_operation":"edit_original_background",
+        "edit_source":background,
+        "edit_source_sha256":slide["background_gate"]["sha256"],
+        "edit_confirmed":True
+    })
+    path.write_text(json.dumps(data))
+    return data,path
+
+def test_explicit_original_edit_is_valid(tmp_path):
+    enable_explicit_edit(tmp_path)
+    assert mod.validate(tmp_path)["validated_two_stage_slides"] == 1
+
+def test_text_revision_must_edit_original_not_previous_final(tmp_path):
+    data,path=enable_explicit_edit(tmp_path)
+    slide=data["slides"]["01"]
+    slide["revision_of_text"]="v1"
+    slide["text"]["headline"]="Uppdaterad rubrik"
+    slide["generation"]["edit_source"]=slide["final"]
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="edit source must be original"):
+        mod.validate(tmp_path)
+
+def test_new_workflow_rejects_plain_generation(tmp_path):
+    data,path=enable_explicit_edit(tmp_path)
+    data["slides"]["01"]["generation"]["final_operation"]="generate_from_prompt"
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="final operation"):
+        mod.validate(tmp_path)
+
+def test_new_workflow_rejects_false_edit_confirmation(tmp_path):
+    data,path=enable_explicit_edit(tmp_path)
+    data["slides"]["01"]["generation"]["edit_confirmed"]=False
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="not confirmed"):
+        mod.validate(tmp_path)
+
+def test_new_workflow_rejects_wrong_edit_checksum(tmp_path):
+    data,path=enable_explicit_edit(tmp_path)
+    data["slides"]["01"]["generation"]["edit_source_sha256"]="0"*64
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="edit source checksum"):
+        mod.validate(tmp_path)
+
+def test_legacy_workflow_stays_accepted(tmp_path):
+    project(tmp_path)
+    assert mod.validate(tmp_path)["validated_two_stage_slides"] == 1
