@@ -85,3 +85,7 @@ Spara både `slides/slide-NN-background.png` och `slides/slide-NN-final.png`, te
 Använd `render_mode: ai_two_stage` i `project/project-state.json` för nya slides. Ange per slide `status`, `background`, `final`, `text` med åtminstone `headline`, `generation.background_prompt`, `generation.final_prompt`, `generation.reference_background` och `approval_recorded` vid godkänd final. Validera projektets fil- och metadatarelationer med `scripts/validate_two_stage_project.py` när tillgängligt; detta bevisar inte att AI-modellen faktiskt följde referensen eller att texten blev korrekt. Visuell kvalitetsgranskning krävs separat.
 
 Tidigare textlagerbaserade slides och äldre helslidebilder ska fortsatt stödjas, men är inte standard för nya projekt. Filer och godkännanden får inte skrivas över tyst.
+
+## Gate mellan bakgrund och slutbild
+
+Före ett bildgenereringsanrop för slutbild ska den rena bakgrunden vara en **faktiskt sparad och visuellt kontrollerad** bild, inte en processillustration som beskriver flödet. Registrera `background_gate` med `checked`, `text_free`, `no_text_containers`, `single_scene` (true) och `sha256` av den lagrade bakgrundsfilen. Misslyckad eller utebliven kontroll blockerar `final_ready` och `approved`. De två bildstegen ska göras i olika anrop. En ensam genererad översiktsbild som avbildar båda stegen utgör **inte** en godkänd tvåstegsgenerering. Valideraren kontrollerar deklaration och checksumma; den kan inte själv avgöra bildens innehåll eller om modellen verkligen använde referensen.
