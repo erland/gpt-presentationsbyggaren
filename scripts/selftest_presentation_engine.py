@@ -69,6 +69,7 @@ def main():
             "generation":{"background_prompt":"A standalone text-free scene",
                           "final_prompt":"Use exact copy integrated into reference scene",
                           "reference_background":"slides/slide-03-background.png"},
+            "background_gate":{"checked":True,"text_free":True,"no_text_containers":True,"single_scene":True,"sha256":__import__("hashlib").sha256(b"background original").hexdigest()},
             "approval_recorded":True}}}
         import json
         (source / "project/project-state.json").write_text(json.dumps(project_state), encoding="utf-8")
