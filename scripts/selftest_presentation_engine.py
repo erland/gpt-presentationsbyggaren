@@ -22,6 +22,7 @@ def main():
     plan = load("validate_presentation_plan")
     pptx = load("validate_pptx")
     project = load("presentation_project")
+    renderer = load("render_slide_layers")
     with tempfile.TemporaryDirectory() as temp:
         base = Path(temp)
         (base / "invalid-plan.md").write_text("not a presentation plan", encoding="utf-8")
@@ -44,6 +45,21 @@ def main():
         restored = base / "restored"
         project.restore(archive, restored)
         assert (restored / "slides/slide-01.png").read_bytes() == b"test-image"
+        from PIL import Image
+        (source / "slides/slide-02-background.png").parent.mkdir(parents=True, exist_ok=True)
+        Image.new("RGB", (1280, 720), "#15243B").save(source / "slides/slide-02-background.png")
+        layers = {"schema_version":1, "background":"slides/slide-02-background.png",
+                  "output":"slides/slide-02.png",
+                  "layers":[{"type":"text","text":"Rubrik 1","box":[0.1,0.1,0.8,0.25],"font_size":48,"color":"#FFFFFF"}]}
+        (source / "slides/slide-02.layers.json").write_text(__import__("json").dumps(layers), encoding="utf-8")
+        import hashlib
+        digest = hashlib.sha256((source / "slides/slide-02-background.png").read_bytes()).hexdigest()
+        first = renderer.render(source,"02").read_bytes()
+        layers["layers"][0]["text"] = "Rubrik 2"
+        (source / "slides/slide-02.layers.json").write_text(__import__("json").dumps(layers), encoding="utf-8")
+        second = renderer.render(source,"02").read_bytes()
+        assert first != second, "Text update must change composite"
+        assert hashlib.sha256((source / "slides/slide-02-background.png").read_bytes()).hexdigest() == digest
     print("PRESENTATION ENGINE SELFTEST: PASS")
     return 0
 
