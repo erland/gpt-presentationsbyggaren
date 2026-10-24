@@ -15,6 +15,10 @@ def verify(archive: Path) -> list[str]:
                 errors.append(f"Missing OpenCode tool: {name}")
                 continue
             wrapper=z.read(name).decode("utf-8")
+            if '\\n    file:' in wrapper:
+                errors.append(f'{name}: literal escaped newline makes TypeScript invalid')
+            if '\n    file:' not in wrapper:
+                errors.append(f'{name}: missing real newline before file argument')
             for required in ('file: tool.schema.string().min(1)', 'const cmd = ["python3", script, file]', 'path.relative(projectRoot, file)'):
                 if required not in wrapper:
                     errors.append(f"{name}: missing {required}")

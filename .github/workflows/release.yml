@@ -38,14 +38,14 @@ jobs:
         run: python scripts/validate_project.py --project-root .
       - name: Deterministic tests
         run: python -m pytest -q -p no:cacheprovider
-      - name: Download pinned GPT Byggaren Engine 1.6.29
+      - name: Download pinned GPT Byggaren Engine 1.6.30
         shell: bash
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 --silent --show-error \
-            https://github.com/erland/gpt-byggaren/releases/download/v1.6.29/gpt-byggaren-engine-1.6.29.zip \
+            https://github.com/erland/gpt-byggaren/releases/download/v1.6.30/gpt-byggaren-engine-1.6.30.zip \
             -o /tmp/gpt-byggaren-engine.zip
-          echo 'ab6bd6c0e380d1b60c989c200b2fb294956574104199708896d9e59bd280bd7f  /tmp/gpt-byggaren-engine.zip' | sha256sum --check
+          echo '2d2723c383c8940fc8fd7df481f78d981eee349aeb3434429ef83cf6b5b1e19c  /tmp/gpt-byggaren-engine.zip' | sha256sum --check
           mkdir -p /tmp/gpt-byggaren-engine
           python -m zipfile -e /tmp/gpt-byggaren-engine.zip /tmp/gpt-byggaren-engine
       - name: Self-test canonical engine
