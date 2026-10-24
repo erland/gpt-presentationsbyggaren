@@ -23,7 +23,8 @@ def main():
     pptx = load("validate_pptx")
     with tempfile.TemporaryDirectory() as temp:
         base = Path(temp)
-        if not plan.validate(base / "missing-plan.md"):
+        (base / "invalid-plan.md").write_text("not a presentation plan", encoding="utf-8")
+        if not plan.validate(base / "invalid-plan.md"):
             raise RuntimeError("Plan validator must reject missing file")
         with zipfile.ZipFile(base / "invalid.pptx", "w") as z:
             z.writestr("invalid.txt", "not a PowerPoint presentation")
