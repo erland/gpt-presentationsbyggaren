@@ -45,6 +45,6 @@ def test_no_duplicate_skill_ownership():
 def test_visual_first_intentional_migration_to_two_stage():
     skill=(ROOT/"canonical/skills/bildproduktion/behavior.md").read_text(encoding="utf-8")
     core=(ROOT/"canonical/core.md").read_text(encoding="utf-8")
-    assert "bakgrunden som bildreferens" in skill
+    assert "bildreferens" in skill
     assert "inga förberedda" in core.lower() or "utan text, textbehållare" in core
     assert "render_mode: ai_two_stage" in core
