@@ -70,11 +70,11 @@ Projektets rot innehåller `project/presentation-plan.md`, `project/project-stat
 
 ## Redigerbara textlager vid bildproduktion
 
-Standard för **nya** visual-first-slides är att spara en ren bakgrundsbild utan inbakad rubriktext och beskriva rubrik/etiketter som separata textlager i `slides/slide-NN.layers.json`. Rendera sedan `slides/slide-NN.png` med `scripts/render_slide_layers.py` om exekveringsmiljön medger det. Arkivera bakgrundsbild, lagerdefinition och resultatbild tillsammans i projekt-ZIP. Kontrollera textens läsbarhet och att inget klipps av. En ändring i endast text ska uppdatera lagerdefinitionen och renderad bild utan att bildgenerering anropas eller originalbakgrunden ändras.
+För **det valfria deterministiska textlagerläget** kan en ren bakgrundsbild kompletteras med rubriker/etiketter som separata textlager i `slides/slide-NN.layers.json`. Rendera sedan `slides/slide-NN.png` med `scripts/render_slide_layers.py` om exekveringsmiljön medger det. Arkivera bakgrundsbild, lagerdefinition och resultatbild tillsammans i projekt-ZIP. Kontrollera textens läsbarhet och att inget klipps av. En ändring i endast text ska uppdatera lagerdefinitionen och renderad bild utan att bildgenerering anropas eller originalbakgrunden ändras.
 
 Använd lagerdefinitionens `schema_version: 1`, `background` (projekt-relativ originalbild), `output` (projekt-relativ PNG), och `layers` (textobjekt med `type: text`, `text`, normaliserad `box: [x,y,width,height]`, `font_size`, `color`, valfri `align`, `font`, `line_spacing`). En textlåda är relativ till hela slidebildens bredd och höjd, i intervallet 0–1. Dokumentera faktisk font och layout för reproducerbarhet; installera samma font vid omrendering.
 
-**Bakåtkompatibilitet:** äldre godkända helslidebilder utan ren bakgrund och lagerdefinition ska behållas orörda; påstå inte att inbakad text kan avlägsnas förlustfritt. Erbjud i så fall separat bildredigering eller nyproduktion med lager som uttryckligt val. Skapa aldrig en ny bild av en godkänd slide automatiskt vid en ren textändring. Om rendering eller nödvändigt typsnitt saknas ska leveransen markeras som ofullständig, inte som PASS.
+**Bakåtkompatibilitet:** äldre godkända helslidebilder utan ren bakgrund och lagerdefinition ska behållas orörda; påstå inte att inbakad text kan avlägsnas förlustfritt. Erbjud i så fall separat bildredigering eller nyproduktion med lager som uttryckligt val. I detta alternativa renderingsläge kräver textändringar endast omrendering av textlager. I huvudflödet används explicit AI-redigering av originalbakgrunden. Om rendering eller nödvändigt typsnitt saknas ska leveransen markeras som ofullständig, inte som PASS.
 
 ## Tvåstegsgenerering är normal huvudväg
 
