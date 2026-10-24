@@ -14,18 +14,19 @@ Primära leveranser:
 
 PPTX behöver inte ha redigerbara interna objekt när användaren valt visual-first.
 
-## Renderingspipeline
+## Renderingspipeline – AI i två steg per slide
 
-1. Läs `presentation-plan.md`.
-2. Fastställ visual system.
-3. Välj 1–2 anchor slides.
-4. Generera och kvalitetsgranska anchor-assets.
-5. Generera övriga slide-assets med anchor-resultaten som stilreferens när runtime stöder det.
-6. Komponera exakt presentationscopy separat från bildgenereringen när text måste vara korrekt.
-7. Rendera varje slide till högupplöst bild.
-8. Paketera slidebilderna i PPTX och PDF.
-9. Granska faktisk preview av alla slides.
-10. Leverera endast när teknisk och visuell gate passerar.
+1. Läs `presentation-plan.md` och aktuellt projekttillstånd.
+2. Fastställ visual system och välj 1–2 anchor slides.
+3. **Bakgrund:** generera en bild som fungerar som självständig, textfri visuell komposition. Inga textrutor, etiketter, förberedda plattor, ramar eller textplatshållare. Låt negativt utrymme uppstå naturligt.
+4. Spara `slides/slide-NN-background.png`. Markera `background_ready`.
+5. **Final:** skapa en NY bild från bakgrunden som **faktisk bildreferens** och ange exakt text. Låt modellen integrera typografi och eventuella skuggor, toner och grafiska textstöd i detta steg. Generera inte en ny orelaterad bakgrund från enbart prompt.
+6. Kontrollera bakgrundens visuella kontinuitet och slutbildens ordalydelse, kontrast och komposition. Spara `slides/slide-NN-final.png`; markera `final_ready`.
+7. Visa finalbilden för godkännande. Ändra status till `approved` först efter användarens explicita godkännande.
+8. Upprepa för nästa slide. Exportera **finalbilderna** i PPTX och PDF, inspektera preview, och skapa projekt-ZIP inklusive båda bildversionerna.
+9. Vid textändring: bevara bakgrunden, regenerera enbart finalbilden, återställ status till `final_ready` och begär nytt godkännande. Versionsspara ersatt finalbild där stöd finns.
+
+När bildreferenser inte stöds: beskriv begränsningen; gör inte anspråk på referensbaserad bildgenerering. Exakt text och grafisk överensstämmelse behöver kontrolleras visuellt.
 
 ## Anchor slides
 
@@ -49,13 +50,13 @@ Om anchor-resultatet är svagt ska visual system justeras **innan** resten gener
 
 ## En slide per bildgenerering
 
-**Hård standardregel: en bildgenerering = exakt en slutlig slidebild.**
+**Hård regel: en bildgenerering = exakt en bild av en slide. Två bildgenereringar ingår normalt per slide: bakgrund + final.**
 
 Det gäller även enkla slides.
 
 Varje bildprompt ska uttryckligen säga:
 
-> Skapa exakt en slutlig 16:9-slidebild för denna slide. Använd hela canvasen för en sammanhängande professionell komposition. Skapa inte collage, grid, kontaktkarta, moodboard, storyboardark, flera alternativa versioner eller flera små slidebilder på samma canvas.
+> Skapa exakt en 16:9-bild för detta steg (ren bakgrund eller final) av denna slide. Använd hela canvasen för en sammanhängande professionell komposition. Skapa inte collage, grid, kontaktkarta, moodboard, storyboardark, flera alternativa versioner eller flera små slidebilder på samma canvas.
 
 Om sliden innehåller flera steg eller perspektiv får de visas inom samma slide, men som **få stora integrerade delar**. Tre steg kan exempelvis vara tre stora scener över bredden; de ska inte bli thumbnails.
 
@@ -79,7 +80,7 @@ När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`:
 1. markera den senast genererade sliden som `approved`,
 2. läs specifikationen för slide X ur `presentation-plan.md`,
 3. markera slide X som `next`,
-4. generera exakt en slutlig bild för slide X,
+4. generera bakgrundsbild för slide X och därefter en separat AI-finalbild med bakgrunden som bildreferens,
 5. lämna övriga slides oförändrade.
 
 Om användaren ber om ändring eller omgenerering ska samma slide behållas som aktiv tills användaren uttryckligen godkänner den.
@@ -98,26 +99,9 @@ En bild underkänns om den:
 
 Vid sådant resultat: gör om **samma slide**, inte nästa slide.
 
-## Bild kontra text
+## Bakgrund kontra text i final
 
-Bildmodellen ska normalt skapa:
-
-- scen,
-- illustration,
-- grafisk bakgrund,
-- visuella objekt,
-- metafor,
-- atmosfär och komposition.
-
-Bildmodellen ska normalt **inte** skapa:
-
-- långa rubriker,
-- brödtext,
-- exakta siffror,
-- källhänvisningar,
-- text som måste vara helt korrekt.
-
-Exakt copy komponeras ovanpå eller tillsammans med asseten i ett kontrollerat renderingssteg före helslidebilden exporteras.
+Bakgrundsbilden innehåller motiv, ljus och bildspråk men **ingen text och inga förberedda textrutor eller tonplattor**. Finalbilden får däremot text, textrelaterade effekter och grafisk typografi via AI-generering med bakgrundsbilden som referens. Förlita dig inte på deterministisk textoverlay som normalväg. Exakta siffror, längre text och källor kräver särskild kontroll; be användaren godkänna slutresultatet innan export.
 
 ## Konsistens
 
