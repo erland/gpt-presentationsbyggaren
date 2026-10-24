@@ -48,6 +48,8 @@ jobs:
         run: python scripts/validate_distributions.py --project-root .
       - name: Verify modular Skill behavior in every runtime projection
         run: python scripts/verify_runtime_behavior_projection.py --project-root . --version "0.0.0-ci"
+      - name: Verify modular OpenCode and complete Claude Project projection
+        run: python scripts/verify_modular_runtime_projection.py --version "0.0.0-ci"
       - name: Verify generated OpenCode validator tools
         run: python scripts/verify_opencode_generated_tools.py --archive "dist/presentationsbyggaren-opencode-0.0.0-ci.zip"
       - name: Verify six ZIP files
