@@ -70,6 +70,24 @@ def validate(root: Path) -> dict:
             raise ValueError(f"{slide_id}: final prompt missing")
         if metadata.get("reference_background") != bg_name:
             raise ValueError(f"{slide_id}: final generation must reference original background")
+        # Workflow v2 uses an actual edit of the saved original, never the prior final.
+        # Legacy two-stage records without workflow_version remain readable.
+        if slide.get("workflow_version", 1) == 2:
+            if metadata.get("final_operation") != "edit_original_background":
+                raise ValueError(f"{slide_id}: final operation must edit original background")
+            if metadata.get("edit_source") != bg_name:
+                raise ValueError(f"{slide_id}: edit source must be original background")
+            if slide.get("final_from_background") != bg_name:
+                raise ValueError(f"{slide_id}: final provenance must name original background")
+            if stage in {"final_ready", "approved"}:
+                if metadata.get("edit_source_sha256") != hashlib.sha256(bg.read_bytes()).hexdigest():
+                    raise ValueError(f"{slide_id}: edit source checksum mismatch")
+                if metadata.get("edit_confirmed") is not True:
+                    raise ValueError(f"{slide_id}: image edit is not confirmed")
+            if "revision_of_text" in slide and not isinstance(slide["revision_of_text"], str):
+                raise ValueError(f"{slide_id}: revision_of_text must be a version identifier")
+        elif slide.get("workflow_version", 1) != 1:
+            raise ValueError(f"{slide_id}: unsupported workflow_version")
         if not isinstance(slide.get("text"), dict):
             raise ValueError(f"{slide_id}: structured text missing")
         if "headline" not in slide["text"] or not isinstance(slide["text"]["headline"], str):
