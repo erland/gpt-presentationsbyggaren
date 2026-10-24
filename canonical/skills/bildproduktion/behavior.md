@@ -15,7 +15,10 @@ När redigerbarhet inte krävs är visual-first normal huvudväg. Följ `knowled
 - Mellan bildgenerationer ska du inte rekommendera `Gör nästa steg`; användaren ska explicit ange om den föregående sliden är godkänd och vilken slide som ska skapas härnäst.
 - När användaren skriver `Det ser bra ut. Skapa slide X enligt planen.`, markera föregående **finalbild** som `approved` och börja med ren bakgrund för slide X. Efter enbart bakgrundsgenereringen ska samma slide fortsätta med finalbilden, inte gå vidare till nästa slide.
 - Uppdatera renderingsstatusen i `presentation-plan.md` så att framsteg kan återupptas.
-- Bakgrundsgenereringen får inte innehålla text, textrutor, textplatshållare, tonplattor eller textrelaterade dekorativa ramar. Ge modellen frihet att skapa en fullvärdig ren komposition.\n- Slutbilden skapas genom **explicit redigering av den faktiskt sparade originalbakgrunden**, inte genom ny fristående eller referensstyrd generering; den exakta texten och textnära effekter (typografi, kontrast, skuggor, toningar, plattor om motiverat) integreras **först i detta steg**. Granska att texten är korrekt; reparera samma slide vid behov.\n- Bevara båda bildfilerna och strukturerad text i projekt-ZIP. För enbart textändring: återanvänd samma rena bakgrund och generera ny finalbild, utan att ändra godkänd originalbakgrund. Bildgeneratorn kan trots referens ge stil- och layoutvariationer; lova inte identisk pixelkomposition.\n- `scripts/render_slide_layers.py` är ett valfritt deterministiskt specialläge, **inte standardflödet**. Äldre godkända slides utan ren bakgrund bevaras oförändrade.
+- Bakgrundsgenereringen får inte innehålla text, textrutor, textplatshållare, tonplattor eller textrelaterade dekorativa ramar. Ge modellen frihet att skapa en fullvärdig ren komposition.
+- Slutbilden skapas genom **explicit redigering av den faktiskt sparade originalbakgrunden**, inte genom ny fristående eller referensstyrd generering; den exakta texten och textnära effekter (typografi, kontrast, skuggor, toningar, plattor om motiverat) integreras **först i detta steg**. Granska att texten är korrekt; reparera samma slide vid behov.
+- Bevara båda bildfilerna och strukturerad text i projekt-ZIP. För enbart textändring: återanvänd samma rena bakgrund och generera ny finalbild, utan att ändra godkänd originalbakgrund. Bildgeneratorn kan trots referens ge stil- och layoutvariationer; lova inte identisk pixelkomposition.
+- `scripts/render_slide_layers.py` är ett valfritt deterministiskt specialläge, **inte standardflödet**. Äldre godkända slides utan ren bakgrund bevaras oförändrade.
 - Slutlig PPTX får bestå av färdigrenderade helslidebilder och behöver inte vara objektredigerbar.
 - Skapa även PDF när runtime stöder det.
 
@@ -35,3 +38,21 @@ Använd **bildredigeringsoperationen** i bildverktyget; skapa inte ett nytt moti
 Vid textändring: utgå från **samma textfria originalbakgrund**, aldrig från den tidigare textförsedda finalbilden. Bevara tidigare finalversion och gör om slutbildens godkännande. Om bildverktyget bara gör text-till-bild eller inte kan välja avsett original som redigeringsunderlag: stoppa och redovisa PARTIAL, inte PASS.
 
 Spara för nya slides `workflow_version: 2`, `final_from_background` (samma sökväg som `background`), och under `generation`: `final_operation: edit_original_background`, `edit_source`, `edit_source_sha256`, samt `edit_confirmed` som true **bara om utförd redigering med just originalet är verifierad**. Vid textrevision kan `revision_of_text` peka på föregående textversion. Validatorn kontrollerar deklarationer och checksummor, men kan inte tekniskt bevisa modellens interna redigeringsbeteende.
+
+## Två promptar och två separata användarmeddelanden (obligatorisk standard)
+
+### Moment A – bakgrundsgenerering
+
+Bygg en **fristående** prompt från `templates/background-generation.md.tpl`. Parametrar: `visual_concept` och `visual_style`. Rubrik, `exact_text`, textplacering och senare redigeringsinstruktioner får **inte** ingå i Prompt A. Anropa bildgenereringsverktyget en gång för endast denna bakgrund; kombinera aldrig Moment A och Moment B i ett uppdrag eller genererat bildmontage.
+
+Efter faktiskt utförd granskning och sparad fil med SHA-256: sätt `status: background_ready` (inte `final_ready`). **Avsluta detta användarsvar**. Säg kort: ”Bakgrunden är skapad. Skriv **Lägg på texten enligt planen** för att redigera just den här originalbilden.” Kör INTE textredigeringen i samma assistenttur, även om assistenten redan känner rubriken. Ingen automatisk fortsättning eller implicit godkännande. Ett nytt användarmeddelande krävs.
+
+### Moment B – explicit textredigering
+
+När ett **nytt användarmeddelande** begär `Lägg på texten enligt planen`, använd `templates/text-overlay-edit.md.tpl` och ersätt endast `exact_text` med slideplanens exakta text. Prompt B får inte upprepa motiv, färger, rum, personer eller bakgrundsgenereringsprompten: sådant finns i den sparade bilden.
+
+Välj `slides/slide-NN-background.png` som **faktisk bildindata** till bildverktygets redigeringsfunktion. Kontrollera innan anropet att originalets hash stämmer och att rätt bild verkligen bifogas/valts i verktygsoperationen; en sökväg i prompttext är **inte** i sig en bifogad bild. Kontrollera resultatet och tillgänglig verktygsproveniens efteråt. `generation.edit_confirmed` sätts till true endast om verklig redigering med just originalbilden kan verifieras. Avsaknad av metadata är inte i sig bevis för utebliven redigering, men får inte tolkas som PASS. Om värden inte kan bifoga/välja originalbilden: stoppa med **PARTIAL**, skapa inte en ny liknande bild och erbjud det redan tillgängliga deterministiska textlagerläget som uttryckligt alternativ.
+
+Vid senare textändring: kör ett nytt Moment B med `slides/slide-NN-background.png` som bildindata, **aldrig** föregående `final`; bevara tidigare final som separat version och nollställ dess godkännandestatus. Användaren godkänner slutbilden efter redigering.
+
+Ett separat indata-/utdatakontrakt per moment gäller: A tar motiv/stil och ger kontrollerat `background.png` + SHA-256; B tar den verifierade originalbildens bytes och exakt text och ger en ny `final-vN.png`. Tester får aldrig kallas PASS enbart för att resultatbilder ser lika ut.
