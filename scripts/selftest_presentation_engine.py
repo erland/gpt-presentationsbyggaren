@@ -62,13 +62,18 @@ def main():
         assert first != second, "Text update must change composite"
         assert hashlib.sha256((source / "slides/slide-02-background.png").read_bytes()).hexdigest() == digest
         project_state = {"slides":{"03":{
-            "render_mode":"ai_two_stage", "status":"approved",
+            "render_mode":"ai_two_stage", "workflow_version":2, "status":"approved",
             "background":"slides/slide-03-background.png",
             "final":"slides/slide-03-final.png",
+            "final_from_background":"slides/slide-03-background.png",
             "text":{"headline":"Testbudskap"},
             "generation":{"background_prompt":"A standalone text-free scene",
                           "final_prompt":"Use exact copy integrated into reference scene",
-                          "reference_background":"slides/slide-03-background.png"},
+                          "reference_background":"slides/slide-03-background.png",
+                          "final_operation":"edit_original_background",
+                          "edit_source":"slides/slide-03-background.png",
+                          "edit_source_sha256":__import__("hashlib").sha256(b"background original").hexdigest(),
+                          "edit_confirmed":True},
             "background_gate":{"checked":True,"text_free":True,"no_text_containers":True,"single_scene":True,"sha256":__import__("hashlib").sha256(b"background original").hexdigest()},
             "approval_recorded":True}}}
         import json
