@@ -55,13 +55,16 @@ engine:
     - scripts/validate_pptx.py
     - scripts/selftest_presentation_engine.py
     - scripts/presentation_project.py
+    - scripts/render_slide_layers.py
   selftest: scripts/selftest_presentation_engine.py
   required_files:
+    - scripts/render_slide_layers.py
     - scripts/presentation_project.py
     - scripts/validate_presentation_plan.py
     - scripts/validate_pptx.py
   python_dependencies:
     - pyyaml
+    - pillow
 
 model_robustness:
     level: guided
