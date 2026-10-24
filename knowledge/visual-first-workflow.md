@@ -130,3 +130,7 @@ Varje slide ska granskas som bild för:
 - inga oavsiktliga objekt eller visuella artefakter.
 
 En slide som ser ut som en skiss, ett flödesschema av standardboxar eller en generisk AI-mall ska göras om.
+
+## Bakgrundsgate
+
+Innan `final_ready` måste `background_gate` ha `checked`, `text_free`, `no_text_containers` och `single_scene` satta till true samt `sha256` för bakgrundsfilens bytes. Valideraren kontrollerar metadata och hash, men inte bildens semantiska innehåll. Rapportera faktisk visuell granskning separat.
