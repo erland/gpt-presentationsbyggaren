@@ -39,7 +39,7 @@ En genererad illustration ska ha ett definierat `visual_intent` i storyboardet. 
 - vilka objekt och relationer som måste synas,
 - vad som uttryckligen ska undvikas.
 
-Illustrationen får inte introducera fakta som saknar stöd i materialet. Text i genererade bilder ska undvikas; lägg text som redigerbara PowerPoint-element ovanpå eller bredvid bilden.
+Illustrationen får inte introducera fakta som saknar stöd i materialet. I visual-first-läge genereras först en ren bakgrund utan text eller textbehållare. Skapa sedan en AI-slutbild med den rena bakgrunden som bildreferens; typografi och eventuella textplattor/effekter läggs till i den andra genereringen. Kontrollera att texten återges korrekt.
 
 ## Redigerbarhet
 
@@ -53,7 +53,7 @@ Föredra inbyggda presentationsobjekt för:
 - tabeller,
 - enkla ikoner och symboler.
 
-En komplex illustration får vara en bild när det ger tydligt högre kommunikativ kvalitet. Behåll rubriker, etiketter, källor och annan text som användaren rimligen behöver ändra som separata redigerbara element när det går. Undvik att rasterisera hela sliden som standard.
+En komplex illustration får vara en bild när det ger tydligt högre kommunikativ kvalitet. I visual-first är den färdiga AI-bilden normalt en helslidebild. Bevara ren bakgrund, strukturerad text och AI-final separat i projekt-ZIP för framtida ändringar. Andra renderingslägen kan använda PowerPoint-element eller deterministiska textlager när redigerbarhet eller exakta data väger tyngre.
 
 ## Konsistens
 
