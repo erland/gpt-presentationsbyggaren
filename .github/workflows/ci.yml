@@ -52,6 +52,13 @@ jobs:
         run: python scripts/verify_modular_runtime_projection.py --version "0.0.0-ci"
       - name: Verify generated OpenCode validator tools
         run: python scripts/verify_opencode_generated_tools.py --archive "dist/presentationsbyggaren-opencode-0.0.0-ci.zip"
+      - name: Verify optional presentation Engine ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "dist/presentationsbyggaren-engine-0.0.0-ci.zip"
+          python -m zipfile -e "dist/presentationsbyggaren-engine-0.0.0-ci.zip" /tmp/presentation-engine-test
+          python /tmp/presentation-engine-test/scripts/selftest_presentation_engine.py
       - name: Verify six ZIP files
         shell: bash
         run: |
